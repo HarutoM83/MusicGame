@@ -225,7 +225,7 @@ Transform:
   m_GameObject: {fileID: 191494183}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.62, y: 0.5, z: -6.32}
+  m_LocalPosition: {x: -0.62, y: 0.5, z: -6.309}
   m_LocalScale: {x: 1.15, y: 0.25, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -714,6 +714,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8162671034551468696, guid: 9ac64cc6ad94bc942a5baf29932db8f1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -6.618
+      objectReference: {fileID: 0}
     - target: {fileID: 8275416822016406203, guid: 9ac64cc6ad94bc942a5baf29932db8f1, type: 3}
       propertyPath: m_Name
       value: BeatMap
