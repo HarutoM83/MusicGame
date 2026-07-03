@@ -1,62 +1,90 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class PlayerManager : MonoBehaviour
 {
+   
+
     public Renderer[] laneRenderer;
     public Material normalMat;
     public Material clickMat;
 
-    private PlayerInput playerInput;
-
-    private void Awake()
+    public void OnAttack1(InputAction.CallbackContext context)
     {
-        playerInput = GetComponent<PlayerInput>();
-    }
-
-    private void OnEnable()
-    {
-        playerInput.onActionTriggered += OnAction;
-    }
-
-    private void OnDisable()
-    {
-        playerInput.onActionTriggered -= OnAction;
-    }
-    private void OnAction(InputAction.CallbackContext context)
-    {
-        if (!context.started) return;
-
-        int index = -1;
-
-        switch (context.action.name)
+        if (context.started) HitLane(0);
+        if (context.canceled)
         {
-            case "Attack1": index = 0; break;
-            case "Attack2": index = 1; break;
-            case "Attack3": index = 2; break;
-            case "Attack4": index = 3; break;
-            case "Attack5": index = 4; break;
-            case "Attack6": index = 5; break;
-            case "Attack7": index = 6; break;
-            case "Attack8": index = 7; break;
+            laneRenderer[0].material = normalMat;
         }
+    }
 
-        if (index < 0) return;
+    public void OnAttack2(InputAction.CallbackContext context)
+    {
+        if (context.started) HitLane(1);
+        if (context.canceled)
+        {
+            laneRenderer[1].material = normalMat;
+        }
+    }
 
-        HitLane(index);
+    public void OnAttack3(InputAction.CallbackContext context)
+    {
+        if (context.started) HitLane(2);
+        if (context.canceled)
+        {
+            laneRenderer[2].material = normalMat;
+        }
+    }
+
+    public void OnAttack4(InputAction.CallbackContext context)
+    {
+        if (context.started) HitLane(3);
+        if (context.canceled)
+        {
+            laneRenderer[3].material = normalMat;
+        }
+    }
+
+    public void OnAttack5(InputAction.CallbackContext context)
+    {
+        if (context.started) HitLane(4);
+        if (context.canceled)
+        {
+            laneRenderer[4].material = normalMat;
+        }
+    }
+
+    public void OnAttack6(InputAction.CallbackContext context)
+    {
+        if (context.started) HitLane(5);
+        if (context.canceled)
+        {
+            laneRenderer[5].material = normalMat;
+        }
+    }
+
+    public void OnAttack7(InputAction.CallbackContext context)
+    {
+        if (context.started) HitLane(6);
+        if (context.canceled)
+        {
+            laneRenderer[6].material = normalMat;
+        }
+    }
+
+    public void OnAttack8(InputAction.CallbackContext context)
+    {
+        if (context.started) HitLane(7);
+        if (context.canceled)
+        {
+            laneRenderer[7].material = normalMat;
+        }
     }
 
     void HitLane(int index)
     {
         laneRenderer[index].material = clickMat;
-        Invoke(nameof(ResetAll), 0.1f);
     }
 
-    void ResetAll()
-    {
-        for (int i = 0; i < laneRenderer.Length; i++)
-        {
-            laneRenderer[i].material = normalMat;
-        }
-    }
 }
