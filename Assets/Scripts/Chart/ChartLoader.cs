@@ -6,7 +6,7 @@ public class ChartLoader : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        string path = Path.Combine(Application.streamingAssetsPath, "song01.json");
+        string path = Path.Combine(Application.streamingAssetsPath, "song00.json");
 
         string json = File.ReadAllText(path);
 
