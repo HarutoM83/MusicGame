@@ -4,6 +4,7 @@ using UnityEngine.Rendering;
 
 public class PlayerManager : MonoBehaviour
 {
+    [SerializeField] private JudgeManager judgeManager;
     public Renderer[] laneRenderer;
     public Material normalMat;
     public Material clickMat;
@@ -84,7 +85,13 @@ public class PlayerManager : MonoBehaviour
     {
         laneRenderer[index].material = clickMat;
 
-        JudgeManager.Instance.Judge(index);
+        if (judgeManager == null)
+        {
+            Debug.LogError("JudgeManager is not assigned!");
+            return;
+        }
+
+        judgeManager.Judge(index);
     }
 
 }

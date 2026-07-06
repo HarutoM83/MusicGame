@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ChartLoader : MonoBehaviour
 {
+    [SerializeField] private JudgeManager judgeManager;
     public GameObject TAPNotesPrefab;
     public Transform[] laneSpawnPoints;
     public AudioSource music;
@@ -13,7 +14,7 @@ public class ChartLoader : MonoBehaviour
     private int nextNoteIndex = 0;
 
     // ”»’èƒ‰ƒCƒ“‚É’…‚­‚Ü‚Å‚ÌŽžŠÔ
-    public float spawnOffset = 10.0f;
+    public float spawnOffset = 2.0f;
 
     public float spawnZ = 10f;
     public float judgeZ = 5f;
@@ -21,7 +22,7 @@ public class ChartLoader : MonoBehaviour
 
     void Start()
     {
-        string path = Path.Combine(Application.streamingAssetsPath, "song01.json");
+        string path = Path.Combine(Application.streamingAssetsPath, "Song01.json");
 
         string json = File.ReadAllText(path);
 
@@ -39,11 +40,11 @@ public class ChartLoader : MonoBehaviour
 
         while (nextNoteIndex < chart.notes.Count)
         {
-            NotesData note = chart.notes[nextNoteIndex];
+            NotesData notes = chart.notes[nextNoteIndex];
 
-            if (songTime >= note.time - spawnOffset)
+            if (songTime >= notes.time - spawnOffset)
             {
-                SpawnNote(note);
+                SpawnNote(notes);
                 nextNoteIndex++;
             }
             else
@@ -60,9 +61,9 @@ public class ChartLoader : MonoBehaviour
         obj.transform.position = laneSpawnPoints[data.lane].position;
         obj.transform.rotation = Quaternion.identity;
 
-        Notes note = obj.GetComponent<Notes>();
+        Notes notes = obj.GetComponent<Notes>();
 
-        note.Initialize(
+        notes.Initialize(
             data,
             music,
             notesPool,
@@ -71,7 +72,7 @@ public class ChartLoader : MonoBehaviour
             travelTime
         );
 
-        JudgeManager.Instance.activeNotes.Add(note);
+        JudgeManager.Instance.activeNotes.Add(notes);
     }
 
 }

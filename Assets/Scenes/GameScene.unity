@@ -976,6 +976,9 @@ MonoBehaviour:
   music: {fileID: 378688921}
   notesPool: {fileID: 951272537}
   spawnOffset: 2
+  spawnZ: 10
+  judgeZ: 5
+  travelTime: 2
 --- !u!114 &1224723824
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -989,15 +992,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JudgeManager
   music: {fileID: 378688921}
-  activeNotes:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  activeNotes: []
 --- !u!1 &1362092411
 GameObject:
   m_ObjectHideFlags: 0
@@ -1918,6 +1913,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6562157219464947512, guid: af5a9a3fd4b1c034698a4e59243b260d, type: 3}
+      propertyPath: judgeManager
+      value: 
+      objectReference: {fileID: 1224723824}
     - target: {fileID: 7272518466392425734, guid: af5a9a3fd4b1c034698a4e59243b260d, type: 3}
       propertyPath: m_Name
       value: BeatMap

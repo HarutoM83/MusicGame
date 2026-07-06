@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+[DefaultExecutionOrder(-100)]
 public class JudgeManager : MonoBehaviour
 {
     public static JudgeManager Instance;
@@ -10,6 +11,12 @@ public class JudgeManager : MonoBehaviour
 
     void Awake()
     {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         Instance = this;
     }
 
