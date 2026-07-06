@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 
 [Serializable]
-public class NoteData
+public class NotesData
 {
     public float time;
     public int lane;
     public string type;
+    public string grade;
 }
 
 [Serializable]
@@ -17,5 +18,5 @@ public class ChartData
     public float bpm;
     public float offset;
 
-    public List<NoteData> notes;
+    public List<NotesData> notes;
 }

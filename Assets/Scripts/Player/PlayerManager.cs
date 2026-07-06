@@ -4,8 +4,6 @@ using UnityEngine.Rendering;
 
 public class PlayerManager : MonoBehaviour
 {
-   
-
     public Renderer[] laneRenderer;
     public Material normalMat;
     public Material clickMat;
@@ -85,6 +83,8 @@ public class PlayerManager : MonoBehaviour
     void HitLane(int index)
     {
         laneRenderer[index].material = clickMat;
+
+        JudgeManager.Instance.Judge(index);
     }
 
 }

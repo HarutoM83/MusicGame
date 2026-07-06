@@ -280,6 +280,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8072960949266799329}
   - component: {fileID: 3974124649285044653}
+  - component: {fileID: 2658579647733349331}
   m_Layer: 0
   m_Name: TAPNotes
   m_TagString: Untagged
@@ -328,6 +329,28 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.2575665, y: 0.2526796, z: 0.72065353}
   m_Center: {x: 0.0023180246, y: -0.13722467, z: -0.067744255}
+--- !u!114 &2658579647733349331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6394444500302648421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1ca4d3755725b34a94eabe61a7929e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Notes
+  Lane: 0
+  hitTime: 0
+  pool: {fileID: 0}
+  normalMat: {fileID: 2100000, guid: ad8317f3e52ddc0469f574254778862a, type: 2}
+  EXMat: {fileID: 2100000, guid: 88dab6476de9d3c4aa836220968fab85, type: 2}
+  sr: {fileID: 2743814236712779394}
+  perfectWindow: -0.6
+  greatWindow: -0.7
+  speed: 10
+  judgeZ: 4.5
 --- !u!1 &7570101019635290652
 GameObject:
   m_ObjectHideFlags: 0
