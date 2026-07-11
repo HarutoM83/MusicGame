@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Notes : MonoBehaviour
 {
+    [SerializeField]
+    private float resetnotes = -10f;
     private AudioSource music;
     public int Lane;
     public float hitTime;
@@ -10,31 +12,37 @@ public class Notes : MonoBehaviour
     public Material normalMat;
     public Material EXMat;
     public Renderer sr;
+    private Vector3 spawnPosition;
+    private Vector3 judgePosition;
+    private float scrollSpeed;
 
-    public float perfectWindow = -0.6f;
-    public float greatWindow = -0.7f;
+    public float perfectWindow = 0.05f;
+    public float greatWindow = 0.10f;
 
     public float speed = 9f;
     public float judgeZ = 5f;
 
+    private bool isReleased = false;
+
     public void Initialize(
-    NotesData data,
-    AudioSource audio,
-    ObjectPool_Notes objectPool,
-    float spawnZ,
-    float judgeZ,
-    float travelTime)
+     NotesData data,
+     AudioSource audio,
+     ObjectPool_Notes objectPool,
+     Vector3 spawnPos,
+     Vector3 judgePos,
+     float speed)
     {
+        isReleased = false;
         hitTime = data.time;
         music = audio;
         pool = objectPool;
 
         Lane = data.lane;
 
-        this.judgeZ = judgeZ;
+        spawnPosition = spawnPos;
+        judgePosition = judgePos;
+        scrollSpeed = speed;
 
-        float distance = Mathf.Abs(spawnZ - judgeZ);
-        speed = distance / travelTime;
 
         if (data.grade == "ex")
         {
@@ -48,26 +56,61 @@ public class Notes : MonoBehaviour
 
     void Update()
     {
-        if (pool == null)
+        if (pool == null || music == null)
             return;
 
-        float t = hitTime - music.time;
+        float remainTime = hitTime - music.time;
 
-        transform.position = new Vector3(
-            transform.position.x,
-            transform.position.y,
-            judgeZ + t * speed
+        float distance =
+            Vector3.Distance(
+                spawnPosition,
+                judgePosition
+            );
+
+        float totalTime = distance / scrollSpeed;
+
+        float progress =
+            1 - (remainTime / totalTime);
+
+
+        Vector3 pos = transform.position;
+
+        pos.z = Mathf.Lerp(
+            spawnPosition.z,
+            judgePosition.z,
+            progress
         );
 
-        if (t < -0.2f)
+        transform.position = pos;
+
+
+        if (transform.position.z < resetnotes)
         {
-            pool.ReleaseObject(gameObject);
+            Release();
         }
+    }
+
+    public void Release()
+    {
+        if (isReleased)
+            return;
+
+        isReleased = true;
+        pool.ReleaseObject(gameObject);
     }
 
     void OnDisable()
     {
         if (JudgeManager.Instance != null)
+        {
             JudgeManager.Instance.activeNotes.Remove(this);
+        }
+    }
+    void OnBecameInvisible()
+    {
+        if (pool != null)
+        {
+            Release();
+        }
     }
 }

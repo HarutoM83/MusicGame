@@ -341,16 +341,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1ca4d3755725b34a94eabe61a7929e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Notes
+  resetnotes: -10
   Lane: 0
   hitTime: 0
   pool: {fileID: 0}
   normalMat: {fileID: 2100000, guid: ad8317f3e52ddc0469f574254778862a, type: 2}
   EXMat: {fileID: 2100000, guid: 88dab6476de9d3c4aa836220968fab85, type: 2}
   sr: {fileID: 2743814236712779394}
-  perfectWindow: -0.6
-  greatWindow: -0.7
+  perfectWindow: 0.6
+  greatWindow: 0.7
   speed: 10
-  judgeZ: 4.5
+  judgeZ: 5
 --- !u!1 &7570101019635290652
 GameObject:
   m_ObjectHideFlags: 0

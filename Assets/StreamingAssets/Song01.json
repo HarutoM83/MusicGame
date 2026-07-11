@@ -1,4 +1,15 @@
 {
     "songName": "シャイニングスター",
-    "bpm": 158
+    "artist": "魔王魂",
+    "bpm": 158,
+    "offset": 0,
+    "scrollSpeed":9.0,
+    "notes":[
+        {
+            "time": 5.0,
+            "lane": 0,
+            "type": "Tap",
+            "grade": "Normal"
+        }
+    ]
 }

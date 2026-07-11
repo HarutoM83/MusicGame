@@ -22,18 +22,39 @@ public class JudgeManager : MonoBehaviour
 
     public void Judge(int lane)
     {
+        if (music == null)
+        {
+            Debug.LogError("AudioSourceÇ™ê›íËÇ≥ÇÍÇƒÇ¢Ç‹ÇπÇÒ");
+            return;
+        }
+
         float songTime = music.time;
 
         Notes target = null;
-        float bestDiff = 999f;
+        float bestDiff = float.MaxValue;
 
-        // á@ ìØÇ∂ÉåÅ[ÉìÇÃÉmÅ[ÉcÇíTÇ∑
-        foreach (var note in activeNotes)
+        // îªíËëŒè€ÇíTÇ∑
+        for (int i = activeNotes.Count - 1; i >= 0; i--)
         {
+            Notes note = activeNotes[i];
+
+
+            // nullëŒçÙ
+            if (note == null)
+            {
+                activeNotes.RemoveAt(i);
+                continue;
+            }
+
+
+            // à·Ç§ÉåÅ[ÉìÇÕñ≥éã
             if (note.Lane != lane)
                 continue;
 
-            float diff = Mathf.Abs(songTime - note.hitTime);
+
+            float diff =
+                Mathf.Abs(songTime - note.hitTime);
+
 
             if (diff < bestDiff)
             {
@@ -42,18 +63,29 @@ public class JudgeManager : MonoBehaviour
             }
         }
 
-        if (target == null)
-            return;
 
-        if (bestDiff <= target.perfectWindow)
+        // ëŒè€Ç»Çµ
+        if (target == null)
+        {
+            Debug.Log("îªíËëŒè€Ç»Çµ");
+            return;
+        }
+
+
+        JudgeResult(target, bestDiff);
+    }
+
+    void JudgeResult(Notes note, float diff)
+    {
+        if (diff <= note.perfectWindow)
         {
             Debug.Log("Perfect");
         }
-        else if (bestDiff <= target.greatWindow)
+        else if (diff <= note.greatWindow)
         {
             Debug.Log("Great");
         }
-        else if (bestDiff <= 0.12f)
+        else if (diff <= 0.12f)
         {
             Debug.Log("Good");
         }
@@ -61,7 +93,9 @@ public class JudgeManager : MonoBehaviour
         {
             Debug.Log("Miss");
         }
-        activeNotes.Remove(target);
-        target.pool.ReleaseObject(target.gameObject);
+
+        activeNotes.Remove(note);
+
+        note.Release();
     }
 }

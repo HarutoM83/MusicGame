@@ -8,6 +8,7 @@ public class NotesData
     public int lane;
     public string type;
     public string grade;
+    public float scrollSpeed;
 }
 
 [Serializable]
@@ -17,6 +18,7 @@ public class ChartData
     public string artist;
     public float bpm;
     public float offset;
+    public float scrollSpeed;
 
     public List<NotesData> notes;
 }

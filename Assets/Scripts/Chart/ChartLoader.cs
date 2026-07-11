@@ -5,6 +5,7 @@ using UnityEngine;
 public class ChartLoader : MonoBehaviour
 {
     [SerializeField] private JudgeManager judgeManager;
+    [SerializeField] private Transform judgeLine;
     public GameObject TAPNotesPrefab;
     public Transform[] laneSpawnPoints;
     public AudioSource music;
@@ -15,9 +16,7 @@ public class ChartLoader : MonoBehaviour
 
     // ”»’èƒ‰ƒCƒ“‚É’…‚­‚Ü‚Å‚ÌŽžŠÔ
     public float spawnOffset = 2.0f;
-
-    public float spawnZ = 10f;
-    public float judgeZ = 5f;
+    public float scrollSpeed = 9f;
     public float travelTime = 2f;
 
     void Start()
@@ -42,7 +41,14 @@ public class ChartLoader : MonoBehaviour
         {
             NotesData notes = chart.notes[nextNoteIndex];
 
-            if (songTime >= notes.time - spawnOffset)
+            float distance = Vector3.Distance(
+            laneSpawnPoints[notes.lane].position,
+            judgeLine.position
+            );
+
+            float spawnTime = distance / scrollSpeed;
+
+            if (songTime >= notes.time - spawnTime)
             {
                 SpawnNote(notes);
                 nextNoteIndex++;
@@ -58,21 +64,30 @@ public class ChartLoader : MonoBehaviour
     {
         GameObject obj = notesPool.GetObject();
 
-        obj.transform.position = laneSpawnPoints[data.lane].position;
-        obj.transform.rotation = Quaternion.identity;
-
         Notes notes = obj.GetComponent<Notes>();
+
+        Vector3 spawnPos =
+        laneSpawnPoints[data.lane].position;
+
+        Vector3 judgePos =
+            judgeLine.position;
+
+        obj.transform.position = spawnPos;
+
 
         notes.Initialize(
             data,
             music,
             notesPool,
-            spawnZ,
-            judgeZ,
-            travelTime
+            spawnPos,
+            judgePos,
+            scrollSpeed
         );
 
-        JudgeManager.Instance.activeNotes.Add(notes);
+        if (!JudgeManager.Instance.activeNotes.Contains(notes))
+        {
+            JudgeManager.Instance.activeNotes.Add(notes);
+        }
     }
 
 }

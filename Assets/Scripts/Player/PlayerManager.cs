@@ -14,7 +14,7 @@ public class PlayerManager : MonoBehaviour
         if (context.started) HitLane(0);
         if (context.canceled)
         {
-            laneRenderer[0].material = normalMat;
+            laneRenderer[0].sharedMaterial = normalMat;
         }
     }
 
@@ -23,7 +23,7 @@ public class PlayerManager : MonoBehaviour
         if (context.started) HitLane(1);
         if (context.canceled)
         {
-            laneRenderer[1].material = normalMat;
+            laneRenderer[1].sharedMaterial = normalMat;
         }
     }
 
@@ -32,7 +32,7 @@ public class PlayerManager : MonoBehaviour
         if (context.started) HitLane(2);
         if (context.canceled)
         {
-            laneRenderer[2].material = normalMat;
+            laneRenderer[2].sharedMaterial = normalMat;
         }
     }
 
@@ -41,7 +41,7 @@ public class PlayerManager : MonoBehaviour
         if (context.started) HitLane(3);
         if (context.canceled)
         {
-            laneRenderer[3].material = normalMat;
+            laneRenderer[3].sharedMaterial = normalMat;
         }
     }
 
@@ -50,7 +50,7 @@ public class PlayerManager : MonoBehaviour
         if (context.started) HitLane(4);
         if (context.canceled)
         {
-            laneRenderer[4].material = normalMat;
+            laneRenderer[4].sharedMaterial = normalMat;
         }
     }
 
@@ -59,7 +59,7 @@ public class PlayerManager : MonoBehaviour
         if (context.started) HitLane(5);
         if (context.canceled)
         {
-            laneRenderer[5].material = normalMat;
+            laneRenderer[5].sharedMaterial = normalMat;
         }
     }
 
@@ -68,7 +68,7 @@ public class PlayerManager : MonoBehaviour
         if (context.started) HitLane(6);
         if (context.canceled)
         {
-            laneRenderer[6].material = normalMat;
+            laneRenderer[6].sharedMaterial = normalMat;
         }
     }
 
@@ -77,14 +77,13 @@ public class PlayerManager : MonoBehaviour
         if (context.started) HitLane(7);
         if (context.canceled)
         {
-            laneRenderer[7].material = normalMat;
+            laneRenderer[7].sharedMaterial = normalMat;
         }
     }
 
     void HitLane(int index)
     {
-        laneRenderer[index].material = clickMat;
-
+        laneRenderer[index].sharedMaterial = clickMat;
         if (judgeManager == null)
         {
             Debug.LogError("JudgeManager is not assigned!");
