@@ -22,6 +22,8 @@ public class JudgeManager : MonoBehaviour
 
     public void Judge(int lane)
     {
+        Debug.Log("activeNotes”:" + activeNotes.Count);
+        Debug.Log("JudgeŒÄ‚Ño‚µ lane:" + lane);
         if (music == null)
         {
             Debug.LogError("AudioSource‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
@@ -38,7 +40,6 @@ public class JudgeManager : MonoBehaviour
         {
             Notes note = activeNotes[i];
 
-
             // null‘Îô
             if (note == null)
             {
@@ -46,11 +47,21 @@ public class JudgeManager : MonoBehaviour
                 continue;
             }
 
-
             // ˆá‚¤ƒŒ[ƒ“‚Í–³‹
             if (note.Lane != lane)
                 continue;
+            Debug.Log(
+            "Note lane:" + note.Lane +
+            " Input lane:" + lane
+            );
 
+            if (note.transform.position.z < note.judgeLineZ)
+            {
+                continue;
+            }
+
+            if (songTime < note.hitTime - note.greatWindow)
+                continue;
 
             float diff =
                 Mathf.Abs(songTime - note.hitTime);
@@ -77,6 +88,7 @@ public class JudgeManager : MonoBehaviour
 
     void JudgeResult(Notes note, float diff)
     {
+        Debug.Log("JudgeResult“’B diff:" + diff);
         if (diff <= note.perfectWindow)
         {
             Debug.Log("Perfect");

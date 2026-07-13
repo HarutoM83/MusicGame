@@ -83,6 +83,7 @@ public class PlayerManager : MonoBehaviour
 
     void HitLane(int index)
     {
+        Debug.Log("HitLane:" + index);
         laneRenderer[index].sharedMaterial = clickMat;
         if (judgeManager == null)
         {

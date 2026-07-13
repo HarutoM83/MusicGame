@@ -21,6 +21,7 @@ public class Notes : MonoBehaviour
 
     public float speed = 9f;
     public float judgeZ = 5f;
+    public float judgeLineZ;
 
     private bool isReleased = false;
 
@@ -42,7 +43,7 @@ public class Notes : MonoBehaviour
         spawnPosition = spawnPos;
         judgePosition = judgePos;
         scrollSpeed = speed;
-
+        judgeLineZ = judgePos.z;
 
         if (data.grade == "ex")
         {
@@ -75,11 +76,10 @@ public class Notes : MonoBehaviour
 
         Vector3 pos = transform.position;
 
-        pos.z = Mathf.Lerp(
-            spawnPosition.z,
-            judgePosition.z,
-            progress
-        );
+        pos.z = 
+            spawnPosition.z+
+            (judgePosition.z- spawnPosition.z)*
+            progress;
 
         transform.position = pos;
 
@@ -108,6 +108,7 @@ public class Notes : MonoBehaviour
     }
     void OnBecameInvisible()
     {
+        Debug.Log("Note Disable " + gameObject.name);
         if (pool != null)
         {
             Release();

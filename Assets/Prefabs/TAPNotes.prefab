@@ -348,10 +348,11 @@ MonoBehaviour:
   normalMat: {fileID: 2100000, guid: ad8317f3e52ddc0469f574254778862a, type: 2}
   EXMat: {fileID: 2100000, guid: 88dab6476de9d3c4aa836220968fab85, type: 2}
   sr: {fileID: 2743814236712779394}
-  perfectWindow: 0.6
-  greatWindow: 0.7
+  perfectWindow: 0.05
+  greatWindow: 0.1
   speed: 10
   judgeZ: 5
+  judgeLineZ: 0
 --- !u!1 &7570101019635290652
 GameObject:
   m_ObjectHideFlags: 0
