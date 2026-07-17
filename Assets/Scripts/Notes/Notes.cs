@@ -55,7 +55,7 @@ public class Notes : MonoBehaviour
         }
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (pool == null || music == null)
             return;
