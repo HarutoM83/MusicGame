@@ -46,12 +46,17 @@ public class ButtonManager : MonoBehaviour
     }
     public void OnQuitButtonClick()
     {
+        MenuCanvas.SetActive(false);
         Time.timeScale = 1f; // ƒQ[ƒ€‚ğÄŠJ
-        FadeManager.Instance.LoadScene("MusicSelectScene", 1f);
+        Invoke("QuitGame", 0.5f);
     }
     private void Retry()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         AudioListener.pause = false; // ‰¹‚ğÄŠJ‚·‚é
+    }
+    private void QuitGame()
+    {
+        FadeManager.Instance.LoadScene("MusicSelectScene", 1f);
     }
 }
