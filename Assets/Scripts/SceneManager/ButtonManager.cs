@@ -18,6 +18,14 @@ public class ButtonManager : MonoBehaviour
         
     }
 
+    public void OnStartButtonClick()
+    {
+        SceneManager.LoadScene("MusicSelectScene");
+    }
+    public void OnMusicSelectClick()
+    {
+        FadeManager.Instance.LoadScene("GameScene",1f);
+    }
     public void OnMenuButtonClick()
     {
         MenuCanvas.SetActive(true);
@@ -26,18 +34,24 @@ public class ButtonManager : MonoBehaviour
     }
     public void OnRestartButtonClick()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        MenuCanvas.SetActive(false);
         Time.timeScale = 1f; // ゲームを再開
-        AudioListener.pause = false; // 音を再開する
-    }
-    public void OnQuitButtonClick()
-    {
-        
+        Invoke("Retry", 1f);
     }
     public void OnReverseButtonClick()
     {
         MenuCanvas.SetActive(false);
         Time.timeScale = 1f; // ゲームを再開
+        AudioListener.pause = false; // 音を再開する
+    }
+    public void OnQuitButtonClick()
+    {
+        Time.timeScale = 1f; // ゲームを再開
+        FadeManager.Instance.LoadScene("MusicSelectScene", 1f);
+    }
+    private void Retry()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         AudioListener.pause = false; // 音を再開する
     }
 }

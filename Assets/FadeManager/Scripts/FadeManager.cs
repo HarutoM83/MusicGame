@@ -5,138 +5,135 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
-/// <summary>
-/// シーン遷移時のフェードイン・アウトを制御するためのクラス .
-/// </summary>
 public class FadeManager : MonoBehaviour
 {
+    #region Singleton
 
-	#region Singleton
+    private static FadeManager instance;
 
-	private static FadeManager instance;
+    public static FadeManager Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = (FadeManager)FindObjectOfType(typeof(FadeManager));
 
-	public static FadeManager Instance {
-		get {
-			if (instance == null) {
-				instance = (FadeManager)FindObjectOfType (typeof(FadeManager));
+                if (instance == null)
+                {
+                    Debug.LogError(typeof(FadeManager) + "is nothing");
+                }
+            }
 
-				if (instance == null) {
-					Debug.LogError (typeof(FadeManager) + "is nothing");
-				}
-			}
+            return instance;
+        }
+    }
 
-			return instance;
-		}
-	}
-
-	#endregion Singleton
-
-	/// <summary>
-	/// デバッグモード .
-	/// </summary>
-	public bool DebugMode = true;
-	/// <summary>フェード中の透明度</summary>
-	private float fadeAlpha = 0;
-	/// <summary>フェード中かどうか</summary>
-	private bool isFading = false;
-	/// <summary>フェード色</summary>
-	public Color fadeColor = Color.black;
+    #endregion
 
 
-	public void Awake ()
-	{
-		if (this != Instance) {
-			Destroy (this.gameObject);
-			return;
-		}
+    public bool DebugMode = true;
 
-		DontDestroyOnLoad (this.gameObject);
-	}
+    private float fadeAlpha = 0;
+    private bool isFading = false;
 
-	public void OnGUI ()
-	{
-
-		// Fade .
-		if (this.isFading) {
-			//色と透明度を更新して白テクスチャを描画 .
-			this.fadeColor.a = this.fadeAlpha;
-			GUI.color = this.fadeColor;
-			GUI.DrawTexture (new Rect (0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
-		}
-
-		if (this.DebugMode) {
-			if (!this.isFading) {
-				//Scene一覧を作成 .
-				//(UnityEditor名前空間を使わないと自動取得できなかったので決めうちで作成) .
-				List<string> scenes = new List<string> ();
-				scenes.Add ("SampleScene");
-				//scenes.Add ("SomeScene1");
-				//scenes.Add ("SomeScene2");
+    // 現在使用するフェード色
+    private Color fadeColor = Color.black;
 
 
-				//Sceneが一つもない .
-				if (scenes.Count == 0) {
-					GUI.Box (new Rect (10, 10, 200, 50), "Fade Manager(Debug Mode)");
-					GUI.Label (new Rect (20, 35, 180, 20), "Scene not found.");
-					return;
-				}
+    // シーンごとのフェード色設定
+    [Serializable]
+    public class SceneFadeColor
+    {
+        public string sceneName;
+        public Color color = Color.black;
+    }
+
+    public List<SceneFadeColor> sceneFadeColors = new List<SceneFadeColor>();
 
 
-				GUI.Box (new Rect (10, 10, 300, 50 + scenes.Count * 25), "Fade Manager(Debug Mode)");
-				GUI.Label (new Rect (20, 30, 280, 20), "Current Scene : " + SceneManager.GetActiveScene ().name);
+    public void Awake()
+    {
+        if (this != Instance)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
 
-				int i = 0;
-				foreach (string sceneName in scenes) {
-					if (GUI.Button (new Rect (20, 55 + i * 25, 100, 20), "Load Level")) {
-						LoadScene (sceneName, 1.0f);
-					}
-					GUI.Label (new Rect (125, 55 + i * 25, 1000, 20), sceneName);
-					i++;
-				}
-			}
-		}
+        DontDestroyOnLoad(this.gameObject);
+    }
 
 
+    public void OnGUI()
+    {
+        if (this.isFading)
+        {
+            fadeColor.a = fadeAlpha;
+            GUI.color = fadeColor;
+            GUI.DrawTexture(
+                new Rect(0, 0, Screen.width, Screen.height),
+                Texture2D.whiteTexture
+            );
+        }
+    }
 
-	}
 
-	/// <summary>
-	/// 画面遷移 .
-	/// </summary>
-	/// <param name='scene'>シーン名</param>
-	/// <param name='interval'>暗転にかかる時間(秒)</param>
-	public void LoadScene (string scene, float interval)
-	{
-		StartCoroutine (TransScene (scene, interval));
-	}
+    public void LoadScene(string scene, float interval)
+    {
+        StartCoroutine(TransScene(scene, interval));
+    }
 
-	/// <summary>
-	/// シーン遷移用コルーチン .
-	/// </summary>
-	/// <param name='scene'>シーン名</param>
-	/// <param name='interval'>暗転にかかる時間(秒)</param>
-	private IEnumerator TransScene (string scene, float interval)
-	{
-		//だんだん暗く .
-		this.isFading = true;
-		float time = 0;
-		while (time <= interval) {
-			this.fadeAlpha = Mathf.Lerp (0f, 1f, time / interval);
-			time += Time.deltaTime;
-			yield return 0;
-		}
 
-		//シーン切替 .
-		SceneManager.LoadScene (scene);
+    private IEnumerator TransScene(string scene, float interval)
+    {
+        // 遷移先シーンの色を取得
+        fadeColor = GetSceneFadeColor(scene);
 
-		//だんだん明るく .
-		time = 0;
-		while (time <= interval) {
-			this.fadeAlpha = Mathf.Lerp (1f, 0f, time / interval);
-			time += Time.deltaTime;
-			yield return 0;
-		}
 
-		this.isFading = false;
-	}
+        // 暗転
+        isFading = true;
+
+        float time = 0;
+
+        while (time <= interval)
+        {
+            fadeAlpha = Mathf.Lerp(0f, 1f, time / interval);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+
+        // シーン変更
+        SceneManager.LoadScene(scene);
+
+
+        // 明転
+        time = 0;
+
+        while (time <= interval)
+        {
+            fadeAlpha = Mathf.Lerp(1f, 0f, time / interval);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+
+        isFading = false;
+    }
+
+
+    // シーン名から色を探す
+    private Color GetSceneFadeColor(string sceneName)
+    {
+        foreach (SceneFadeColor data in sceneFadeColors)
+        {
+            if (data.sceneName == sceneName)
+            {
+                return data.color;
+            }
+        }
+
+        // 設定がない場合は黒
+        return Color.black;
+    }
 }
