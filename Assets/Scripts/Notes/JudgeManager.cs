@@ -11,6 +11,8 @@ public class JudgeManager : MonoBehaviour
 
     void Awake()
     {
+        if (!music.isPlaying)
+            return;
         if (Instance != null)
         {
             Destroy(gameObject);
@@ -78,7 +80,6 @@ public class JudgeManager : MonoBehaviour
         // ‘ÎÛ‚È‚µ
         if (target == null)
         {
-            Debug.Log("”»’è‘ÎÛ‚È‚µ");
             return;
         }
 

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class ButtonManager : MonoBehaviour
 {
     [SerializeField] GameObject MenuCanvas;
+    [SerializeField] GameObject PauseCanvas;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,6 +22,18 @@ public class ButtonManager : MonoBehaviour
     public void OnStartButtonClick()
     {
         SceneManager.LoadScene("MusicSelectScene");
+    }
+    public void OnTitleButtonClick()
+    {
+        SceneManager.LoadScene("TitleScene");
+    }
+    public void OnPauseButtonClick()
+    {
+        PauseCanvas.SetActive(true);
+    }
+    public void OnHomeButtonClick()
+    {
+        PauseCanvas.SetActive(false);
     }
     public void OnMusicSelectClick()
     {

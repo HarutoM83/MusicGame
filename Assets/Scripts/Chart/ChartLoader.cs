@@ -19,6 +19,8 @@ public class ChartLoader : MonoBehaviour
     public float scrollSpeed = 9f;
     public float travelTime = 2f;
 
+    private bool gameStarted = false;
+
     void Start()
     {
         string path = Path.Combine(Application.streamingAssetsPath, "Song01.json");
@@ -26,13 +28,17 @@ public class ChartLoader : MonoBehaviour
         string json = File.ReadAllText(path);
 
         chart = JsonUtility.FromJson<ChartData>(json);
-
+    }
+    public void StartGame()
+    {
+        gameStarted = true;
         music.Play();
     }
-
     // Update is called once per frame
     void Update()
     {
+        if (!gameStarted)
+            return;
         if (chart == null) return;
 
         float songTime = music.time + chart.offset;
@@ -59,7 +65,7 @@ public class ChartLoader : MonoBehaviour
             }
         }
     }
-
+    
     void SpawnNote(NotesData data)
     {
         GameObject obj = notesPool.GetObject();

@@ -57,6 +57,8 @@ public class Notes : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!music.isPlaying)
+            return;
         if (pool == null || music == null)
             return;
 
