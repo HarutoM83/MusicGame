@@ -348,6 +348,7 @@ GameObject:
   - component: {fileID: 817047689}
   - component: {fileID: 817047688}
   - component: {fileID: 817047690}
+  - component: {fileID: 817047691}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -496,6 +497,22 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!111 &817047691
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 817047686}
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Animation: {fileID: 7400000, guid: 92d9a6f8033fab14d86564a9d42fa521, type: 2}
+  m_Animations: []
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_UpdateMode: 0
+  m_CullingType: 0
 --- !u!1 &1876078392
 GameObject:
   m_ObjectHideFlags: 0
