@@ -33,10 +33,10 @@ public class FadeManager : MonoBehaviour
 
 
     public bool DebugMode = true;
-
+    /// <summary>フェード中の透明度</summary>
     private float fadeAlpha = 0;
+    /// <summary>フェード中かどうか</summary>
     private bool isFading = false;
-
     // 現在使用するフェード色
     private Color fadeColor = Color.black;
 
@@ -65,8 +65,9 @@ public class FadeManager : MonoBehaviour
 
     public void OnGUI()
     {
+        // Fade .
         if (this.isFading)
-        {
+        {   //色と透明度を更新して白テクスチャを描画 .
             fadeColor.a = fadeAlpha;
             GUI.color = fadeColor;
             GUI.DrawTexture(
@@ -75,7 +76,6 @@ public class FadeManager : MonoBehaviour
             );
         }
     }
-
 
     public void LoadScene(string scene, float interval)
     {
@@ -87,7 +87,6 @@ public class FadeManager : MonoBehaviour
     {
         // 遷移先シーンの色を取得
         fadeColor = GetSceneFadeColor(scene);
-
 
         // 暗転
         isFading = true;
@@ -101,10 +100,8 @@ public class FadeManager : MonoBehaviour
             yield return null;
         }
 
-
         // シーン変更
         SceneManager.LoadScene(scene);
-
 
         // 明転
         time = 0;
@@ -115,7 +112,6 @@ public class FadeManager : MonoBehaviour
             time += Time.deltaTime;
             yield return null;
         }
-
 
         isFading = false;
     }
