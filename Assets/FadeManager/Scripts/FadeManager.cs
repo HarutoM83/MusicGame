@@ -40,7 +40,6 @@ public class FadeManager : MonoBehaviour
     // 現在使用するフェード色
     private Color fadeColor = Color.black;
 
-
     // シーンごとのフェード色設定
     [Serializable]
     public class SceneFadeColor
