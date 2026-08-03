@@ -14,6 +14,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MusicSelectScene.unity
     guid: c069d685b96b0684cab033c30b178fb3
+  - enabled: 1
+    path: Assets/Scenes/LoadingScene.unity
+    guid: 1fba5f6af39672c45951219a58390060
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

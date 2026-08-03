@@ -21,7 +21,7 @@ public class ButtonManager : MonoBehaviour
 
     public void OnStartButtonClick()
     {
-        SceneManager.LoadScene("MusicSelectScene");
+        FadeManager.Instance.LoadScene("LoadingScene",1f);
     }
     public void OnTitleButtonClick()
     {
