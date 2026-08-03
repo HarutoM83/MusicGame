@@ -52,17 +52,8 @@ public class JudgeManager : MonoBehaviour
             // ˆá‚¤ƒŒ[ƒ“‚Í–³‹
             if (note.Lane != lane)
                 continue;
-            Debug.Log(
-            "Note lane:" + note.Lane +
-            " Input lane:" + lane
-            );
 
-            if (note.transform.position.z < note.judgeLineZ)
-            {
-                continue;
-            }
-
-            if (songTime < note.hitTime - note.greatWindow)
+            if (songTime < note.hitTime - note.badWindow)
                 continue;
 
             float diff =
@@ -90,7 +81,14 @@ public class JudgeManager : MonoBehaviour
     void JudgeResult(Notes note, float diff)
     {
         Debug.Log("JudgeResult“’B diff:" + diff);
-        if (diff <= note.perfectWindow)
+
+        bool isLate = music.time > note.hitTime;
+
+        if (diff <= note.perfectplusWindow)
+        {
+            Debug.Log("Perfect plus");
+        }
+        else if (diff <= note.perfectWindow)
         {
             Debug.Log("Perfect");
         }
@@ -98,9 +96,13 @@ public class JudgeManager : MonoBehaviour
         {
             Debug.Log("Great");
         }
-        else if (diff <= 0.12f)
+        else if (diff <= note.goodWindow)
         {
             Debug.Log("Good");
+        }
+        else if (diff <= note.badWindow)
+        {
+            Debug.Log("Bad");
         }
         else
         {

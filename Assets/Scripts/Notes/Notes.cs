@@ -16,8 +16,12 @@ public class Notes : MonoBehaviour
     private Vector3 judgePosition;
     private float scrollSpeed;
 
-    public float perfectWindow = 0.05f;
-    public float greatWindow = 0.10f;
+    public float perfectplusWindow = 0.02f;
+    public float perfectWindow = 0.03f;
+    public float greatWindow = 0.06f;
+    public float goodWindow = 0.09f;
+    public float badWindow = 0.12f;
+
 
     public float speed = 9f;
     public float judgeZ = 5f;
