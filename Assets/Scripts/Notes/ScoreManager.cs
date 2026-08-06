@@ -1,13 +1,15 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance;
+    private string lastJudgment;
 
     [Header("UIテキスト（ゲーム画面用）")]
-    [SerializeField] private Text comboText;
-    [SerializeField] private Text scoreText;
+    [SerializeField] private TMP_Text comboText;
+    [SerializeField] private TMP_Text scoreText;
 
     // ゲーム中のリアルタイムデータ
     private float currentScore = 0f; // ★計算精度のためfloatで保持
@@ -49,6 +51,7 @@ public class ScoreManager : MonoBehaviour
 
     public void AddJudgment(string judgment)
     {
+        lastJudgment = judgment;
         switch (judgment)
         {
             case "Perfect+":
@@ -96,7 +99,18 @@ public class ScoreManager : MonoBehaviour
 
     void UpdateUI()
     {
-        if (comboText != null) comboText.text = currentCombo.ToString();
+        if (comboText != null)
+        {
+            if (currentCombo == 0)
+            {
+                comboText.text = "";
+            }
+            else
+            {
+                comboText.text = currentCombo.ToString();
+                UpdateComboColor();
+            }
+        }
 
         if (scoreText != null)
         {
@@ -104,6 +118,26 @@ public class ScoreManager : MonoBehaviour
             // 計算途中の小数点以下のズレで、最後に1点ズレるのを防ぎます
             int displayScore = Mathf.RoundToInt(currentScore);
             scoreText.text = displayScore.ToString();
+        }
+    }
+    private void UpdateComboColor()
+    {
+        if (lastJudgment == "Perfect+")
+        {
+            comboText.color = Color.blue;
+        }
+        else if (lastJudgment == "Perfect")
+        {
+            comboText.color = Color.yellow;
+        }
+        else
+        {
+            comboText.color = Color.gray;
+        }
+        // 100コンボ以上
+        if (currentCombo >= 100)
+        {
+            comboText.color = Color.orange;
         }
     }
 

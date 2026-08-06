@@ -1698,6 +1698,7 @@ GameObject:
   - component: {fileID: 1224723822}
   - component: {fileID: 1224723823}
   - component: {fileID: 1224723824}
+  - component: {fileID: 1224723825}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1763,6 +1764,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ButtonManager
   MenuCanvas: {fileID: 25336042}
   PauseCanvas: {fileID: 0}
+--- !u!114 &1224723825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1224723821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d9ca1353257ea8409c8c98fb9e0a95b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
+  comboText: {fileID: 9101696334540226280}
+  scoreText: {fileID: 9101696334540226281}
+  totalNotes: 0
 --- !u!1 &1440241967
 GameObject:
   m_ObjectHideFlags: 0
@@ -2489,6 +2505,28 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7a01d777a2a355a4693d336e654f4e37, type: 3}
+--- !u!114 &9101696334540226280 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 686014818564140099, guid: 7a01d777a2a355a4693d336e654f4e37, type: 3}
+  m_PrefabInstance: {fileID: 9101696334540226279}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &9101696334540226281 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8674284621313229029, guid: 7a01d777a2a355a4693d336e654f4e37, type: 3}
+  m_PrefabInstance: {fileID: 9101696334540226279}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
