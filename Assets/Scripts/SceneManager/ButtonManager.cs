@@ -6,6 +6,7 @@ public class ButtonManager : MonoBehaviour
 {
     [SerializeField] GameObject MenuCanvas;
     [SerializeField] GameObject PauseCanvas;
+    [SerializeField] GameObject OptionCanvas;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -64,6 +65,14 @@ public class ButtonManager : MonoBehaviour
         MenuCanvas.SetActive(false);
         Time.timeScale = 1f; // ÉQÅ[ÉÄÇçƒäJ
         Invoke("QuitGame", 0.5f);
+    }
+    public void OnOptionButtonClick()
+    {
+        OptionCanvas.SetActive(true);
+    }
+    public void OnOptionQuitButtonClick()
+    {
+        OptionCanvas.SetActive(false);
     }
     private void Retry()
     {
