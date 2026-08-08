@@ -1,0 +1,1873 @@
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Rhythm Game Chart Editor</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #111;
+    color: white;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+/* =========================
+   ツールバー
+========================= */
+
+#toolbar {
+    height: 64px;
+    background: #222;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid #444;
+}
+
+#toolbar input,
+#toolbar select {
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    padding: 6px;
+}
+
+button {
+    background: #444;
+    color: white;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #666;
+}
+
+button.active {
+    background: #268cff;
+}
+
+/* =========================
+   エディタ
+========================= */
+
+#editorWrapper {
+    height: calc(100vh - 64px);
+    overflow: auto;
+}
+
+#timeline {
+    position: relative;
+    width: 600px;
+    min-height: 5000px;
+    margin-left: 100px;
+    background: #1b1b1b;
+}
+
+/* レーン */
+
+.lane {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 150px;
+    border-left: 1px solid #444;
+    border-right: 1px solid #444;
+}
+
+.lane:nth-child(1) {
+    left: 0;
+}
+
+.lane:nth-child(2) {
+    left: 150px;
+}
+
+.lane:nth-child(3) {
+    left: 300px;
+}
+
+.lane:nth-child(4) {
+    left: 450px;
+}
+
+/* 時間線 */
+
+.timeLine {
+    position: absolute;
+    left: 0;
+    height: 1px;
+    background: #333;
+}
+
+.timeLabel {
+    position: absolute;
+    left: -90px;
+    width: 80px;
+    text-align: right;
+    color: #888;
+    font-size: 12px;
+}
+
+/* =========================
+   共通ノーツ
+========================= */
+
+.note {
+    position: absolute;
+    z-index: 10;
+    cursor: pointer;
+}
+
+/* TAP */
+
+.note-tap {
+    height: 24px;
+    border-radius: 5px;
+    background: #35a9ff;
+    border: 2px solid white;
+}
+
+/* EX */
+
+.note-ex {
+    height: 28px;
+    border-radius: 50%;
+    background: #ffd83d;
+    border: 3px solid #fff;
+    box-shadow:
+        0 0 10px #ffd83d,
+        0 0 20px #ffd83d;
+}
+
+/* HOLD */
+
+.note-hold {
+    background: #ff4d91;
+    border: 2px solid white;
+    border-radius: 8px;
+}
+
+/* FLICK */
+
+.note-flick {
+    width: 34px;
+    height: 34px;
+    background: #9d5cff;
+    border: 3px solid white;
+    transform: rotate(45deg);
+}
+
+/* DRAG */
+
+.note-drag {
+    height: 26px;
+    border-radius: 13px;
+    background: #39e68c;
+    border: 2px solid white;
+}
+
+/* SLIDE */
+
+.slide-line {
+    position: absolute;
+    height: 8px;
+    background: #ff9d3d;
+    border-radius: 8px;
+    transform-origin: 0 50%;
+    z-index: 5;
+}
+
+.slide-point {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid white;
+    z-index: 12;
+}
+
+/* SKY */
+
+.note-sky {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #4de8ff;
+    border: 3px solid white;
+    box-shadow:
+        0 0 10px #4de8ff,
+        0 0 30px #4de8ff;
+}
+
+/* =========================
+   設定パネル
+========================= */
+
+#propertyPanel {
+    position: fixed;
+    right: 0;
+    top: 64px;
+    width: 260px;
+    bottom: 0;
+    background: #202020;
+    border-left: 1px solid #444;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+#propertyPanel h3 {
+    margin-top: 0;
+}
+
+.property {
+    margin-bottom: 12px;
+}
+
+.property label {
+    display: block;
+    color: #aaa;
+    margin-bottom: 4px;
+}
+
+.property input,
+.property select {
+    width: 100%;
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    padding: 7px;
+}
+
+.hidden {
+    display: none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     ツールバー
+========================= -->
+
+<div id="toolbar">
+
+    <label>
+        曲名
+        <input
+            id="songName"
+            value="MySong"
+        >
+    </label>
+
+    <label>
+        BPM
+        <input
+            id="bpm"
+            type="number"
+            value="120"
+        >
+    </label>
+
+    <label>
+        レーン
+        <select id="laneCount">
+    		<option value="4">4</option>
+    		<option value="5">5</option>
+    		<option value="6">6</option>
+    		<option value="7">7</option>
+    		<option value="8">8</option>
+    		<option value="9">9</option>
+    		<option value="10">10</option>
+    		<option value="11">11</option>
+    		<option value="12">12</option>
+    		<option value="13">13</option>
+    		<option value="14">14</option>
+    		<option value="15">15</option>
+    		<option value="16">16</option>
+	</select>
+    </label>
+
+    <div id="noteButtons"></div>
+
+    <button onclick="setMode('delete')">
+        削除
+    </button>
+
+    <button onclick="saveJSON()">
+        JSON保存
+    </button>
+
+    <button onclick="loadJSON()">
+        JSON読み込み
+    </button>
+
+    <input
+        id="fileInput"
+        type="file"
+        accept=".json"
+        style="display:none"
+    >
+
+</div>
+
+
+<!-- =========================
+     タイムライン
+========================= -->
+
+<div id="editorWrapper">
+
+    <div id="timeline"></div>
+
+</div>
+
+
+<!-- =========================
+     プロパティ
+========================= -->
+
+<div id="propertyPanel">
+
+    <h3>ノーツ設定</h3>
+
+    <div id="properties">
+        ノーツを選択してください。
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   基本設定
+========================================================= */
+
+let pixelsPerSecond = 100;
+
+let laneCount = 4;
+
+let mode = "tap";
+
+let selectedNoteIndex = -1;
+
+let dragStart = null;
+
+
+/* =========================================================
+   譜面データ
+========================================================= */
+
+let chart = {
+
+    songName: "MySong",
+
+    bpm: 120,
+
+    laneCount: 4,
+
+    notes: []
+
+};
+
+
+/* =========================================================
+   ★ ノーツ定義
+=========================================================
+
+   新しいノーツを追加するときは、
+   基本的にここへ追加するだけ。
+
+========================================================= */
+
+const NOTE_TYPES = {
+
+    tap: {
+
+        name: "通常",
+
+        color: "#35a9ff",
+
+        placement: "single"
+
+    },
+
+
+    ex: {
+
+        name: "EX",
+
+        color: "#ffd83d",
+
+        placement: "single",
+
+        defaults: {
+
+            judgeWindow: 0.15,
+
+            scoreMultiplierBonus: 0.5
+
+        }
+
+    },
+
+
+    flick: {
+
+        name: "フリック",
+
+        color: "#9d5cff",
+
+        placement: "single",
+
+        defaults: {
+
+            direction: "right"
+
+        }
+
+    },
+
+
+    drag: {
+
+        name: "ドラッグ",
+
+        color: "#39e68c",
+
+        placement: "single"
+
+    },
+
+
+    hold: {
+
+        name: "ホールド",
+
+        color: "#ff4d91",
+
+        placement: "range"
+
+    },
+
+
+    slide: {
+
+        name: "スライド",
+
+        color: "#ff9d3d",
+
+        placement: "slide"
+
+    },
+
+
+    sky: {
+
+        name: "スカイ",
+
+        color: "#4de8ff",
+
+        placement: "sky",
+
+        defaults: {
+
+            x: 0,
+
+            y: 2,
+
+            z: 5
+
+        }
+
+    }
+
+};
+
+
+/* =========================================================
+   HTML要素
+========================================================= */
+
+const timeline =
+    document.getElementById("timeline");
+
+const noteButtons =
+    document.getElementById("noteButtons");
+
+const laneCountInput =
+    document.getElementById("laneCount");
+
+const properties =
+    document.getElementById("properties");
+
+
+/* =========================================================
+   ノーツボタンを自動生成
+========================================================= */
+
+function createNoteButtons() {
+
+    noteButtons.innerHTML = "";
+
+    Object.keys(NOTE_TYPES).forEach(type => {
+
+        const config =
+            NOTE_TYPES[type];
+
+        const button =
+            document.createElement("button");
+
+        button.textContent =
+            config.name;
+
+        button.dataset.type =
+            type;
+
+        button.onclick = () => {
+
+            setMode(type);
+
+        };
+
+        noteButtons.appendChild(button);
+
+    });
+
+}
+
+
+/* =========================================================
+   モード変更
+========================================================= */
+
+function setMode(type) {
+
+    mode = type;
+
+    document
+        .querySelectorAll("#noteButtons button")
+        .forEach(button => {
+
+            button.classList.remove("active");
+
+            if (
+                button.dataset.type === type
+            ) {
+
+                button.classList.add("active");
+
+            }
+
+        });
+
+}
+
+
+/* =========================================================
+   時間変換
+========================================================= */
+
+function timeToY(time) {
+
+    return (
+        time *
+        pixelsPerSecond
+    ) + 30;
+
+}
+
+
+function yToTime(y) {
+
+    return Math.max(
+
+        0,
+
+        (y - 30) /
+        pixelsPerSecond
+
+    );
+
+}
+
+
+/* =========================================================
+   レーン取得
+========================================================= */
+
+function getLaneWidth() {
+
+    if (laneCount <= 4) {
+        return 150;
+    }
+
+    if (laneCount <= 6) {
+        return 120;
+    }
+
+    if (laneCount <= 8) {
+        return 100;
+    }
+
+    if (laneCount <= 12) {
+        return 75;
+    }
+
+    return 60;
+}
+
+function getLane(x) {
+
+    const width =
+        getLaneWidth();
+
+    return Math.floor(
+        x / width
+    );
+
+}
+
+/* =========================================================
+   マウス位置
+========================================================= */
+
+function getMousePosition(event) {
+
+    const rect =
+        timeline.getBoundingClientRect();
+
+    return {
+
+        x:
+            event.clientX -
+            rect.left,
+
+        y:
+            event.clientY -
+            rect.top
+
+    };
+
+}
+
+
+/* =========================================================
+   タイムライン
+========================================================= */
+
+timeline.addEventListener(
+    "mousedown",
+    event => {
+
+        const pos =
+            getMousePosition(event);
+
+        const lane =
+            getLane(pos.x);
+
+        if (
+            lane < 0 ||
+            lane >= laneCount
+        ) {
+
+            return;
+
+        }
+
+
+        /* 削除 */
+
+        if (
+            mode === "delete"
+        ) {
+
+            return;
+
+        }
+
+
+        const config =
+            NOTE_TYPES[mode];
+
+
+        if (!config) {
+
+            return;
+
+        }
+
+
+        /* 単発ノーツ */
+
+        if (
+            config.placement ===
+            "single"
+        ) {
+
+            const time =
+                yToTime(pos.y);
+
+            addSingleNote(
+                mode,
+                lane,
+                time
+            );
+
+        }
+
+
+        /* HOLD */
+
+        if (
+            config.placement ===
+            "range"
+        ) {
+
+            dragStart = {
+
+                lane: lane,
+
+                time:
+                    yToTime(pos.y)
+
+            };
+
+        }
+
+
+        /* SLIDE */
+
+        if (
+            config.placement ===
+            "slide"
+        ) {
+
+            dragStart = {
+
+                lane: lane,
+
+                time:
+                    yToTime(pos.y)
+
+            };
+
+        }
+
+
+        /* SKY */
+
+        if (
+            config.placement ===
+            "sky"
+        ) {
+
+            const time =
+                yToTime(pos.y);
+
+            addSkyNote(
+                time
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   マウスアップ
+========================================================= */
+
+timeline.addEventListener(
+    "mouseup",
+    event => {
+
+        if (
+            dragStart === null
+        ) {
+
+            return;
+
+        }
+
+
+        const pos =
+            getMousePosition(event);
+
+        const endLane =
+            getLane(pos.x);
+
+        const endTime =
+            yToTime(pos.y);
+
+
+        /* HOLD */
+
+        if (
+            mode === "hold"
+        ) {
+
+            if (
+                endTime >
+                dragStart.time
+            ) {
+
+                addHoldNote(
+
+                    dragStart.lane,
+
+                    dragStart.time,
+
+                    endTime
+
+                );
+
+            }
+
+        }
+
+
+        /* SLIDE */
+
+        if (
+            mode === "slide"
+        ) {
+
+            if (
+                endTime >
+                dragStart.time &&
+                endLane >= 0 &&
+                endLane < laneCount
+            ) {
+
+                addSlideNote(
+
+                    dragStart.lane,
+
+                    endLane,
+
+                    dragStart.time,
+
+                    endTime
+
+                );
+
+            }
+
+        }
+
+
+        dragStart = null;
+
+    }
+);
+
+
+/* =========================================================
+   単発ノーツ
+========================================================= */
+
+function addSingleNote(
+    type,
+    lane,
+    time
+) {
+
+    const config =
+        NOTE_TYPES[type];
+
+    const note = {
+
+        type: type,
+
+        lane: lane,
+
+        time: time
+
+    };
+
+
+    /*
+       デフォルト値を追加
+    */
+
+    if (config.defaults) {
+
+        Object.assign(
+
+            note,
+
+            config.defaults
+
+        );
+
+    }
+
+
+    chart.notes.push(note);
+
+    renderChart();
+
+}
+
+
+/* =========================================================
+   HOLD
+========================================================= */
+
+function addHoldNote(
+    lane,
+    startTime,
+    endTime
+) {
+
+    chart.notes.push({
+
+        type: "hold",
+
+        lane: lane,
+
+        startTime:
+            startTime,
+
+        endTime:
+            endTime
+
+    });
+
+    renderChart();
+
+}
+
+
+/* =========================================================
+   スライド
+========================================================= */
+
+function addSlideNote(
+    startLane,
+    endLane,
+    startTime,
+    endTime
+) {
+
+    chart.notes.push({
+
+        type: "slide",
+
+        startLane:
+            startLane,
+
+        endLane:
+            endLane,
+
+        startTime:
+            startTime,
+
+        endTime:
+            endTime
+
+    });
+
+    renderChart();
+
+}
+
+
+/* =========================================================
+   SKY
+========================================================= */
+
+function addSkyNote(time) {
+
+    const config =
+        NOTE_TYPES.sky;
+
+    chart.notes.push({
+
+        type: "sky",
+
+        time: time,
+
+        x: config.defaults.x,
+
+        y: config.defaults.y,
+
+        z: config.defaults.z
+
+    });
+
+    renderChart();
+
+}
+
+
+/* =========================================================
+   譜面描画
+========================================================= */
+
+function renderChart() {
+
+    /*
+       既存のノーツ・時間線を削除
+    */
+
+    timeline
+        .querySelectorAll(
+            ".note, .slide-line, .slide-point, .timeLine, .timeLabel"
+        )
+        .forEach(
+            element =>
+                element.remove()
+        );
+
+
+    /* レーン幅を自動計算 */
+
+    const laneWidth =
+        getLaneWidth();
+
+    const timelineWidth =
+        laneWidth * laneCount;
+
+    timeline.style.width =
+        timelineWidth + "px";
+
+
+    /*
+       時間線
+    */
+
+    for (
+        let time = 0;
+        time <= 50;
+        time++
+    ) {
+
+        const y =
+            timeToY(time);
+
+        const line =
+            document.createElement("div");
+
+        line.className =
+            "timeLine";
+
+        line.style.top =
+            y + "px";
+
+	line.style.width =
+    		timelineWidth + "px";
+
+        timeline.appendChild(line);
+
+
+        const label =
+            document.createElement("div");
+
+        label.className =
+            "timeLabel";
+
+        label.style.top =
+            (y - 8) + "px";
+
+        label.textContent =
+            time.toFixed(1) + "s";
+
+        timeline.appendChild(label);
+
+    }
+
+
+    /*
+       ノーツ
+    */
+
+    chart.notes.forEach(
+        (note, index) => {
+
+            renderNote(
+                note,
+                index,
+                laneWidth
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ノーツ描画
+========================================================= */
+
+function renderNote(
+    note,
+    index,
+    laneWidth
+) {
+
+    switch (
+        note.type
+    ) {
+
+
+        /* TAP */
+
+        case "tap":
+
+            createSingleVisual(
+                note,
+                index,
+                laneWidth,
+                "note-tap"
+            );
+
+            break;
+
+
+        /* EX */
+
+        case "ex":
+
+            createSingleVisual(
+                note,
+                index,
+                laneWidth,
+                "note-ex"
+            );
+
+            break;
+
+
+        /* FLICK */
+
+        case "flick":
+
+            createSingleVisual(
+                note,
+                index,
+                laneWidth,
+                "note-flick"
+            );
+
+            break;
+
+
+        /* DRAG */
+
+        case "drag":
+
+            createSingleVisual(
+                note,
+                index,
+                laneWidth,
+                "note-drag"
+            );
+
+            break;
+
+
+        /* HOLD */
+
+        case "hold":
+
+            createHoldVisual(
+                note,
+                index,
+                laneWidth
+            );
+
+            break;
+
+
+        /* SLIDE */
+
+        case "slide":
+
+            createSlideVisual(
+                note,
+                index,
+                laneWidth
+            );
+
+            break;
+
+
+        /* SKY */
+
+        case "sky":
+
+            createSkyVisual(
+                note,
+                index
+            );
+
+            break;
+
+    }
+
+}
+
+
+/* =========================================================
+   単発ノーツ表示
+========================================================= */
+
+function createSingleVisual(
+    note,
+    index,
+    laneWidth,
+    className
+) {
+
+    const element =
+        document.createElement("div");
+
+    element.className =
+        "note " + className;
+
+    element.style.left =
+        (
+            note.lane *
+            laneWidth +
+            10
+        ) + "px";
+
+    element.style.top =
+        timeToY(note.time)
+        + "px";
+
+    element.style.width =
+        (
+            laneWidth -
+            20
+        ) + "px";
+
+
+    element.onclick =
+        event => {
+
+            event.stopPropagation();
+
+            if (
+                mode === "delete"
+            ) {
+
+                chart.notes.splice(
+                    index,
+                    1
+                );
+
+                renderChart();
+
+                return;
+
+            }
+
+
+            selectNote(index);
+
+        };
+
+
+    timeline.appendChild(
+        element
+    );
+
+}
+
+
+/* =========================================================
+   HOLD表示
+========================================================= */
+
+function createHoldVisual(
+    note,
+    index,
+    laneWidth
+) {
+
+    const element =
+        document.createElement("div");
+
+    element.className =
+        "note note-hold";
+
+    element.style.left =
+        (
+            note.lane *
+            laneWidth +
+            20
+        ) + "px";
+
+    element.style.top =
+        timeToY(
+            note.startTime
+        ) + "px";
+
+    element.style.width =
+        (
+            laneWidth -
+            40
+        ) + "px";
+
+    element.style.height =
+        (
+            (
+                note.endTime -
+                note.startTime
+            ) *
+            pixelsPerSecond
+        ) + "px";
+
+
+    element.onclick =
+        event => {
+
+            event.stopPropagation();
+
+            if (
+                mode === "delete"
+            ) {
+
+                chart.notes.splice(
+                    index,
+                    1
+                );
+
+                renderChart();
+
+                return;
+
+            }
+
+            selectNote(index);
+
+        };
+
+
+    timeline.appendChild(
+        element
+    );
+
+}
+
+
+/* =========================================================
+   スライド表示
+========================================================= */
+
+function createSlideVisual(
+    note,
+    index,
+    laneWidth
+) {
+
+    const startX =
+        note.startLane *
+        laneWidth +
+        laneWidth / 2;
+
+    const endX =
+        note.endLane *
+        laneWidth +
+        laneWidth / 2;
+
+    const startY =
+        timeToY(
+            note.startTime
+        );
+
+    const endY =
+        timeToY(
+            note.endTime
+        );
+
+
+    const dx =
+        endX -
+        startX;
+
+    const dy =
+        endY -
+        startY;
+
+    const length =
+        Math.sqrt(
+            dx * dx +
+            dy * dy
+        );
+
+    const angle =
+        Math.atan2(
+            dy,
+            dx
+        ) *
+        180 /
+        Math.PI;
+
+
+    const line =
+        document.createElement("div");
+
+    line.className =
+        "slide-line";
+
+    line.style.left =
+        startX + "px";
+
+    line.style.top =
+        startY + "px";
+
+    line.style.width =
+        length + "px";
+
+    line.style.transform =
+        `rotate(${angle}deg)`;
+
+
+    line.onclick =
+        event => {
+
+            event.stopPropagation();
+
+            if (
+                mode === "delete"
+            ) {
+
+                chart.notes.splice(
+                    index,
+                    1
+                );
+
+                renderChart();
+
+            }
+
+        };
+
+
+    timeline.appendChild(
+        line
+    );
+
+
+    createSlidePoint(
+        startX,
+        startY,
+        "#ffffff"
+    );
+
+    createSlidePoint(
+        endX,
+        endY,
+        "#ff9d3d"
+    );
+
+}
+
+
+/* =========================================================
+   スライドの点
+========================================================= */
+
+function createSlidePoint(
+    x,
+    y,
+    color
+) {
+
+    const point =
+        document.createElement("div");
+
+    point.className =
+        "slide-point";
+
+    point.style.left =
+        (x - 11) + "px";
+
+    point.style.top =
+        (y - 11) + "px";
+
+    point.style.background =
+        color;
+
+    timeline.appendChild(
+        point
+    );
+
+}
+
+
+/* =========================================================
+   SKY表示
+========================================================= */
+
+function createSkyVisual(
+    note,
+    index
+) {
+
+    const element =
+        document.createElement("div");
+
+    element.className =
+        "note note-sky";
+
+
+    /*
+       2Dエディタでは
+       Xを横位置として表示
+    */
+
+    const x =
+        300 +
+        note.x * 100;
+
+    element.style.left =
+        x + "px";
+
+    element.style.top =
+        timeToY(
+            note.time
+        ) + "px";
+
+
+    element.title =
+        `SKY\nX:${note.x}\nY:${note.y}\nZ:${note.z}`;
+
+
+    element.onclick =
+        event => {
+
+            event.stopPropagation();
+
+            if (
+                mode === "delete"
+            ) {
+
+                chart.notes.splice(
+                    index,
+                    1
+                );
+
+                renderChart();
+
+                return;
+
+            }
+
+            selectNote(index);
+
+        };
+
+
+    timeline.appendChild(
+        element
+    );
+
+}
+
+
+/* =========================================================
+   ノーツ選択
+========================================================= */
+
+function selectNote(index) {
+
+    selectedNoteIndex =
+        index;
+
+    const note =
+        chart.notes[index];
+
+    showProperties(note);
+
+}
+
+
+/* =========================================================
+   プロパティ表示
+========================================================= */
+
+function showProperties(note) {
+
+    properties.innerHTML = "";
+
+
+    Object.keys(note)
+        .forEach(key => {
+
+            const wrapper =
+                document.createElement(
+                    "div"
+                );
+
+            wrapper.className =
+                "property";
+
+
+            const label =
+                document.createElement(
+                    "label"
+                );
+
+            label.textContent =
+                key;
+
+
+            const input =
+                document.createElement(
+                    "input"
+                );
+
+            input.value =
+                note[key];
+
+
+            input.onchange =
+                () => {
+
+                    let value =
+                        input.value;
+
+
+                    if (
+                        value !== "" &&
+                        !isNaN(value)
+                    ) {
+
+                        value =
+                            Number(value);
+
+                    }
+
+
+                    note[key] =
+                        value;
+
+
+                    renderChart();
+
+                };
+
+
+            wrapper.appendChild(
+                label
+            );
+
+            wrapper.appendChild(
+                input
+            );
+
+            properties.appendChild(
+                wrapper
+            );
+
+        });
+
+}
+
+
+/* =========================================================
+   レーン数変更
+========================================================= */
+
+laneCountInput.onchange =
+    () => {
+
+        laneCount =
+            Number(
+                laneCountInput.value
+            );
+
+        chart.laneCount =
+            laneCount;
+
+        renderChart();
+
+    };
+
+
+/* =========================================================
+   JSON保存
+========================================================= */
+
+function saveJSON() {
+
+    chart.songName =
+        document.getElementById(
+            "songName"
+        ).value;
+
+    chart.bpm =
+        Number(
+            document.getElementById(
+                "bpm"
+            ).value
+        );
+
+    chart.laneCount =
+        laneCount;
+
+
+    const json =
+        JSON.stringify(
+            chart,
+            null,
+            2
+        );
+
+
+    const blob =
+        new Blob(
+            [json],
+            {
+                type:
+                    "application/json"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const a =
+        document.createElement(
+            "a"
+        );
+
+    a.href =
+        url;
+
+    a.download =
+        chart.songName +
+        ".json";
+
+    a.click();
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+}
+
+
+/* =========================================================
+   JSON読み込み
+========================================================= */
+
+function loadJSON() {
+
+    document
+        .getElementById(
+            "fileInput"
+        )
+        .click();
+
+}
+
+
+document
+    .getElementById(
+        "fileInput"
+    )
+    .addEventListener(
+        "change",
+        event => {
+
+            const file =
+                event.target.files[0];
+
+            if (!file) {
+                return;
+            }
+
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                () => {
+
+                    chart =
+                        JSON.parse(
+                            reader.result
+                        );
+
+
+                    laneCount =
+                        chart.laneCount ||
+                        4;
+
+
+                    laneCountInput.value =
+                        laneCount;
+
+
+                    document
+                        .getElementById(
+                            "songName"
+                        )
+                        .value =
+                        chart.songName ||
+                        "MySong";
+
+
+                    document
+                        .getElementById(
+                            "bpm"
+                        )
+                        .value =
+                        chart.bpm ||
+                        120;
+
+
+                    renderChart();
+
+                };
+
+
+            reader.readAsText(
+                file
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   初期化
+========================================================= */
+
+createNoteButtons();
+
+renderChart();
+
+setMode("tap");
+
+</script>
+
+</body>
+</html>
+```
