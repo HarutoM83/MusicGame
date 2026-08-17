@@ -81,6 +81,12 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    public void Sky(InputAction.CallbackContext context)
+    {
+        if (context.started) HitLane(8);
+
+    }
+
     void HitLane(int index)
     {
         Debug.Log("HitLane:" + index);
