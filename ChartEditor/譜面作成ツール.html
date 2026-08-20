@@ -17,6 +17,21 @@ body {
     overflow: hidden;
 }
 
+#timeline {
+    position: relative;
+    width: 600px;
+    margin-left: 100px;
+    background: #1b1b1b;
+    /* タイムライン全体を上下反転させる */
+    transform: scaleY(-1);
+}
+
+/* 反転させると文字（小節数やBPMラベル）まで上下さかさまになってしまうので、文字だけ元に戻す */
+.timeLabel,
+.bpmChangeLabel {
+    transform: scaleY(-1);
+}
+
 /* =========================
    ツールバー
 ========================= */
@@ -514,9 +529,11 @@ function getLane(x) {
 
 function getMousePosition(event) {
     const rect = timeline.getBoundingClientRect();
+    // 画面上で上下反転しているため、マウスのY座標も逆向きにする
+    const invertedY = rect.bottom - event.clientY; 
     return {
         x: event.clientX - rect.left,
-        y: event.clientY - rect.top
+        y: invertedY
     };
 }
 
