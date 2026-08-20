@@ -304,7 +304,7 @@ button.active {
             <option value="5">5</option>
             <option value="6">6</option>
             <option value="7">7</option>
-            <option value="8">8</option>
+            <option value="8"selected>8</option>
             <option value="9">9</option>
             <option value="10">10</option>
             <option value="11">11</option>
@@ -349,7 +349,7 @@ button.active {
 ========================================================= */
 
 let pixelsPerSecond = 100;
-let laneCount = 4;
+let laneCount = 8;
 let mode = "tap";
 let selectedNoteIndex = -1;
 let dragStart = null;
@@ -362,7 +362,7 @@ let chart = {
     songName: "MySong",
     bpm: 120,
     timeSignature: 4,
-    laneCount: 4,
+    laneCount: 8,
     duration: 120,
     bpmChanges: [], // ソフラン用（例: [{time: 30, bpm: 180}]）
     notes: []
