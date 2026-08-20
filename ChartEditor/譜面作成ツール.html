@@ -163,14 +163,14 @@ button.active {
 .note-tap {
     height: 24px;
     border-radius: 5px;
-    background: #35a9ff;
+    background: #ff3535;
     border: 2px solid white;
 }
 
 /* EX */
 .note-ex {
-    height: 28px;
-    border-radius: 50%;
+    height: 24px;
+    border-radius: 5px;
     background: #ffd83d;
     border: 3px solid #fff;
     box-shadow: 0 0 10px #ffd83d, 0 0 20px #ffd83d;
@@ -178,25 +178,24 @@ button.active {
 
 /* HOLD */
 .note-hold {
-    background: #ff4d91;
+    background: #ff9100;
     border: 2px solid white;
     border-radius: 8px;
 }
 
 /* FLICK */
 .note-flick {
-    width: 34px;
-    height: 34px;
-    background: #9d5cff;
+    height: 24px;
+    border-radius: 5px;
+    background: #00e1ff;
     border: 3px solid white;
-    transform: rotate(45deg);
 }
 
 /* DRAG */
 .note-drag {
-    height: 26px;
-    border-radius: 13px;
-    background: #39e68c;
+    height: 12px;
+    border-radius: 5px;
+    background: #ff3535;
     border: 2px solid white;
 }
 
@@ -204,7 +203,7 @@ button.active {
 .slide-line {
     position: absolute;
     height: 8px;
-    background: #ff9d3d;
+    background: #0084ff;
     border-radius: 8px;
     transform-origin: 0 50%;
     z-index: 5;
@@ -215,18 +214,17 @@ button.active {
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    border: 2px solid white;
+    border: 2px solid rgb(0, 38, 255);
     z-index: 12;
 }
 
 /* SKY */
 .note-sky {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: #4de8ff;
+    height: 12px;
+    border-radius: 5px;
+    background: #4400ff;
     border: 3px solid white;
-    box-shadow: 0 0 10px #4de8ff, 0 0 30px #4de8ff;
+    box-shadow: 0 0 10px #824dff, 0 0 30px #824dff;
 }
 
 /* =========================
@@ -394,7 +392,7 @@ const NOTE_TYPES = {
     drag: { name: "ドラッグ", color: "#39e68c", placement: "single" },
     hold: { name: "ホールド", color: "#ff4d91", placement: "range" },
     slide: { name: "スライド", color: "#ff9d3d", placement: "slide" },
-    sky: { name: "スカイ", color: "#4de8ff", placement: "sky", defaults: { x: 0, y: 2, z: 5 } }
+    sky:　{ name: "スカイ", color: "#4de8ff", placement: "single" }
 };
 
 /* =========================================================
@@ -556,9 +554,6 @@ timeline.addEventListener("mousedown", event => {
     }
     if (config.placement === "range" || config.placement === "slide") {
         dragStart = { lane: lane, time: yToTime(pos.y) };
-    }
-    if (config.placement === "sky") {
-        addSkyNote(yToTime(pos.y));
     }
 });
 
@@ -755,7 +750,7 @@ function renderNote(note, index, laneWidth) {
             createSlideVisual(note, index, laneWidth);
             break;
         case "sky":
-            createSkyVisual(note, index);
+            createSkyVisual(note, index,laneWidth);
             break;
     }
 }
@@ -839,13 +834,12 @@ function createSlidePoint(x, y, color) {
     timeline.appendChild(point);
 }
 
-function createSkyVisual(note, index) {
+function createSkyVisual(note, index, laneWidth) {
     const element = document.createElement("div");
     element.className = "note note-sky";
-    const x = 300 + note.x * 100;
-    element.style.left = x + "px";
+    element.style.left = (note.lane * laneWidth + 10) + "px";
     element.style.top = timeToY(note.time) + "px";
-    element.title = `SKY\nX:${note.x}\nY:${note.y}\nZ:${note.z}`;
+    element.style.width = (laneWidth - 20) + "px";
 
     element.onclick = event => {
         event.stopPropagation();
@@ -858,7 +852,6 @@ function createSkyVisual(note, index) {
     };
     timeline.appendChild(element);
 }
-
 /* =========================================================
    ノーツ選択・プロパティ
 ========================================================= */
