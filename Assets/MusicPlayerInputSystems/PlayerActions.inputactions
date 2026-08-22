@@ -339,6 +339,17 @@
                     "action": "Sky",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "eea88612-2099-49c0-9cd4-9078b68ba33b",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Sky",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
