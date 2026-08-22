@@ -17,21 +17,6 @@ body {
     overflow: hidden;
 }
 
-#timeline {
-    position: relative;
-    width: 600px;
-    margin-left: 100px;
-    background: #1b1b1b;
-    /* タイムライン全体を上下反転させる */
-    transform: scaleY(-1);
-}
-
-/* 反転させると文字（小節数やBPMラベル）まで上下さかさまになってしまうので、文字だけ元に戻す */
-.timeLabel,
-.bpmChangeLabel {
-    transform: scaleY(-1);
-}
-
 /* =========================
    ツールバー
 ========================= */
@@ -78,6 +63,7 @@ button.active {
 #editorWrapper {
     height: calc(100vh - 64px);
     overflow: auto;
+    position: relative;
 }
 
 #timeline {
@@ -85,6 +71,17 @@ button.active {
     width: 600px;
     margin-left: 100px;
     background: #1b1b1b;
+    /* タイムライン全体を上下反転させ、奥から手前に流れるようにする */
+    transform: scaleY(-1);
+}
+
+/* 反転によって逆さになった文字やラベルを元に戻す */
+.timeLabel,
+.bpmChangeLabel,
+.note,
+.slide-line,
+.slide-point {
+    transform: scaleY(-1);
 }
 
 /* 小節線・拍線・レーン線 */
@@ -147,6 +144,14 @@ button.active {
 .bpmChangeLabel:hover {
     background: #ff9d3d;
     color: black;
+}
+
+.gridSubLine {
+    position: absolute;
+    left: 0;
+    height: 1px;
+    background: #222;
+    z-index: 1;
 }
 
 /* =========================
@@ -297,10 +302,26 @@ button.active {
 
     <label>
         拍子
-        <select id="timeSignature" style="width: 55px;">
-            <option value="4">4/4</option>
-            <option value="3">3/4</option>
-            <option value="2">2/4</option>
+    </label>
+    <div style="display: inline-flex; align-items: center; gap: 2px;">
+        <input id="timeNumerator" type="number" value="4" min="1" max="32" style="width: 40px; text-align: center;">
+        <span>/</span>
+        <select id="timeDenominator" style="width: 55px;">
+            <option value="2">2</option>
+            <option value="4" selected>4</option>
+            <option value="8">8</option>
+            <option value="16">16</option>
+            <option value="32">32</option>
+        </select>
+    </div>
+
+    <label>
+        グリッド
+        <select id="gridDivision" style="width: 65px;">
+            <option value="4" selected>4分</option>
+            <option value="8">8分</option>
+            <option value="16">16分</option>
+            <option value="32">32分</option>
         </select>
     </label>
 
@@ -317,7 +338,7 @@ button.active {
             <option value="5">5</option>
             <option value="6">6</option>
             <option value="7">7</option>
-            <option value="8"selected>8</option>
+            <option value="8" selected>8</option>
             <option value="9">9</option>
             <option value="10">10</option>
             <option value="11">11</option>
@@ -374,10 +395,11 @@ let dragStart = null;
 let chart = {
     songName: "MySong",
     bpm: 120,
-    timeSignature: 4,
+    timeNumerator: 4,
+    timeDenominator: 4,
     laneCount: 8,
     duration: 120,
-    bpmChanges: [], // ソフラン用（例: [{time: 30, bpm: 180}]）
+    bpmChanges: [],
     notes: []
 };
 
@@ -392,7 +414,7 @@ const NOTE_TYPES = {
     drag: { name: "ドラッグ", color: "#39e68c", placement: "single" },
     hold: { name: "ホールド", color: "#ff4d91", placement: "range" },
     slide: { name: "スライド", color: "#ff9d3d", placement: "slide" },
-    sky:　{ name: "スカイ", color: "#4de8ff", placement: "single" }
+    sky: { name: "スカイ", color: "#4de8ff", placement: "single", defaults: { x: 0, y: 0, z: 0 } }
 };
 
 /* =========================================================
@@ -431,11 +453,17 @@ function setMode(type) {
 }
 
 /* =========================================================
-   時間変換（ソフラン対応）
+   時間変換（ソフラン対応）拍子・小節の計算
 ========================================================= */
 
 function getTimeSignature() {
-    return Number(document.getElementById("timeSignature").value) || 4;
+    const num = Number(document.getElementById("timeNumerator").value) || 4;
+    const den = Number(document.getElementById("timeDenominator").value) || 4;
+    return num * (4 / den);
+}
+
+function getBeatPerMeasure() {
+    return getTimeSignature();
 }
 
 function getBpmChanges() {
@@ -489,10 +517,7 @@ function yToTime(y) {
         let bpm = changes[i].bpm;
         let nextStart = (i < changes.length - 1) ? changes[i + 1].time : Infinity;
         
-        // この区間での1秒あたりのピクセル数
         let speed = pps * (bpm / baseBpm);
-        
-        // 区間の終了Y座標を計算
         let startTimeY = currentY;
         let maxSpan = nextStart === Infinity ? Infinity : (nextStart - start);
         let maxSegmentY = startTimeY + maxSpan * speed;
@@ -506,6 +531,27 @@ function yToTime(y) {
         }
     }
     return currentTime;
+}
+
+/* =========================================================
+   グリッドスナップ関数
+========================================================= */
+
+function snapTimeToGrid(time) {
+    const changes = getBpmChanges();
+    let currentBpm = 120;
+    for (let i = 0; i < changes.length; i++) {
+        if (time >= changes[i].time) {
+            currentBpm = changes[i].bpm;
+        }
+    }
+
+    const secPerBeat = 60 / currentBpm;
+    const division = Number(document.getElementById("gridDivision").value) || 16;
+    const gridInterval = secPerBeat * (4 / division);
+
+    const snappedTime = Math.round(time / gridInterval) * gridInterval;
+    return Math.max(0, snappedTime);
 }
 
 /* =========================================================
@@ -527,8 +573,8 @@ function getLane(x) {
 
 function getMousePosition(event) {
     const rect = timeline.getBoundingClientRect();
-    // 画面上で上下反転しているため、マウスのY座標も逆向きにする
-    const invertedY = rect.bottom - event.clientY; 
+    // scaleY(-1) がかかっているため、Y座標を反転させる
+    const invertedY = rect.height - (event.clientY - rect.top);
     return {
         x: event.clientX - rect.left,
         y: invertedY
@@ -549,11 +595,13 @@ timeline.addEventListener("mousedown", event => {
     const config = NOTE_TYPES[mode];
     if (!config) return;
 
+    const snappedTime = snapTimeToGrid(yToTime(pos.y));
+
     if (config.placement === "single") {
-        addSingleNote(mode, lane, yToTime(pos.y));
+        addSingleNote(mode, lane, snappedTime);
     }
     if (config.placement === "range" || config.placement === "slide") {
-        dragStart = { lane: lane, time: yToTime(pos.y) };
+        dragStart = { lane: lane, time: snappedTime };
     }
 });
 
@@ -562,7 +610,7 @@ timeline.addEventListener("mouseup", event => {
 
     const pos = getMousePosition(event);
     const endLane = getLane(pos.x);
-    const endTime = yToTime(pos.y);
+    const endTime = snapTimeToGrid(yToTime(pos.y));
 
     if (mode === "hold" && endTime > dragStart.time) {
         addHoldNote(dragStart.lane, dragStart.time, endTime);
@@ -595,35 +643,23 @@ function addSlideNote(startLane, endLane, startTime, endTime) {
     renderChart();
 }
 
-function addSkyNote(time) {
-    const config = NOTE_TYPES.sky;
-    chart.notes.push({ type: "sky", time: time, x: config.defaults.x, y: config.defaults.y, z: config.defaults.z });
-    renderChart();
-}
-
 /* =========================================================
    BPM変更（ソフラン）追加
 ========================================================= */
 
 function addBpmChangeAtCurrent() {
-    // 現在スクロールしているエディタの中央あたり、または最後にクリック/選択した時間などを基準にするか、
-    // または「現在表示されているエディタの上部からの位置」を基準にします。
-    // 今回は手軽に「エディタのラッパーのスクロール位置（画面の一番上に見えている時間）」を基準にしてみましょう！
-    
     const wrapper = document.getElementById("editorWrapper");
-    // 画面の視覚的な上部（スクロール位置）に対応する時間を取得
-    const targetY = wrapper.scrollTop + 40; // 少し余裕を持たせる
-    const time = Math.round(yToTime(targetY) * 100) / 100; // 小数点第2位まで
+    // 上下反転しているため、スクロール位置に応じた目標Y座標を計算
+    const targetY = timeline.offsetHeight - wrapper.scrollTop - wrapper.clientHeight + 40;
+    const time = Math.round(yToTime(Math.max(0, targetY)) * 100) / 100;
 
     const newBpm = Number(document.getElementById("newBpmInput").value) || 180;
 
-    // すでに同じ時間にBPM変更がある場合は上書き、なければ追加
     const existing = chart.bpmChanges.find(b => Math.abs(b.time - time) < 0.05);
     if (existing) {
         existing.bpm = newBpm;
     } else {
         chart.bpmChanges.push({ time: time, bpm: newBpm });
-        // 時間順にソート
         chart.bpmChanges.sort((a, b) => a.time - b.time);
     }
 
@@ -635,7 +671,7 @@ function addBpmChangeAtCurrent() {
 ========================================================= */
 
 function renderChart() {
-    timeline.querySelectorAll(".note, .slide-line, .slide-point, .measureLine, .beatLine, .laneLine, .timeLabel, .bpmChangeLine, .bpmChangeLabel").forEach(el => el.remove());
+    timeline.querySelectorAll(".note, .slide-line, .slide-point, .measureLine, .beatLine, .laneLine, .timeLabel, .bpmChangeLine, .bpmChangeLabel, .gridSubLine").forEach(el => el.remove());
 
     const laneWidth = getLaneWidth();
     const timelineWidth = laneWidth * laneCount;
@@ -648,7 +684,6 @@ function renderChart() {
 
     timeline.style.height = timeToY(maxTime) + 50 + "px";
 
-    /* レーン毎の縦線を描画 */
     for (let i = 0; i <= laneCount; i++) {
         const laneLine = document.createElement("div");
         laneLine.className = "laneLine";
@@ -656,10 +691,10 @@ function renderChart() {
         timeline.appendChild(laneLine);
     }
 
-    /* 小節線・拍線の描画（ソフラン・拍子対応） */
-    const timeSignature = getTimeSignature();
     const changes = getBpmChanges();
     if (changes[0].time > 0) changes.unshift({ time: 0, bpm: changes[0].bpm });
+
+    const division = Number(document.getElementById("gridDivision").value) || 16;
 
     for (let i = 0; i < changes.length; i++) {
         let segStart = changes[i].time;
@@ -667,15 +702,26 @@ function renderChart() {
         let segEnd = (i < changes.length - 1) ? changes[i + 1].time : maxTime;
 
         let secPerBeat = 60 / segBpm;
-        let secPerMeasure = secPerBeat * timeSignature;
+        let secPerMeasure = secPerBeat * getBeatPerMeasure();
+        let gridInterval = secPerBeat * (4 / division);
 
         let t = segStart;
         while (t <= segEnd && t <= maxTime) {
             const y = timeToY(t);
+            
             const isMeasureStart = Math.abs((t % secPerMeasure)) < 0.01 || Math.abs(t - segStart) < 0.001;
+            const isBeatStart = Math.abs((t % secPerBeat)) < 0.01;
 
             const line = document.createElement("div");
-            line.className = isMeasureStart ? "measureLine" : "beatLine";
+            
+            if (isMeasureStart) {
+                line.className = "measureLine";
+            } else if (isBeatStart) {
+                line.className = "beatLine";
+            } else {
+                line.className = "gridSubLine";
+            }
+
             line.style.top = y + "px";
             line.style.width = timelineWidth + "px";
             timeline.appendChild(line);
@@ -688,11 +734,11 @@ function renderChart() {
                 label.textContent = `${measureNum}小節`;
                 timeline.appendChild(label);
             }
-            t += secPerBeat;
+            
+            t += gridInterval;
         }
     }
 
-    /* BPM変更ポイントの可視化ラインを描画 */
     if (chart.bpmChanges && chart.bpmChanges.length > 0) {
         chart.bpmChanges.forEach((change) => {
             const y = timeToY(change.time);
@@ -708,7 +754,6 @@ function renderChart() {
             bpmLabel.style.top = (y - 8) + "px";
             bpmLabel.textContent = `▶ BPM ${change.bpm} (${change.time.toFixed(1)}秒)`;
             
-            // クリックで削除できるようにする（timeを基準に特定して削除）
             bpmLabel.onclick = () => {
                 if (confirm(`秒数 ${change.time.toFixed(1)} のBPM変更を削除しますか？`)) {
                     chart.bpmChanges = chart.bpmChanges.filter(b => b.time !== change.time);
@@ -719,7 +764,6 @@ function renderChart() {
         });
     }
 
-    /* ノーツ描画 */
     chart.notes.forEach((note, index) => {
         renderNote(note, index, laneWidth);
     });
@@ -750,7 +794,7 @@ function renderNote(note, index, laneWidth) {
             createSlideVisual(note, index, laneWidth);
             break;
         case "sky":
-            createSkyVisual(note, index,laneWidth);
+            createSkyVisual(note, index, laneWidth);
             break;
     }
 }
@@ -803,14 +847,15 @@ function createSlideVisual(note, index, laneWidth) {
     const dx = endX - startX;
     const dy = endY - startY;
     const length = Math.sqrt(dx * dx + dy * dy);
-    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+    // 反転環境に合わせて角度の計算も調整
+    const angle = -Math.atan2(dy, dx) * 180 / Math.PI;
 
     const line = document.createElement("div");
     line.className = "slide-line";
     line.style.left = startX + "px";
     line.style.top = startY + "px";
     line.style.width = length + "px";
-    line.style.transform = `rotate(${angle}deg)`;
+    line.style.transform = `scaleY(-1) rotate(${angle}deg)`;
 
     line.onclick = event => {
         event.stopPropagation();
@@ -852,6 +897,7 @@ function createSkyVisual(note, index, laneWidth) {
     };
     timeline.appendChild(element);
 }
+
 /* =========================================================
    ノーツ選択・プロパティ
 ========================================================= */
@@ -899,9 +945,11 @@ laneCountInput.onchange = () => {
 };
 
 document.getElementById("bpm").onchange = renderChart;
-document.getElementById("timeSignature").onchange = renderChart;
+document.getElementById("timeNumerator").onchange = renderChart;
+document.getElementById("timeDenominator").onchange = renderChart;
 document.getElementById("songMinutes").onchange = renderChart;
 document.getElementById("songSeconds").onchange = renderChart;
+document.getElementById("gridDivision").onchange = renderChart;
 
 /* =========================================================
    JSON保存・読み込み
@@ -910,7 +958,8 @@ document.getElementById("songSeconds").onchange = renderChart;
 function saveJSON() {
     chart.songName = document.getElementById("songName").value;
     chart.bpm = Number(document.getElementById("bpm").value);
-    chart.timeSignature = getTimeSignature();
+    chart.timeNumerator = Number(document.getElementById("timeNumerator").value) || 4;
+    chart.timeDenominator = Number(document.getElementById("timeDenominator").value) || 4;
     chart.laneCount = laneCount;
 
     const minutes = Number(document.getElementById("songMinutes").value) || 0;
@@ -945,7 +994,8 @@ document.getElementById("fileInput").addEventListener("change", event => {
 
         document.getElementById("songName").value = chart.songName || "MySong";
         document.getElementById("bpm").value = chart.bpm || 120;
-        document.getElementById("timeSignature").value = chart.timeSignature || 4;
+        document.getElementById("timeNumerator").value = chart.timeNumerator || 4;
+        document.getElementById("timeDenominator").value = chart.timeDenominator || 4;
 
         const totalSec = chart.duration || 120;
         document.getElementById("songMinutes").value = Math.floor(totalSec / 60);
