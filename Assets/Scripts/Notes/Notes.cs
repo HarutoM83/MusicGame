@@ -11,7 +11,7 @@ public abstract class Notes : MonoBehaviour
     public ObjectPool_Notes pool;
     public Material normalMat;
     public Material EXMat;
-    protected Renderer sr;
+    public Renderer sr;
     private Vector3 spawnPosition;
     private Vector3 judgePosition;
     private float scrollSpeed;

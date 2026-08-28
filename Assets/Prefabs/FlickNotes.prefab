@@ -190,7 +190,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1405435691869714110}
   - component: {fileID: 7944681151116420898}
-  - component: {fileID: 1293053914554152041}
   m_Layer: 0
   m_Name: FlickNotes
   m_TagString: Untagged
@@ -239,33 +238,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.2575665, y: 0.013050944, z: 0.72065353}
   m_Center: {x: 0.0023180246, y: -0.14087124, z: -0.067744255}
---- !u!114 &1293053914554152041
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2064417354040042299}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1ca4d3755725b34a94eabe61a7929e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Notes
-  resetnotes: -10
-  Lane: 0
-  hitTime: 0
-  pool: {fileID: 0}
-  normalMat: {fileID: 2100000, guid: ad8317f3e52ddc0469f574254778862a, type: 2}
-  EXMat: {fileID: 2100000, guid: 88dab6476de9d3c4aa836220968fab85, type: 2}
-  sr: {fileID: 3304644753094568914}
-  perfectplusWindow: 0.02
-  perfectWindow: 0.05
-  greatWindow: 0.1
-  goodWindow: 0.09
-  badWindow: 0.12
-  speed: 10
-  judgeZ: 5
-  judgeLineZ: 0
 --- !u!1 &6026069135691348114
 GameObject:
   m_ObjectHideFlags: 0

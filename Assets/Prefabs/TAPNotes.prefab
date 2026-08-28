@@ -347,6 +347,7 @@ MonoBehaviour:
   pool: {fileID: 0}
   normalMat: {fileID: 2100000, guid: ad8317f3e52ddc0469f574254778862a, type: 2}
   EXMat: {fileID: 2100000, guid: 88dab6476de9d3c4aa836220968fab85, type: 2}
+  sr: {fileID: 2743814236712779394}
   perfectplusWindow: 0.02
   perfectWindow: 0.03
   greatWindow: 0.06
