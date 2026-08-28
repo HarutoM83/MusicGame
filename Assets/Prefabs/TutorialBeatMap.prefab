@@ -2752,7 +2752,7 @@ Transform:
   m_GameObject: {fileID: 6579304695060931621}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.21327, y: -0, z: -6.06177}
+  m_LocalPosition: {x: 0, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2764,8 +2764,8 @@ Transform:
   - {fileID: 4245908327042640224}
   - {fileID: 920334520243495334}
   - {fileID: 8752072420932030956}
-  - {fileID: 8410724639134226584}
   - {fileID: 6225016112140871878}
+  - {fileID: 8410724639134226584}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &9174993541757708352
@@ -2925,6 +2925,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: aa8083eb-7793-4c19-b9bf-70c54578ae56
     m_ActionName: 'Player/Move[/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ba87fc34-d378-47c7-a4ec-8438dba99935
+    m_ActionName: 'Player/Sky[/Keyboard/q,/Keyboard/w,/Keyboard/e,/Keyboard/r,/Keyboard/t,/Keyboard/y,/Keyboard/u,/Keyboard/i,/Keyboard/o,/Keyboard/p,/Keyboard/upArrow]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -3035,8 +3039,8 @@ Transform:
   m_GameObject: {fileID: 6890196285447601136}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.21327, y: 3, z: 0.051769733}
-  m_LocalScale: {x: 1, y: 1, z: 0.01}
+  m_LocalPosition: {x: 0, y: 3, z: -6}
+  m_LocalScale: {x: 1, y: 1, z: 0.005}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7697403579344359495}

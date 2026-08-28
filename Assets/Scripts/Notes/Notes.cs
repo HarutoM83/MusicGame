@@ -1,17 +1,17 @@
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class Notes : MonoBehaviour
+public abstract class Notes : MonoBehaviour
 {
     [SerializeField]
     private float resetnotes = -10f;
-    private AudioSource music;
+    protected AudioSource music;
     public int Lane;
     public float hitTime;
     public ObjectPool_Notes pool;
     public Material normalMat;
     public Material EXMat;
-    public Renderer sr;
+    protected Renderer sr;
     private Vector3 spawnPosition;
     private Vector3 judgePosition;
     private float scrollSpeed;
@@ -29,7 +29,7 @@ public class Notes : MonoBehaviour
 
     private bool isReleased = false;
 
-    public void Initialize(
+    public virtual void Initialize(
      NotesData data,
      AudioSource audio,
      ObjectPool_Notes objectPool,
@@ -59,7 +59,7 @@ public class Notes : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         if (!music.isPlaying)
             return;
@@ -114,7 +114,7 @@ public class Notes : MonoBehaviour
     }
     void OnBecameInvisible()
     {
-        Debug.Log("Note Disable " + gameObject.name);
+        //Debug.Log("Note Disable " + gameObject.name);
         if (pool != null)
         {
             Release();

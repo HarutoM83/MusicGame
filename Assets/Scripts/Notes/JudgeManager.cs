@@ -9,6 +9,9 @@ public class JudgeManager : MonoBehaviour
     public AudioSource music;
     public List<Notes> activeNotes = new List<Notes>();
 
+    // レーンが押されているかを保持する配列（例として4レーン分）
+    private bool[] isLanePressed = new bool[4];
+
     void Awake()
     {
         if (!music.isPlaying)
@@ -20,6 +23,29 @@ public class JudgeManager : MonoBehaviour
         }
 
         Instance = this;
+    }
+
+    // 外部から「このレーンが押されているか」を確認できるようにするメソッド
+    public bool IsLanePressed(int lane)
+    {
+        if (lane >= 0 && lane < isLanePressed.Length)
+        {
+            return isLanePressed[lane];
+        }
+        return false;
+    }
+
+    // 押されたとき・離されたときに呼び出す用のメソッド（必要に応じてInput処理から呼ぶ）
+    public void PressLane(int lane)
+    {
+        if (lane >= 0 && lane < isLanePressed.Length)
+            isLanePressed[lane] = true;
+    }
+
+    public void ReleaseLane(int lane)
+    {
+        if (lane >= 0 && lane < isLanePressed.Length)
+            isLanePressed[lane] = false;
     }
 
     public void Judge(int lane)
@@ -113,4 +139,5 @@ public class JudgeManager : MonoBehaviour
 
         note.Release();
     }
+
 }
