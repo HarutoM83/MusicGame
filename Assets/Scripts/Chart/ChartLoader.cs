@@ -7,6 +7,7 @@ public class ChartLoader : MonoBehaviour
     [SerializeField] private JudgeManager judgeManager;
     [SerializeField] private Transform judgeLine;
     public GameObject TAPNotesPrefab;
+    public GameObject DragNotesPrefab;
     public Transform[] laneSpawnPoints;
     public AudioSource music;
     [SerializeField] private ObjectPool_Notes notesPool;
@@ -69,38 +70,35 @@ public class ChartLoader : MonoBehaviour
     
     void SpawnNote(NotesData data)
     {
-        void SpawnNote(NotesData data)
+        // 例: ノーツのタイプに応じて使用するプールを切り替える
+        ObjectPool_Notes targetPool = notesPool;
+
+        if (data.type == "Drag") // チャートデータの仕様に合わせて条件を変更してください
         {
-            // 例: ノーツのタイプに応じて使用するプールを切り替える
-            ObjectPool_Notes targetPool = notesPool;
+            targetPool = dragnotesPool;
+        }
 
-            if (data.type == "Long") // チャートデータの仕様に合わせて条件を変更してください
-            {
-                targetPool = dragnotesPool;
-            }
+        GameObject obj = targetPool.GetObject();
+        Notes notes = obj.GetComponent<Notes>();
 
-            GameObject obj = targetPool.GetObject();
-            Notes notes = obj.GetComponent<Notes>();
+        Vector3 spawnPos = laneSpawnPoints[data.lane].position;
+        Vector3 judgePos = judgeLine.position;
 
-            Vector3 spawnPos = laneSpawnPoints[data.lane].position;
-            Vector3 judgePos = judgeLine.position;
+        obj.transform.position = spawnPos;
 
-            obj.transform.position = spawnPos;
+        // 取得したプールの参照を渡すことで、Notes.Release() が正しいプールに返却する
+        notes.Initialize(
+            data,
+            music,
+            targetPool,
+            spawnPos,
+            judgePos,
+            scrollSpeed
+        );
 
-            // 取得したプールの参照を渡すことで、Notes.Release() が正しいプールに返却する
-            notes.Initialize(
-                data,
-                music,
-                targetPool,
-                spawnPos,
-                judgePos,
-                scrollSpeed
-            );
-
-            if (!JudgeManager.Instance.activeNotes.Contains(notes))
-            {
-                JudgeManager.Instance.activeNotes.Add(notes);
-            }
+        if (!JudgeManager.Instance.activeNotes.Contains(notes))
+        {
+            JudgeManager.Instance.activeNotes.Add(notes);
         }
     }
 

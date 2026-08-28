@@ -1781,6 +1781,7 @@ MonoBehaviour:
   judgeManager: {fileID: 4073855793498850242}
   judgeLine: {fileID: 1828101462}
   TAPNotesPrefab: {fileID: 6394444500302648421, guid: a3f723b52b5921c40964863c8a916db0, type: 3}
+  DragNotesPrefab: {fileID: 5077756624101637648, guid: dca62e6c465f9ac4eb83d2c7010cc258, type: 3}
   laneSpawnPoints:
   - {fileID: 8628065660327793804}
   - {fileID: 7202040539361373432}

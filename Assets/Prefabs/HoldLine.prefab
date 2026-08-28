@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 122442294361215970}
   - component: {fileID: 5238063233298565405}
+  - component: {fileID: 9090585924602369989}
   m_Layer: 0
   m_Name: HoldLine
   m_TagString: Untagged
@@ -58,7 +59,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 74664869a05b7e2478cd51d0049b4f4c, type: 2}
+  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -143,3 +144,30 @@ LineRenderer:
   m_UseWorldSpace: 0
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &9090585924602369989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 418601739501199270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef387cae3fc7875478d2ce7b818bede3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LongNotes
+  resetnotes: -10
+  Lane: 0
+  hitTime: 0
+  pool: {fileID: 0}
+  normalMat: {fileID: 0}
+  EXMat: {fileID: 2100000, guid: 88dab6476de9d3c4aa836220968fab85, type: 2}
+  sr: {fileID: 0}
+  scrollSpeed: 0
+  speed: 9
+  judgeZ: 5
+  judgeLineZ: 0
+  holdDuration: 0
+  bpm: 0
+  tickInterval: 0.1
+  lineRenderer: {fileID: 0}

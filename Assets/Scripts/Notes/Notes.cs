@@ -10,8 +10,12 @@ public abstract class Notes : MonoBehaviour
     public float hitTime;
     public ObjectPool_Notes pool;
     public Material normalMat;
+    public Material normallaneMat;
     public Material EXMat;
+    public Material FlickMat;
+    public Material FlicklaneMat;
     public Renderer sr;
+    public Renderer[] srl;
     protected Vector3 spawnPosition;
     protected Vector3 judgePosition;
     public float scrollSpeed;
@@ -49,9 +53,13 @@ public abstract class Notes : MonoBehaviour
         scrollSpeed = speed;
         judgeLineZ = judgePos.z;
 
-        if (data.grade == "ex")
+        if (data.grade == "EX")
         {
             sr.material = EXMat;
+        }
+        if (data.grade == "Flick")
+        {
+            sr.material = FlickMat;
         }
         else
         {

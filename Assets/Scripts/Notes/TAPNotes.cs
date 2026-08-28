@@ -10,6 +10,14 @@ public class TAPNotes : Notes
     public float exGoodWindow = 0.10f;
     public float exBadWindow = 0.12f;
 
+    // Flick用の場合の判定ウィンドウを定義
+    [Header("Flick Note Windows")]
+    public float flickPerfectPlusWindow = 0.016f;
+    public float flickPerfectWindow = 0.027f;
+    public float flickGreatWindow = 0.058f;
+    public float flickGoodWindow = 0.089f;
+    public float flickBadWindow = 0.12f;
+
     public override void Initialize(
         NotesData data,
         AudioSource audio,
@@ -22,7 +30,7 @@ public class TAPNotes : Notes
         base.Initialize(data, audio, objectPool, spawnPos, judgePos, speed);
 
         // EX化している場合の判定変更処理
-        if (data.grade == "ex")
+        if (data.grade == "EX")
         {
             // 例：EXノーツ専用の判定幅に上書きする
             perfectplusWindow = exPerfectPlusWindow;
@@ -30,6 +38,17 @@ public class TAPNotes : Notes
             greatWindow = exGreatWindow;
             goodWindow = exGoodWindow;
             badWindow = exBadWindow;
+        }
+        
+        // Flick化している場合の判定変更処理
+        if (data.grade == "Flick")
+        {
+            // 例：EXノーツ専用の判定幅に上書きする
+            perfectplusWindow = flickPerfectPlusWindow;
+            perfectWindow = flickPerfectWindow;
+            greatWindow = flickGreatWindow;
+            goodWindow = flickGoodWindow;
+            badWindow = flickBadWindow;
         }
     }
 }

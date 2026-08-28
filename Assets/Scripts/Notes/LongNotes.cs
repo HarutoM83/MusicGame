@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class LongNotes:Notes
+public class LongNotes:Notes
 {
 
     [Header("ホールド・スライド共通設定")]
