@@ -12,15 +12,15 @@ public abstract class Notes : MonoBehaviour
     public Material normalMat;
     public Material EXMat;
     public Renderer sr;
-    private Vector3 spawnPosition;
-    private Vector3 judgePosition;
-    private float scrollSpeed;
+    protected Vector3 spawnPosition;
+    protected Vector3 judgePosition;
+    public float scrollSpeed;
 
-    public float perfectplusWindow = 0.02f;
-    public float perfectWindow = 0.03f;
-    public float greatWindow = 0.06f;
-    public float goodWindow = 0.09f;
-    public float badWindow = 0.12f;
+    public virtual float perfectplusWindow { get; set; } = 0.02f;
+    public virtual float perfectWindow { get; set; } = 0.03f;
+    public virtual float greatWindow { get; set; } = 0.06f;
+    public virtual float goodWindow { get; set; } = 0.09f;
+    public virtual float badWindow { get; set; } = 0.12f;
 
 
     public float speed = 9f;

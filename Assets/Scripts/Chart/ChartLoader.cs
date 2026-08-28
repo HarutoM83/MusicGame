@@ -9,7 +9,8 @@ public class ChartLoader : MonoBehaviour
     public GameObject TAPNotesPrefab;
     public Transform[] laneSpawnPoints;
     public AudioSource music;
-    public ObjectPool_Notes notesPool;
+    [SerializeField] private ObjectPool_Notes notesPool;
+    [SerializeField] private ObjectPool_Notes dragnotesPool;
 
     private ChartData chart;
     private int nextNoteIndex = 0;
@@ -68,31 +69,38 @@ public class ChartLoader : MonoBehaviour
     
     void SpawnNote(NotesData data)
     {
-        GameObject obj = notesPool.GetObject();
-
-        Notes notes = obj.GetComponent<Notes>();
-
-        Vector3 spawnPos =
-        laneSpawnPoints[data.lane].position;
-
-        Vector3 judgePos =
-            judgeLine.position;
-
-        obj.transform.position = spawnPos;
-
-
-        notes.Initialize(
-            data,
-            music,
-            notesPool,
-            spawnPos,
-            judgePos,
-            scrollSpeed
-        );
-
-        if (!JudgeManager.Instance.activeNotes.Contains(notes))
+        void SpawnNote(NotesData data)
         {
-            JudgeManager.Instance.activeNotes.Add(notes);
+            // 例: ノーツのタイプに応じて使用するプールを切り替える
+            ObjectPool_Notes targetPool = notesPool;
+
+            if (data.type == "Long") // チャートデータの仕様に合わせて条件を変更してください
+            {
+                targetPool = dragnotesPool;
+            }
+
+            GameObject obj = targetPool.GetObject();
+            Notes notes = obj.GetComponent<Notes>();
+
+            Vector3 spawnPos = laneSpawnPoints[data.lane].position;
+            Vector3 judgePos = judgeLine.position;
+
+            obj.transform.position = spawnPos;
+
+            // 取得したプールの参照を渡すことで、Notes.Release() が正しいプールに返却する
+            notes.Initialize(
+                data,
+                music,
+                targetPool,
+                spawnPos,
+                judgePos,
+                scrollSpeed
+            );
+
+            if (!JudgeManager.Instance.activeNotes.Contains(notes))
+            {
+                JudgeManager.Instance.activeNotes.Add(notes);
+            }
         }
     }
 
