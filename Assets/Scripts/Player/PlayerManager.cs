@@ -89,13 +89,25 @@ public class PlayerManager : MonoBehaviour
 
     public void MoveLeft(InputAction.CallbackContext context)
     {
-        if (context.started) HitLane(8);
+        if (context.started) HitLane(1);
+        if (context.started) HitLane(2);
+        if (context.started) HitLane(3);
+        if (context.started) HitLane(4);
+        if (context.started) HitLane(5);
+        if (context.started) HitLane(6);
+        if (context.started) HitLane(7);
 
     }
 
     public void MoveRight(InputAction.CallbackContext context)
     {
-        if (context.started) HitLane(8);
+        if (context.started) HitLane(1);
+        if (context.started) HitLane(2);
+        if (context.started) HitLane(3);
+        if (context.started) HitLane(4);
+        if (context.started) HitLane(5);
+        if (context.started) HitLane(6);
+        if (context.started) HitLane(7);
 
     }
 

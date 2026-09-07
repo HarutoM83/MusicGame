@@ -346,7 +346,7 @@ MonoBehaviour:
   hitTime: 0
   pool: {fileID: 0}
   normalMat: {fileID: 2100000, guid: ad8317f3e52ddc0469f574254778862a, type: 2}
-  normalLaneMat: {fileID: 0}
+  normalLaneMat: {fileID: 2100000, guid: 74664869a05b7e2478cd51d0049b4f4c, type: 2}
   EXMat: {fileID: 2100000, guid: 88dab6476de9d3c4aa836220968fab85, type: 2}
   skynotesMat: {fileID: 0}
   skynotesLaneMat: {fileID: 0}

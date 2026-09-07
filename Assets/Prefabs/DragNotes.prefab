@@ -356,7 +356,7 @@ MonoBehaviour:
   - {fileID: 4578096887941148736}
   - {fileID: 4683465533020037254}
   - {fileID: 3167092223275124826}
-  scrollSpeed: 10
+  scrollSpeed: 1.5
   speed: 10
   judgeZ: 5
   judgeLineZ: 0

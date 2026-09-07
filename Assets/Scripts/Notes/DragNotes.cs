@@ -10,11 +10,6 @@ public class DragNotes : Notes
         base.Initialize(data, audio, objectPool, spawnPos, judgePos, speed);
         if (data.type == "sky")
         {
-            sr.material = skynotesMat;
-            srl[1].material = skynotesLaneMat;
-            srl[2].material = skynotesLaneMat;
-            srl[3].material = skynotesLaneMat;
-            srl[4].material = skynotesLaneMat;
             spawnPos = new Vector3(spawnPos.x, spawnPos.y + 3f, spawnPos.z);
             judgePos = new Vector3(judgePos.x, judgePos.y + 3f, judgePos.z);
         }

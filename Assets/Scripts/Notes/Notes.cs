@@ -73,9 +73,17 @@ public abstract class Notes : MonoBehaviour
             srl[3].material = normalLaneMat;
             srl[4].material = normalLaneMat;
         }
-        else if (data.grade == "dragEX")
+        else if (data.grade == "dragex")
         {
             sr.material = EXMat;
+        }
+        else if (data.type == "sky")
+        {
+            sr.material = skynotesMat;
+            srl[1].material = skynotesLaneMat;
+            srl[2].material = skynotesLaneMat;
+            srl[3].material = skynotesLaneMat;
+            srl[4].material = skynotesLaneMat;
         }
     }
 
