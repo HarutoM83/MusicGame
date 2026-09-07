@@ -2175,7 +2175,7 @@ Transform:
   m_GameObject: {fileID: 4780643214860825513}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.01, y: 0.01, z: -6}
+  m_LocalPosition: {x: 0.01, y: 0.01, z: -5.5}
   m_LocalScale: {x: 10, y: 1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2661,7 +2661,7 @@ Transform:
   m_GameObject: {fileID: 6106148170115555146}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.01, y: 0.01, z: -6.618}
+  m_LocalPosition: {x: 0.01, y: 0.01, z: -6.5}
   m_LocalScale: {x: 10, y: 1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2923,12 +2923,16 @@ MonoBehaviour:
     m_ActionName: 'Player/Attack8[/Keyboard/l]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: aa8083eb-7793-4c19-b9bf-70c54578ae56
-    m_ActionName: 'Player/Move[/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]'
-  - m_PersistentCalls:
-      m_Calls: []
     m_ActionId: ba87fc34-d378-47c7-a4ec-8438dba99935
     m_ActionName: 'Player/Sky[/Keyboard/q,/Keyboard/w,/Keyboard/e,/Keyboard/r,/Keyboard/t,/Keyboard/y,/Keyboard/u,/Keyboard/i,/Keyboard/o,/Keyboard/p,/Keyboard/upArrow]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 1d53ad61-ab68-45be-a08e-1a398d983f31
+    m_ActionName: 'Player/MoveLeft[/Keyboard/leftArrow]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e8c39af4-d949-4a79-bb9a-6422c755b2d5
+    m_ActionName: 'Player/MoveRight[/Keyboard/rightArrow]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -4277,8 +4281,8 @@ RectTransform:
   - {fileID: 3781265250024787726}
   - {fileID: 5295403576409667944}
   - {fileID: 933273456647133699}
-  - {fileID: 8698394764126664783}
   - {fileID: 6180846292157074283}
+  - {fileID: 8698394764126664783}
   - {fileID: 702547788588004886}
   - {fileID: 4780820724825861622}
   - {fileID: 6610143624377515058}
