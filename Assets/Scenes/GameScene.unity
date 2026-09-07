@@ -1795,7 +1795,7 @@ MonoBehaviour:
   notesPool: {fileID: 951272537}
   dragnotesPool: {fileID: 72391356}
   spawnOffset: 20
-  scrollSpeed: 9
+  scrollSpeed: 10
   travelTime: 20
 --- !u!114 &1224723824
 MonoBehaviour:
@@ -2499,6 +2499,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 449967267237875073, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 1309234741381269548, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.66

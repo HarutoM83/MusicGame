@@ -31,7 +31,7 @@ public class LongNotes:Notes
         dropTimer = 0f;
         tickTimer = 0f;
 
-        // holdDurationがデータから取得できる場合はここで代入（例: data.holdDuration など）
+        // holdDurationがデータから取得できる場合はここで代入
         // holdDuration = data.holdDuration;
 
         // LineRendererの初期化
@@ -70,10 +70,10 @@ public class LongNotes:Notes
     {
         if (lineRenderer == null) return;
 
-        // 1. 始点（ヘッド）の現在地
+        // 始点（ヘッド）の現在地
         Vector3 headPos = transform.position;
 
-        // 2. 終点（テイル）の現在地を計算
+        // 終点（テイル）の現在地を計算
         // テイルが判定ラインに到達する時間は「hitTime + holdDuration」
         float tailHitTime = hitTime + holdDuration;
         float remainTailTime = tailHitTime - music.time;
@@ -88,8 +88,6 @@ public class LongNotes:Notes
         // 3D空間上のテイルの位置を計算（ヘッドと同じ移動経路上に配置）
         Vector3 tailPos = spawnPosition + (judgePosition - spawnPosition) * tailProgress;
 
-        // もし「ヘッドがすでに判定ラインに到達して止まっている」場合の処理：
-        // ヘッドが判定ラインを超えて進まないようにしている場合、ヘッドの位置を固定してテイル側が縮むように表現することも可能です。
         if (headPos.z < judgePosition.z)
         {
             // ヘッドがまだ判定ライン手前ならそのまま
@@ -153,7 +151,6 @@ public class LongNotes:Notes
             OnHoldTick();
         }
     }
-
     protected virtual void OnHoldTick()
     {
         Debug.Log("ホールドコンボ加算！");

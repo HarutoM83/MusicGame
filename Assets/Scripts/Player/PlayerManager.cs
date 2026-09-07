@@ -87,6 +87,18 @@ public class PlayerManager : MonoBehaviour
 
     }
 
+    public void MoveLeft(InputAction.CallbackContext context)
+    {
+        if (context.started) HitLane(8);
+
+    }
+
+    public void MoveRight(InputAction.CallbackContext context)
+    {
+        if (context.started) HitLane(8);
+
+    }
+
     void HitLane(int index)
     {
         Debug.Log("HitLane:" + index);

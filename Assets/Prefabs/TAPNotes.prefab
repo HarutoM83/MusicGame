@@ -346,18 +346,18 @@ MonoBehaviour:
   hitTime: 0
   pool: {fileID: 0}
   normalMat: {fileID: 2100000, guid: ad8317f3e52ddc0469f574254778862a, type: 2}
-  normallaneMat: {fileID: 2100000, guid: 3c9949993d45b6649bf824ec910d34da, type: 2}
+  normalLaneMat: {fileID: 0}
   EXMat: {fileID: 2100000, guid: 88dab6476de9d3c4aa836220968fab85, type: 2}
-  FlickMat: {fileID: 2100000, guid: bbe74ef7d80dd1f44a7ffe8f286386b5, type: 2}
-  FlicklaneMat: {fileID: 2100000, guid: 27d5ebb1bdc91de47b27c1d18810a449, type: 2}
+  skynotesMat: {fileID: 0}
+  skynotesLaneMat: {fileID: 0}
   sr: {fileID: 2743814236712779394}
   srl:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  scrollSpeed: 0
-  speed: 9
+  - {fileID: 8123128728297539944}
+  - {fileID: 8560092418364553040}
+  - {fileID: 7466816272712819075}
+  - {fileID: 8174562879926154185}
+  scrollSpeed: 1.5
+  speed: 10
   judgeZ: 5
   judgeLineZ: 0
   exPerfectPlusWindow: 0.02
@@ -365,11 +365,6 @@ MonoBehaviour:
   exGreatWindow: 0.08
   exGoodWindow: 0.1
   exBadWindow: 0.12
-  flickPerfectPlusWindow: 0.016
-  flickPerfectWindow: 0.027
-  flickGreatWindow: 0.058
-  flickGoodWindow: 0.089
-  flickBadWindow: 0.12
 --- !u!1 &7570101019635290652
 GameObject:
   m_ObjectHideFlags: 0

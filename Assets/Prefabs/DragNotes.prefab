@@ -346,14 +346,18 @@ MonoBehaviour:
   hitTime: 0
   pool: {fileID: 0}
   normalMat: {fileID: 2100000, guid: ad8317f3e52ddc0469f574254778862a, type: 2}
+  normalLaneMat: {fileID: 2100000, guid: 74664869a05b7e2478cd51d0049b4f4c, type: 2}
   EXMat: {fileID: 2100000, guid: 88dab6476de9d3c4aa836220968fab85, type: 2}
+  skynotesMat: {fileID: 2100000, guid: bbe74ef7d80dd1f44a7ffe8f286386b5, type: 2}
+  skynotesLaneMat: {fileID: 2100000, guid: 27d5ebb1bdc91de47b27c1d18810a449, type: 2}
   sr: {fileID: 5750291968756512866}
-  perfectplusWindow: 0.02
-  perfectWindow: 0.03
-  greatWindow: 0.06
-  goodWindow: 0.09
-  badWindow: 0.12
-  speed: 9
+  srl:
+  - {fileID: 1869638880753582438}
+  - {fileID: 4578096887941148736}
+  - {fileID: 4683465533020037254}
+  - {fileID: 3167092223275124826}
+  scrollSpeed: 10
+  speed: 10
   judgeZ: 5
   judgeLineZ: 0
 --- !u!1 &5873468980661040497

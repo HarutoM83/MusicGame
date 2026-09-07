@@ -8,11 +8,22 @@ public class DragNotes : Notes
     public override void Initialize(NotesData data, AudioSource audio, ObjectPool_Notes objectPool, Vector3 spawnPos, Vector3 judgePos, float speed)
     {
         base.Initialize(data, audio, objectPool, spawnPos, judgePos, speed);
+        if (data.type == "sky")
+        {
+            sr.material = skynotesMat;
+            srl[1].material = skynotesLaneMat;
+            srl[2].material = skynotesLaneMat;
+            srl[3].material = skynotesLaneMat;
+            srl[4].material = skynotesLaneMat;
+            spawnPos = new Vector3(spawnPos.x, spawnPos.y + 3f, spawnPos.z);
+            judgePos = new Vector3(judgePos.x, judgePos.y + 3f, judgePos.z);
+        }
         isProcessed = false;
     }
 
     protected override void FixedUpdate()
     {
+
         base.FixedUpdate(); // e‚ÌˆÚ“®ˆ—‚ğÀs
 
         if (!music || !music.isPlaying || isProcessed) return;

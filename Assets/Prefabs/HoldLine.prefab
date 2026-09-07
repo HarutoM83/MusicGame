@@ -161,10 +161,14 @@ MonoBehaviour:
   hitTime: 0
   pool: {fileID: 0}
   normalMat: {fileID: 0}
+  normalLaneMat: {fileID: 0}
   EXMat: {fileID: 2100000, guid: 88dab6476de9d3c4aa836220968fab85, type: 2}
+  skynotesMat: {fileID: 0}
+  skynotesLaneMat: {fileID: 0}
   sr: {fileID: 0}
+  srl: []
   scrollSpeed: 0
-  speed: 9
+  speed: 10
   judgeZ: 5
   judgeLineZ: 0
   holdDuration: 0

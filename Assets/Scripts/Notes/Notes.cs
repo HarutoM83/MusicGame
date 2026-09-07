@@ -10,10 +10,10 @@ public abstract class Notes : MonoBehaviour
     public float hitTime;
     public ObjectPool_Notes pool;
     public Material normalMat;
-    public Material normallaneMat;
+    public Material normalLaneMat;
     public Material EXMat;
-    public Material FlickMat;
-    public Material FlicklaneMat;
+    public Material skynotesMat;
+    public Material skynotesLaneMat;
     public Renderer sr;
     public Renderer[] srl;
     protected Vector3 spawnPosition;
@@ -27,7 +27,7 @@ public abstract class Notes : MonoBehaviour
     public virtual float badWindow { get; set; } = 0.12f;
 
 
-    public float speed = 9f;
+    public float speed = 10f;
     public float judgeZ = 5f;
     public float judgeLineZ;
 
@@ -50,20 +50,32 @@ public abstract class Notes : MonoBehaviour
 
         spawnPosition = spawnPos;
         judgePosition = judgePos;
-        scrollSpeed = speed;
+        scrollSpeed = speed * scrollSpeed;
         judgeLineZ = judgePos.z;
 
-        if (data.grade == "EX")
+        if (data.type == "tap")
+        {
+            sr.material = normalMat;
+            srl[1].material = normalLaneMat;
+            srl[2].material = normalLaneMat;
+            srl[3].material = normalLaneMat;
+            srl[4].material = normalLaneMat;
+        }
+        else if (data.grade == "ex")
         {
             sr.material = EXMat;
         }
-        if (data.grade == "Flick")
-        {
-            sr.material = FlickMat;
-        }
-        else
+        else if (data.grade == "drag")
         {
             sr.material = normalMat;
+            srl[1].material = normalLaneMat;
+            srl[2].material = normalLaneMat;
+            srl[3].material = normalLaneMat;
+            srl[4].material = normalLaneMat;
+        }
+        else if (data.grade == "dragEX")
+        {
+            sr.material = EXMat;
         }
     }
 
@@ -96,7 +108,6 @@ public abstract class Notes : MonoBehaviour
             progress;
 
         transform.position = pos;
-
 
         if (transform.position.z < resetnotes)
         {

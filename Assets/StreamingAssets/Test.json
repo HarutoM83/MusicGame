@@ -1,0 +1,36 @@
+{
+  "songName": "Test",
+  "bpm": 120,
+  "timeNumerator": 4,
+  "timeDenominator": 4,
+  "laneCount": 8,
+  "duration": 120,
+  "bpmChanges": [],
+  "notes": [
+    {
+      "type": "tap",
+      "lane": 0,
+      "time": 4
+    },
+    {
+      "type": "ex",
+      "lane": 1,
+      "time": 8,
+      "judgeWindow": 0.15,
+      "scoreMultiplierBonus": 0.5
+    },
+    {
+      "type": "drag",
+      "lane": 2,
+      "time": 10
+    },
+    {
+      "type": "sky",
+      "lane": 3,
+      "time": 12,
+      "x": 0,
+      "y": 0,
+      "z": 0
+    }
+  ]
+}
