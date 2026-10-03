@@ -43,9 +43,7 @@ public class ScoreManager : MonoBehaviour
         else
         {
             Debug.LogError("総ノーツ数(totalNotes)が0、または設定されていません！");
-            perfectBaseScore = 1000f; // エラー防止のデフォルト値
         }
-
         UpdateUI();
     }
 
@@ -108,6 +106,7 @@ public class ScoreManager : MonoBehaviour
             else
             {
                 comboText.text = currentCombo.ToString();
+                Debug.Log("コンボテキストに代入された文字: " + comboText.text); // ← ここを追加
                 UpdateComboColor();
             }
         }
@@ -122,22 +121,20 @@ public class ScoreManager : MonoBehaviour
     }
     private void UpdateComboColor()
     {
+        Debug.Log("現在のコンボ数: " + currentCombo);
         if (lastJudgment == "Perfect+")
         {
             comboText.color = Color.blue;
         }
+        /*
         else if (lastJudgment == "Perfect")
         {
             comboText.color = Color.yellow;
         }
+        */
         else
         {
-            comboText.color = Color.gray;
-        }
-        // 100コンボ以上
-        if (currentCombo >= 100)
-        {
-            comboText.color = Color.orange;
+            comboText.color = Color.white;
         }
     }
 

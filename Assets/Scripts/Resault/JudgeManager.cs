@@ -102,29 +102,43 @@ public class JudgeManager : MonoBehaviour
 
     void JudgeResult(Notes note, float diff)
     {
+        string judgmentStr = ""; // ”»’è•¶Žš—ñ
+
         if (diff <= note.perfectplusWindow)
         {
             Debug.Log("Perfect plus");
+            judgmentStr = "Perfect+"; // ScoreManager‚Ìcase‚ÆŠ®‘S‚É‡‚í‚¹‚é
         }
         else if (diff <= note.perfectWindow)
         {
             Debug.Log("Perfect");
+            judgmentStr = "Perfect";
         }
         else if (diff <= note.greatWindow)
         {
             Debug.Log("Great");
+            judgmentStr = "Great";
         }
         else if (diff <= note.goodWindow)
         {
             Debug.Log("Good");
+            judgmentStr = "Good";
         }
         else if (diff <= note.badWindow)
         {
             Debug.Log("Bad");
+            judgmentStr = "Bad";
         }
         else
         {
             Debug.Log("Miss");
+            judgmentStr = "Miss";
+        }
+
+        // š‚±‚±‚ÅScoreManager‚É”»’èŒ‹‰Ê‚ð“n‚·I
+        if (ScoreManager.Instance != null)
+        {
+            ScoreManager.Instance.AddJudgment(judgmentStr);
         }
 
         activeNotes.Remove(note);
