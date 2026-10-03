@@ -14,8 +14,7 @@ public class JudgeManager : MonoBehaviour
 
     void Awake()
     {
-        if (!music.isPlaying)
-            return;
+        // シングルトンの初期化を確実に実行する
         if (Instance != null)
         {
             Destroy(gameObject);
@@ -35,7 +34,6 @@ public class JudgeManager : MonoBehaviour
         return false;
     }
 
-    // 押されたとき・離されたときに呼び出す用のメソッド（必要に応じてInput処理から呼ぶ）
     public void PressLane(int lane)
     {
         if (lane >= 0 && lane < isLanePressed.Length)
@@ -50,11 +48,9 @@ public class JudgeManager : MonoBehaviour
 
     public void Judge(int lane)
     {
-        Debug.Log("activeNotes数:" + activeNotes.Count);
-        Debug.Log("Judge呼び出し lane:" + lane);
-        if (music == null)
+        if (music == null || !music.isPlaying)
         {
-            Debug.LogError("AudioSourceが設定されていません");
+            Debug.LogWarning("音楽が再生されていないか、AudioSourceが設定されていません");
             return;
         }
 
@@ -63,8 +59,9 @@ public class JudgeManager : MonoBehaviour
         Notes target = null;
         float bestDiff = float.MaxValue;
 
-        // 判定対象を探す
-        for (int i = activeNotes.Count - 1; i >= 0; i--)
+        // 判定対象を探す（古いノーツ（リストの前方）を優先するため、正順で走査する方が安全な場合が多いです）
+        // ただし削除の安全性を考慮して逆順にする場合は、一番古いものを選ぶ条件に調整します
+        for (int i = 0; i < activeNotes.Count; i++)
         {
             Notes note = activeNotes[i];
 
@@ -72,6 +69,7 @@ public class JudgeManager : MonoBehaviour
             if (note == null)
             {
                 activeNotes.RemoveAt(i);
+                i--; // インデックスのズレを調整
                 continue;
             }
 
@@ -79,13 +77,13 @@ public class JudgeManager : MonoBehaviour
             if (note.Lane != lane)
                 continue;
 
+            // まだ判定範囲に入っていない場合は無視
             if (songTime < note.hitTime - note.badWindow)
                 continue;
 
-            float diff =
-                Mathf.Abs(songTime - note.hitTime);
+            float diff = Mathf.Abs(songTime - note.hitTime);
 
-
+            // 最初に範囲内に入った（＝一番時間が古い）ノーツを優先、もしくは最もタイミングが近いものを選択
             if (diff < bestDiff)
             {
                 bestDiff = diff;
@@ -93,23 +91,17 @@ public class JudgeManager : MonoBehaviour
             }
         }
 
-
         // 対象なし
         if (target == null)
         {
             return;
         }
 
-
         JudgeResult(target, bestDiff);
     }
 
     void JudgeResult(Notes note, float diff)
     {
-        Debug.Log("JudgeResult到達 diff:" + diff);
-
-        bool isLate = music.time > note.hitTime;
-
         if (diff <= note.perfectplusWindow)
         {
             Debug.Log("Perfect plus");
@@ -136,8 +128,6 @@ public class JudgeManager : MonoBehaviour
         }
 
         activeNotes.Remove(note);
-
         note.Release();
     }
-
 }

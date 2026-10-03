@@ -34,12 +34,12 @@ public abstract class Notes : MonoBehaviour
     private bool isReleased = false;
 
     public virtual void Initialize(
-     NotesData data,
-     AudioSource audio,
-     ObjectPool_Notes objectPool,
-     Vector3 spawnPos,
-     Vector3 judgePos,
-     float speed)
+        NotesData data,
+        AudioSource audio,
+        ObjectPool_Notes objectPool,
+        Vector3 spawnPos,
+        Vector3 judgePos,
+        float speed)
     {
         isReleased = false;
         hitTime = data.time;
@@ -50,16 +50,32 @@ public abstract class Notes : MonoBehaviour
 
         spawnPosition = spawnPos;
         judgePosition = judgePos;
-        scrollSpeed = speed * scrollSpeed;
+
+        // 【注意】ここで元のコードだと `scrollSpeed = speed * scrollSpeed;` になっており、
+        // インスペクターの設定次第で速度が倍々に増えてしまう可能性があるため、修正
+        scrollSpeed = speed;
+
         judgeLineZ = judgePos.z;
 
+        // --- ★ここを追加：生成時にJudgeManagerのリストに登録する---
+        if (JudgeManager.Instance != null)
+        {
+            if (!JudgeManager.Instance.activeNotes.Contains(this))
+            {
+                JudgeManager.Instance.activeNotes.Add(this);
+            }
+        }
+
+        // ----------------------------------------------------
+
+        // （以降の見た目の処理はそのまま）
         if (data.type == "tap")
         {
             sr.material = normalMat;
+            srl[0].material = normalLaneMat;
             srl[1].material = normalLaneMat;
             srl[2].material = normalLaneMat;
             srl[3].material = normalLaneMat;
-            srl[4].material = normalLaneMat;
         }
         else if (data.grade == "ex")
         {
@@ -68,10 +84,10 @@ public abstract class Notes : MonoBehaviour
         else if (data.grade == "drag")
         {
             sr.material = normalMat;
+            srl[0].material = normalLaneMat;
             srl[1].material = normalLaneMat;
             srl[2].material = normalLaneMat;
             srl[3].material = normalLaneMat;
-            srl[4].material = normalLaneMat;
         }
         else if (data.grade == "dragex")
         {
@@ -80,10 +96,10 @@ public abstract class Notes : MonoBehaviour
         else if (data.type == "sky")
         {
             sr.material = skynotesMat;
+            srl[0].material = skynotesLaneMat;
             srl[1].material = skynotesLaneMat;
             srl[2].material = skynotesLaneMat;
             srl[3].material = skynotesLaneMat;
-            srl[4].material = skynotesLaneMat;
         }
     }
 

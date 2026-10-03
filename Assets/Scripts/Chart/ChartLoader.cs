@@ -25,7 +25,7 @@ public class ChartLoader : MonoBehaviour
 
     void Start()
     {
-        string path = Path.Combine(Application.streamingAssetsPath, "Song01.json");
+        string path = Path.Combine(Application.streamingAssetsPath, "Test.json");
 
         string json = File.ReadAllText(path);
 
@@ -73,7 +73,7 @@ public class ChartLoader : MonoBehaviour
         // 例: ノーツのタイプに応じて使用するプールを切り替える
         ObjectPool_Notes targetPool = notesPool;
 
-        if (data.type == "Drag") // チャートデータの仕様に合わせて条件を変更してください
+        if ((data.type == "drag")|| (data.grade == "dragex"))// チャートデータの仕様に合わせて条件を変更してください
         {
             targetPool = dragnotesPool;
         }
