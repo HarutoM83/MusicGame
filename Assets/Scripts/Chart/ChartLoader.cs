@@ -30,6 +30,23 @@ public class ChartLoader : MonoBehaviour
         string json = File.ReadAllText(path);
 
         chart = JsonUtility.FromJson<ChartData>(json);
+
+        // ★ ここでJSONから読み込んだ最大コンボ数を ScoreManager にセットする
+        if (ScoreManager.Instance != null && chart != null)
+        {
+            ScoreManager.Instance.maxChartCombo = chart.maxPossibleCombo;
+
+            // 【保険】もし古いJSONなどで maxPossibleCombo が 0 になっている場合は、
+            // 自動的にノーツの数（notes.Count）を代入するようにしておくと安全です
+            if (chart.maxPossibleCombo == 0 && chart.notes != null)
+            {
+                ScoreManager.Instance.maxChartCombo = chart.notes.Count;
+            }
+        }
+        else
+        {
+            Debug.LogWarning("ScoreManager.Instance または chart が見つかりませんでした。");
+        }
     }
     public void StartGame()
     {
