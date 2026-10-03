@@ -19,6 +19,7 @@ public class ChartData
     public float bpm;
     public float offset;
     public float scrollSpeed;
+    public int maxPossibleCombo;
 
     public List<NotesData> notes;
 }

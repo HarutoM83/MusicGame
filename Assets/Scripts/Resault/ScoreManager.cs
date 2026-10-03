@@ -12,15 +12,15 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private TMP_Text scoreText;
 
     // ゲーム中のリアルタイムデータ
-    private float currentScore = 0f; // ★計算精度のためfloatで保持
+    private float currentScore = 0f; // 計算精度のためfloatで保持
     private int currentCombo = 0;
-    private int maxCombo = 0;
+    private int maxCombo = 0; // プレイヤーが実際に達成した最大コンボ
 
     // 各判定のカウント
     private int pPlus, perfect, great, good, bad, miss;
 
     [Header("譜面データ（ゲーム開始時に設定）")]
-    public int totalNotes = 0; // ★その曲の総ノーツ数（例: 500個）
+    public int maxChartCombo = 0; // ★ 変更：その曲の最大コンボ数（総ノーツ数）
 
     // 1ノーツあたりの配点（自動計算される）
     private float perfectBaseScore = 0f;
@@ -32,17 +32,17 @@ public class ScoreManager : MonoBehaviour
 
     void Start()
     {
-       // if (GameResultData.Instance != null) GameResultData.Instance.ClearData();
+        // if (GameResultData.Instance != null) GameResultData.Instance.ClearData();
 
-        // ★最重要: 1ノーツあたりのPerfectの配点を計算
-        if (totalNotes > 0)
+        // ★ 最重要: 1コンボ（1ノーツ）あたりのPerfectの配点を計算
+        if (maxChartCombo > 0)
         {
-            // 1,000,000点 を 総ノーツ数で割る
-            perfectBaseScore = 1000000f / totalNotes;
+            // 1,000,000点 を 最大コンボ数で割る
+            perfectBaseScore = 1000000f / maxChartCombo;
         }
         else
         {
-            Debug.LogError("総ノーツ数(totalNotes)が0、または設定されていません！");
+            Debug.LogError("最大コンボ数(maxChartCombo)が0、または設定されていません！");
         }
         UpdateUI();
     }
@@ -55,33 +55,31 @@ public class ScoreManager : MonoBehaviour
             case "Perfect+":
                 pPlus++;
                 currentCombo++;
-                // ★Perfectの1.01倍の点数（全てこれなら101万点になる）
                 currentScore += perfectBaseScore * 1.01f;
                 break;
 
             case "Perfect":
                 perfect++;
                 currentCombo++;
-                // ★ベース配点（全てこれならちょうど100万点になる）
                 currentScore += perfectBaseScore;
                 break;
 
             case "Great":
                 great++;
                 currentCombo++;
-                currentScore += perfectBaseScore * 0.7f; // Perfectの70%の点数
+                currentScore += perfectBaseScore * 0.7f;
                 break;
 
             case "Good":
                 good++;
                 currentCombo = 0;
-                currentScore += perfectBaseScore * 0.4f; // Perfectの40%の点数
+                currentScore += perfectBaseScore * 0.4f;
                 break;
 
             case "Bad":
                 bad++;
                 currentCombo = 0;
-                currentScore += perfectBaseScore * 0.1f; // Perfectの10%の点数
+                currentScore += perfectBaseScore * 0.1f;
                 break;
 
             case "Miss":
@@ -106,43 +104,46 @@ public class ScoreManager : MonoBehaviour
             else
             {
                 comboText.text = currentCombo.ToString();
-                Debug.Log("コンボテキストに代入された文字: " + comboText.text); // ← ここを追加
+                Debug.Log("コンボテキストに代入された文字: " + comboText.text);
                 UpdateComboColor();
             }
         }
 
         if (scoreText != null)
         {
-            // ★表示するときは Mathf.RoundToInt で四捨五入して整数にする
-            // 計算途中の小数点以下のズレで、最後に1点ズレるのを防ぎます
             int displayScore = Mathf.RoundToInt(currentScore);
             scoreText.text = displayScore.ToString();
         }
     }
+
     private void UpdateComboColor()
     {
         Debug.Log("現在のコンボ数: " + currentCombo);
-        if (lastJudgment == "Perfect+")
+        // コンボが途切れていない場合（1以上のとき）
+        if (currentCombo > 0)
         {
-            comboText.color = Color.blue;
+            // 最後の判定によって色を変える例
+            if (lastJudgment == "Perfect+")
+            {
+                comboText.color = new Color(0.0f, 0.8f, 1.0f, 1.0f); // 水色
+            }
+            else
+            {
+                comboText.color = Color.yellow; // 通常のコンボ継続時は黄色にする例
+            }
         }
-        /*
-        else if (lastJudgment == "Perfect")
-        {
-            comboText.color = Color.yellow;
-        }
-        */
         else
         {
+            // コンボが途切れている（通常、ここに来る前に text が空になりますが念のため）
             comboText.color = Color.white;
         }
     }
 
     public void OnSongFinished()
-    {/*
+    {
+        /*
         if (GameResultData.Instance != null)
         {
-            // ★リザルトデータに渡すときも整数に変換して渡す
             GameResultData.Instance.score = Mathf.RoundToInt(currentScore);
             GameResultData.Instance.maxCombo = maxCombo;
             GameResultData.Instance.perfectPlusCount = pPlus;
