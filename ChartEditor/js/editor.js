@@ -82,21 +82,19 @@ function getBeatPerMeasure() {
 }
 
 function getBpmChanges() {
-    if (chart.bpmChanges && chart.bpmChanges.length > 0) {
-        return [...chart.bpmChanges].sort((a, b) => a.time - b.time);
+    let baseBpm = Number(document.getElementById("bpm").value) || 120;
+    let changes = chart.bpmChanges ? [...chart.bpmChanges] : [];
+    
+    if (!changes.some(b => Math.abs(b.time) < 0.001)) {
+        changes.unshift({ time: 0, bpm: baseBpm });
     }
-    const currentBpm = Number(document.getElementById("bpm").value) || 120;
-    return [{ time: 0, bpm: currentBpm }];
+    return changes.sort((a, b) => a.time - b.time);
 }
 
 function timeToY(time) {
     let y = 30; // 下部余白
     let changes = getBpmChanges();
-    if (changes[0].time > 0) {
-        changes = [{ time: 0, bpm: Number(document.getElementById("bpm").value) || 120 }, ...changes];
-    }
-
-    let baseBpm = 120;
+    let baseBpm = Number(document.getElementById("bpm").value) || 120;
     let pps = pixelsPerSecond;
 
     for (let i = 0; i < changes.length; i++) {
@@ -123,11 +121,7 @@ function yToTime(y) {
     if (y <= 30) return 0;
     let targetY = y - 30;
     let changes = getBpmChanges();
-    if (changes[0].time > 0) {
-        changes = [{ time: 0, bpm: Number(document.getElementById("bpm").value) || 120 }, ...changes];
-    }
-
-    let baseBpm = 120;
+    let baseBpm = Number(document.getElementById("bpm").value) || 120;
     let pps = pixelsPerSecond;
     let accumulatedY = 0;
 
@@ -259,6 +253,7 @@ function addBpmChangeAtCurrent() {
     const time = Math.round(yToTime(Math.max(0, targetY)) * 100) / 100;
     const newBpm = Number(document.getElementById("newBpmInput").value) || 180;
 
+    if (!chart.bpmChanges) chart.bpmChanges = [];
     const existing = chart.bpmChanges.find(b => Math.abs(b.time - time) < 0.05);
     if (existing) {
         existing.bpm = newBpm;
@@ -271,7 +266,7 @@ function addBpmChangeAtCurrent() {
 }
 
 /* =========================================================
-   譜面描画
+   譜面描画（誤差蓄積を完全排除した小節・グリッド描画版）
 ========================================================= */
 function renderChart() {
     if (!timeline) return;
@@ -281,13 +276,14 @@ function renderChart() {
     const timelineWidth = laneWidth * laneCount;
     timeline.style.width = timelineWidth + "px";
 
-    const minutes = Number(document.getElementById("songMinutes").value) || 0;
+    const minutes = Number(document.getElementById("songMinutes").value) || 2;
     const seconds = Number(document.getElementById("songSeconds").value) || 0;
     const totalSeconds = (minutes * 60) + seconds;
-    const maxTime = Math.max(10, totalSeconds);
+    const maxTime = Math.max(30, totalSeconds);
 
-    timeline.style.height = timeToY(maxTime) + 50 + "px";
+    timeline.style.height = timeToY(maxTime) + 100 + "px";
 
+    // レーン線の描画
     for (let i = 0; i <= laneCount; i++) {
         const laneLine = document.createElement("div");
         laneLine.className = "laneLine";
@@ -296,52 +292,69 @@ function renderChart() {
     }
 
     const changes = getBpmChanges();
-    if (changes[0].time > 0) changes.unshift({ time: 0, bpm: changes[0].bpm });
-
     const division = Number(document.getElementById("gridDivision").value) || 16;
+    const beatsPerMeasure = getBeatPerMeasure();
 
+    // 各BPMセグメントごとに処理
     for (let i = 0; i < changes.length; i++) {
         let segStart = changes[i].time;
         let segBpm = changes[i].bpm;
         let segEnd = (i < changes.length - 1) ? changes[i + 1].time : maxTime;
 
         let secPerBeat = 60 / segBpm;
-        let secPerMeasure = secPerBeat * getBeatPerMeasure();
-        let gridInterval = secPerBeat * (4 / division);
+        let secPerMeasure = secPerBeat * beatsPerMeasure;
+        let subInterval = secPerBeat * (4 / division);
+        let subsPerMeasure = Math.round(secPerMeasure / subInterval);
 
-        let t = segStart;
-        while (t <= segEnd && t <= maxTime) {
-            const y = timeToY(t);
-            
-            const isMeasureStart = Math.abs((t % secPerMeasure)) < 0.01 || Math.abs(t - segStart) < 0.001;
-            const isBeatStart = Math.abs((t % secPerBeat)) < 0.01;
+        // このセグメントが含まれる小節の範囲を算出
+        let startMeasure = Math.floor(segStart / secPerMeasure);
+        let endMeasure = Math.ceil(segEnd / secPerMeasure);
 
-            const line = document.createElement("div");
-            if (isMeasureStart) {
-                line.className = "measureLine";
-            } else if (isBeatStart) {
-                line.className = "beatLine";
-            } else {
-                line.className = "gridSubLine";
+        for (let m = startMeasure; m <= endMeasure; m++) {
+            let measureStartTime = m * secPerMeasure;
+
+            // この小節内の各グリッド位置を整数倍で計算（誤差を出さない）
+            for (let sub = 0; sub < subsPerMeasure; sub++) {
+                let t = measureStartTime + (sub * subInterval);
+
+                // セグメントの範囲内、かつ maxTime 以内であれば描画
+                if (t >= segStart - 0.0001 && t < segEnd && t <= maxTime) {
+                    const y = timeToY(t);
+
+                    let isMeasureStart = (sub === 0);
+                    let isBeatStart = (sub % (division / 4) === 0);
+
+                    if (isMeasureStart) {
+                        const measureLine = document.createElement("div");
+                        measureLine.className = "measureLine";
+                        measureLine.style.bottom = y + "px";
+                        measureLine.style.width = timelineWidth + "px";
+                        timeline.appendChild(measureLine);
+
+                        const label = document.createElement("div");
+                        label.className = "timeLabel";
+                        label.style.bottom = (y - 8) + "px";
+                        label.textContent = `${m + 1}小節`;
+                        timeline.appendChild(label);
+                    } else if (isBeatStart) {
+                        const beatLine = document.createElement("div");
+                        beatLine.className = "beatLine";
+                        beatLine.style.bottom = y + "px";
+                        beatLine.style.width = timelineWidth + "px";
+                        timeline.appendChild(beatLine);
+                    } else {
+                        const subLine = document.createElement("div");
+                        subLine.className = "gridSubLine";
+                        subLine.style.bottom = y + "px";
+                        subLine.style.width = timelineWidth + "px";
+                        timeline.appendChild(subLine);
+                    }
+                }
             }
-
-            line.style.bottom = y + "px";
-            line.style.width = timelineWidth + "px";
-            timeline.appendChild(line);
-
-            if (isMeasureStart) {
-                const label = document.createElement("div");
-                label.className = "timeLabel";
-                label.style.bottom = (y - 8) + "px";
-                let measureNum = Math.round(t / secPerMeasure) + 1;
-                label.textContent = `${measureNum}小節`;
-                timeline.appendChild(label);
-            }
-            
-            t += gridInterval;
         }
     }
 
+    // BPM変更ラインの描画
     if (chart.bpmChanges && chart.bpmChanges.length > 0) {
         chart.bpmChanges.forEach((change) => {
             const y = timeToY(change.time);
@@ -367,13 +380,11 @@ function renderChart() {
         });
     }
 
-    chart.notes.forEach((note, index) => {
-        renderNote(note, index, laneWidth);
-    });
-
-    const wrapper = document.getElementById("editorWrapper");
-    if (wrapper && wrapper.scrollTop === 0) {
-        wrapper.scrollTop = timeline.scrollHeight;
+    // ノーツの描画
+    if (chart.notes && chart.notes.length > 0) {
+        chart.notes.forEach((note, index) => {
+            renderNote(note, index, laneWidth);
+        });
     }
 }
 
@@ -696,7 +707,7 @@ if (bgmPlayer) {
 }
 
 /* =========================================================
-   初期実行
+   initial execution
 ========================================================= */
 createNoteButtons();
 renderChart();
