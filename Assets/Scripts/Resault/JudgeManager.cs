@@ -1,5 +1,7 @@
-using UnityEngine;
+using System.Collections; // コルーチンを使うために必要
 using System.Collections.Generic;
+using TMPro; // TextMeshProを使う場合
+using UnityEngine;
 
 [DefaultExecutionOrder(-100)]
 public class JudgeManager : MonoBehaviour
@@ -8,6 +10,19 @@ public class JudgeManager : MonoBehaviour
 
     public AudioSource music;
     public List<Notes> activeNotes = new List<Notes>();
+
+    [SerializeField] private TextMeshProUGUI judgmentTextUI; // ★ 判定を表示するテキスト
+
+    [Header("判定ごとの色設定")]
+    [SerializeField] private Color pPlusColor = new Color(0.0f, 0.8f, 1.0f);
+    [SerializeField] private Color perfectColor = Color.yellow;
+    [SerializeField] private Color greatColor = new Color(1.0f, 0.4f, 0.7f);
+    [SerializeField] private Color goodColor = Color.yellowGreen;
+    [SerializeField] private Color badColor = Color.blue;
+    [SerializeField] private Color missColor = Color.gray;
+
+    // 非表示タイマー用のコルーチンを保持する変数
+    private Coroutine hideJudgmentCoroutine;
 
     // レーンが押されているかを保持する配列（例として4レーン分）
     private bool[] isLanePressed = new bool[4];
@@ -74,12 +89,10 @@ public class JudgeManager : MonoBehaviour
             }
 
             // 違うレーンは無視
-            if (note.Lane != lane)
-                continue;
+            if (note.Lane != lane)continue;
 
             // まだ判定範囲に入っていない場合は無視
-            if (songTime < note.hitTime - note.badWindow)
-                continue;
+            if (songTime < note.hitTime - note.badWindow)continue;
 
             float diff = Mathf.Abs(songTime - note.hitTime);
 
@@ -92,50 +105,39 @@ public class JudgeManager : MonoBehaviour
         }
 
         // 対象なし
-        if (target == null)
-        {
-            return;
-        }
+        if (target == null)return;
 
         JudgeResult(target, bestDiff);
     }
 
     void JudgeResult(Notes note, float diff)
     {
-        string judgmentStr = ""; // 判定文字列
+        string judgmentStr = "";
 
-        if (diff <= note.perfectplusWindow)
+        if (diff <= note.perfectplusWindow) judgmentStr = "Perfect+";
+        else if (diff <= note.perfectWindow) judgmentStr = "Perfect";
+        else if (diff <= note.greatWindow) judgmentStr = "Great";
+        else if (diff <= note.goodWindow) judgmentStr = "Good";
+        else if (diff <= note.badWindow) judgmentStr = "Bad";
+        else judgmentStr = "Miss";
+
+        // ★ 判定テキストの表示・色変更・非表示タイマーの処理
+        if (judgmentTextUI != null)
         {
-            Debug.Log("Perfect plus");
-            judgmentStr = "Perfect+"; // ScoreManagerのcaseと完全に合わせる
-        }
-        else if (diff <= note.perfectWindow)
-        {
-            Debug.Log("Perfect");
-            judgmentStr = "Perfect";
-        }
-        else if (diff <= note.greatWindow)
-        {
-            Debug.Log("Great");
-            judgmentStr = "Great";
-        }
-        else if (diff <= note.goodWindow)
-        {
-            Debug.Log("Good");
-            judgmentStr = "Good";
-        }
-        else if (diff <= note.badWindow)
-        {
-            Debug.Log("Bad");
-            judgmentStr = "Bad";
-        }
-        else
-        {
-            Debug.Log("Miss");
-            judgmentStr = "Miss";
+            judgmentTextUI.text = judgmentStr;
+            judgmentTextUI.color = GetJudgmentColor(judgmentStr); // 色を設定
+            judgmentTextUI.gameObject.SetActive(true);            // 表示する
+
+            // すでに動いている非表示タイマーがあればリセットする（連続で叩いたとき用）
+            if (hideJudgmentCoroutine != null)
+            {
+                StopCoroutine(hideJudgmentCoroutine);
+            }
+            // 0.5秒後にテキストを非表示にする
+            hideJudgmentCoroutine = StartCoroutine(HideJudgmentTextAfterDelay(0.5f));
         }
 
-        // ★ここでScoreManagerに判定結果を渡す！
+        // ScoreManagerに判定結果を渡す
         if (ScoreManager.Instance != null)
         {
             ScoreManager.Instance.AddJudgment(judgmentStr);
@@ -143,5 +145,31 @@ public class JudgeManager : MonoBehaviour
 
         activeNotes.Remove(note);
         note.Release();
+    }
+
+    // 判定ごとに色を返すメソッド
+    private Color GetJudgmentColor(string judgment)
+    {
+        switch (judgment)
+        {
+            case "Perfect+": return pPlusColor;
+            case "Perfect": return perfectColor;
+            case "Great": return greatColor;
+            case "Good": return goodColor;
+            case "Bad": return badColor;
+            case "Miss": return missColor;
+            default: return Color.white;
+        }
+    }
+
+    // 一定時間後にテキストオブジェクトを非表示にするコルーチン
+    private IEnumerator HideJudgmentTextAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (judgmentTextUI != null)
+        {
+            judgmentTextUI.gameObject.SetActive(false); // 非表示にする
+        }
     }
 }

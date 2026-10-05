@@ -4,12 +4,17 @@ using TMPro;
 
 public class ScoreManager : MonoBehaviour
 {
+    public JudgeManager judge;
     public static ScoreManager Instance;
     private string lastJudgment;
 
     [Header("UIテキスト（ゲーム画面用）")]
     [SerializeField] private TMP_Text comboText;
     [SerializeField] private TMP_Text scoreText;
+    [Header("コンボの文字色設定")]
+    [SerializeField] private Color pPlusComboColor = new Color(0.0f, 0.8f, 1.0f, 1.0f); // Perfect+時の水色（初期値）
+    [SerializeField] private Color normalComboColor = Color.yellow;                     // フルコンボ時の黄色（初期値）
+    [SerializeField] private Color defaultComboColor = Color.gray;　　　　　　　　　　　// コンボが切れた時の色（初期値）
 
     // ゲーム中のリアルタイムデータ
     private float currentScore = 0f; // 計算精度のためfloatで保持
@@ -125,17 +130,16 @@ public class ScoreManager : MonoBehaviour
             // 最後の判定によって色を変える例
             if (lastJudgment == "Perfect+")
             {
-                comboText.color = new Color(0.0f, 0.8f, 1.0f, 1.0f); // 水色
+                comboText.color = pPlusComboColor;
             }
             else
             {
-                comboText.color = Color.yellow; // 通常のコンボ継続時は黄色にする例
+                comboText.color = normalComboColor;
             }
         }
         else
         {
-            // コンボが途切れている（通常、ここに来る前に text が空になりますが念のため）
-            comboText.color = Color.white;
+            comboText.color = defaultComboColor;
         }
     }
 

@@ -6,7 +6,6 @@ using TMPro;
 
 public class ButtonManager : MonoBehaviour
 {
-    [SerializeField] private TimelineManager timelineManager;
     [SerializeField] GameObject MenuCanvas;
     [SerializeField] GameObject PauseCanvas;
     [SerializeField] GameObject OptionCanvas;
