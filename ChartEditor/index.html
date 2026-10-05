@@ -71,17 +71,6 @@ button.active {
     width: 600px;
     margin-left: 100px;
     background: #1b1b1b;
-    /* タイムライン全体を上下反転させ、奥から手前に流れるようにする */
-    transform: scaleY(-1);
-}
-
-/* 反転によって逆さになった文字やラベルを元に戻す */
-.timeLabel,
-.bpmChangeLabel,
-.note,
-.slide-line,
-.slide-point {
-    transform: scaleY(-1);
 }
 
 /* 小節線・拍線・レーン線 */
@@ -325,13 +314,11 @@ button.active {
         </select>
     </label>
 
-   <!-- 新しく追加：音声ファイル選択 ＆ 曲の長さ自動取得 -->
     <label>
         音源ファイル
         <input id="audioFileInput" type="file" accept="audio/*" style="width: 140px;">
     </label>
 
-    <!-- 内部データ維持用の隠しinput（JavaScriptから値を書き込むためidを残します） -->
     <input id="songMinutes" type="hidden" value="2">
     <input id="songSeconds" type="hidden" value="0">
     <audio id="bgmPlayer" style="display: none;"></audio>
@@ -360,6 +347,9 @@ button.active {
     <button onclick="setMode('delete')">削除</button>
     <button onclick="saveJSON()">JSON保存</button>
     <button onclick="loadJSON()">JSON読み込み</button>
+    <button onclick="togglePlay()">再生 / 一時停止</button>
+    <button onclick="stopAudio()">停止</button>
+    <span id="audioTimeDisplay" style="font-size: 13px; margin-left: 8px;">0.00 / 0.00</span>
 
     <input id="fileInput" type="file" accept=".json" style="display:none">
 </div>
@@ -380,6 +370,8 @@ button.active {
     <h3>ノーツ設定</h3>
     <div id="properties">ノーツを選択してください。</div>
 </div>
+
+<!-- JavaScriptの読み込みをここに移動しました -->
 <script src="js/editor.js"></script>
 </body>
 </html>
