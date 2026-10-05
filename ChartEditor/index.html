@@ -325,11 +325,16 @@ button.active {
         </select>
     </label>
 
+   <!-- 新しく追加：音声ファイル選択 ＆ 曲の長さ自動取得 -->
     <label>
-        曲の長さ
-        <input id="songMinutes" type="number" value="2" min="0" style="width: 40px;">分
-        <input id="songSeconds" type="number" value="0" min="0" max="59" style="width: 40px;">秒
+        音源ファイル
+        <input id="audioFileInput" type="file" accept="audio/*" style="width: 140px;">
     </label>
+
+    <!-- 内部データ維持用の隠しinput（JavaScriptから値を書き込むためidを残します） -->
+    <input id="songMinutes" type="hidden" value="2">
+    <input id="songSeconds" type="hidden" value="0">
+    <audio id="bgmPlayer" style="display: none;"></audio>
 
     <label>
         レーン

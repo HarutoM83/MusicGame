@@ -572,6 +572,61 @@ document.getElementById("songSeconds").onchange = renderChart;
 document.getElementById("gridDivision").onchange = renderChart;
 
 /* =========================================================
+   音声ファイルの自動読み込みと時間取得
+========================================================= */
+
+const audioFileInput = document.getElementById("audioFileInput");
+const bgmPlayer = document.getElementById("bgmPlayer");
+const songMinutesInput = document.getElementById("songMinutes");
+const songSecondsInput = document.getElementById("songSeconds");
+const audioDurationText = document.getElementById("audioDurationText");
+
+if (audioFileInput) {
+    audioFileInput.addEventListener("change", (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // ローカルファイルを再生可能なURLに変換
+        const fileURL = URL.createObjectURL(file);
+        bgmPlayer.src = fileURL;
+
+        // ファイル名を曲名として自動設定（お好みで）
+        const baseName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+        const songNameInput = document.getElementById("songName");
+        if (songNameInput) {
+            songNameInput.value = baseName;
+            chart.songName = baseName;
+        }
+    });
+}
+
+// 音声のメタデータ（長さなど）の読み込みが完了した瞬間
+if (bgmPlayer) {
+    bgmPlayer.addEventListener("loadedmetadata", () => {
+        const totalSeconds = bgmPlayer.duration;
+        
+        // 分と秒に分解
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = Math.round(totalSeconds % 60);
+
+        // input欄に自動反映
+        songMinutesInput.value = minutes;
+        songSecondsInput.value = seconds;
+
+        // 画面上のテキストを更新
+        if (audioDurationText) {
+            audioDurationText.textContent = `(${totalSeconds.toFixed(2)}秒)`;
+        }
+
+        // 譜面データとタイムライン描画を更新
+        chart.duration = totalSeconds;
+        renderChart();
+        
+        console.log(`音声ファイルを読み込みました。長さ: ${totalSeconds.toFixed(2)}秒`);
+    });
+}
+
+/* =========================================================
    JSON保存・読み込み
 ========================================================= */
 
