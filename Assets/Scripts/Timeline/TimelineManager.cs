@@ -3,17 +3,18 @@ using UnityEngine.Playables;
 
 public class TimelineManager : MonoBehaviour
 {
-    [SerializeField] private PlayableDirector director;
+    [SerializeField] private PlayableDirector MusicStartDirector;
     [SerializeField] private ChartLoader chartLoader;
 
     void Start()
     {
-        director.stopped += OnTimelineFinished;
-        director.Play();
+        MusicStartDirector.stopped += OnTimelineFinished;
+        MusicStartDirector.Play();
     }
 
-    void OnTimelineFinished(PlayableDirector director)
+    void OnTimelineFinished(PlayableDirector MusicStartDirector)
     {
         chartLoader.StartGame();
     }
+    
 }

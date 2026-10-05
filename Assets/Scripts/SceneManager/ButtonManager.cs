@@ -1,12 +1,17 @@
+using System.Collections; // コルーチンを使うために必要
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class ButtonManager : MonoBehaviour
 {
+    [SerializeField] private TimelineManager timelineManager;
     [SerializeField] GameObject MenuCanvas;
     [SerializeField] GameObject PauseCanvas;
     [SerializeField] GameObject OptionCanvas;
+
+    [SerializeField] private TMP_Text countdownText;      // カウントダウン用の数字Text（TextMeshProなら TextMeshProUGUI）
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -57,8 +62,38 @@ public class ButtonManager : MonoBehaviour
     public void OnReverseButtonClick()
     {
         MenuCanvas.SetActive(false);
-        Time.timeScale = 1f; // ゲームを再開
-        AudioListener.pause = false; // 音を再開する
+        // カウントダウン付きでタイムラインを再生するコルーチンを開始
+        StartCoroutine(ReverseCountdownRoutine());
+    }
+    private IEnumerator ReverseCountdownRoutine()
+    {
+        // 1. カウントダウン用テキストオブジェクトを有効化（表示する）
+        if (countdownText != null)
+        {
+            countdownText.gameObject.SetActive(true);
+        }
+
+        // 表示する文字の順番
+        string[] countdownTexts = { "3", "2", "1" };
+
+        foreach (string msg in countdownTexts)
+        {
+            if (countdownText != null)
+            {
+                countdownText.text = msg; // 1つのテキストを時間ごとに書き換える
+            }
+            // タイムスケールが0の可能性やポーズ中を考慮してリアルタイムで待機
+            yield return new WaitForSecondsRealtime(1.0f);
+        }
+
+        // 2. カウントダウン終了：テキストを非表示にする（閉じる）
+        if (countdownText != null)
+        {
+            countdownText.text = ""; // 文字を空にしておく（お好みで）
+            countdownText.gameObject.SetActive(false);
+            Time.timeScale = 1f; // ゲームを再開
+            AudioListener.pause = false; // 音を再開する
+        }
     }
     public void OnQuitButtonClick()
     {
@@ -72,7 +107,7 @@ public class ButtonManager : MonoBehaviour
     }
     public void OnOptionQuitButtonClick()
     {
-        OptionCanvas.SetActive(false);
+        OptionCanvas.SetActive(false); // オプション画面を閉じる
     }
     private void Retry()
     {
