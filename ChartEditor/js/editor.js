@@ -26,12 +26,12 @@ let chart = {
 ========================================================= */
 const NOTE_TYPES = {
     tap: { name: "通常", color: "#35a9ff", placement: "single" },
-    ex: { name: "EX", color: "#ffd83d", placement: "single", defaults: { judgeWindow: 0.15, scoreMultiplierBonus: 0.5 } },
     flick: { name: "フリック", color: "#9d5cff", placement: "single", defaults: { direction: "right" } },
     drag: { name: "ドラッグ", color: "#39e68c", placement: "single" },
     hold: { name: "ホールド", color: "#ff4d91", placement: "range" },
     slide: { name: "スライド", color: "#ff9d3d", placement: "slide" },
-    sky: { name: "スカイ", color: "#4de8ff", placement: "single", defaults: { x: 0, y: 0, z: 0 } }
+    sky: { name: "スカイ", color: "#4de8ff", placement: "single", defaults: { x: 0, y: 0, z: 0 } },
+    jump: { name: "ジャンプ", color: "#ff2a85", placement: "single", defaults: { direction: "up" } }
 };
 
 /* =========================================================
@@ -59,6 +59,15 @@ function createNoteButtons() {
 }
 
 function setMode(type) {
+    // 【追加】もし「すでに選択されているモード」をもう一度クリックした場合は解除（キャンセル）する
+    if (mode === type) {
+        mode = null; // または "none" など、配置できないモードにする
+        document.querySelectorAll("#noteButtons button").forEach(button => {
+            button.classList.remove("active");
+        });
+        return;
+    }
+
     mode = type;
     document.querySelectorAll("#noteButtons button").forEach(button => {
         button.classList.remove("active");
@@ -187,12 +196,15 @@ function getLane(x) {
    タイムライン イベント
 ========================================================= */
 if (timeline) {
+    // タイムラインの mousedown イベント内
     timeline.addEventListener("mousedown", event => {
+        // 【重要】modeがnull、または "delete" のときはノーツを新しく配置しない
+        if (!mode || mode === "delete") return;
+
         const pos = getMousePosition(event);
         const lane = getLane(pos.x);
 
         if (lane < 0 || lane >= laneCount) return;
-        if (mode === "delete") return;
 
         const config = NOTE_TYPES[mode];
         if (!config) return;
@@ -207,7 +219,10 @@ if (timeline) {
         }
     });
 
+    // タイムラインの mouseup イベント内
     timeline.addEventListener("mouseup", event => {
+        // 【追加】モードが解除されている（null）か、削除モードなら何もしない
+        if (!mode || mode === "delete") return;
         if (dragStart === null) return;
 
         const pos = getMousePosition(event);
@@ -400,7 +415,7 @@ function renderNote(note, index, laneWidth) {
             createSingleVisual(note, index, laneWidth, "note-ex");
             break;
         case "flick":
-            createSingleVisual(note, index, laneWidth, "note-flick");
+            createDirectionalVisual(note, index, laneWidth, "note-flick");
             break;
         case "drag":
             createSingleVisual(note, index, laneWidth, "note-drag");
@@ -414,6 +429,9 @@ function renderNote(note, index, laneWidth) {
         case "sky":
             createSkyVisual(note, index, laneWidth);
             break;
+        case "jump":
+            createJumpVisual(note, index, laneWidth);
+            break;
     }
 }
 
@@ -424,6 +442,13 @@ function createSingleVisual(note, index, laneWidth, className) {
     element.style.bottom = timeToY(note.time) + "px";
     element.style.width = (laneWidth - 20) + "px";
     
+    // 【追加】isExがtrueの場合、見た目をEX風（金色・光沢）に上書きする
+    if (note.isEx) {
+        element.style.background = "#ffd83d";
+        element.style.border = "2px solid #fff";
+        element.style.boxShadow = "0 0 8px #ffd83d";
+    }
+
     element.onclick = event => {
         event.stopPropagation();
         if (mode === "delete") {
@@ -443,6 +468,12 @@ function createHoldVisual(note, index, laneWidth) {
     element.style.bottom = timeToY(note.startTime) + "px";
     element.style.width = (laneWidth - 40) + "px";
     element.style.height = (timeToY(note.endTime) - timeToY(note.startTime)) + "px";
+
+    if (note.isEx) {
+        element.style.background = "#ffd83d";
+        element.style.border = "2px solid #fff";
+        element.style.boxShadow = "0 0 8px #ffd83d";
+    }
 
     element.onclick = event => {
         event.stopPropagation();
@@ -474,6 +505,13 @@ function createSlideVisual(note, index, laneWidth) {
     line.style.width = length + "px";
     line.style.transformOrigin = "0 50%";
     line.style.transform = `rotate(${angle}deg)`;
+
+    if (note.isEx) {
+            element.style.background = "#ffd83d";
+            element.style.border = "2px solid #fff";
+            element.style.boxShadow = "0 0 8px #ffd83d";
+        }
+
 
     line.onclick = event => {
         event.stopPropagation();
@@ -516,6 +554,89 @@ function createSkyVisual(note, index, laneWidth) {
     timeline.appendChild(element);
 }
 
+function createJumpVisual(note, index, laneWidth) {
+    const element = document.createElement("div");
+    element.className = "note";
+    element.style.left = (note.lane * laneWidth + 10) + "px";
+    element.style.bottom = timeToY(note.time) + "px";
+    element.style.width = (laneWidth - 20) + "px";
+    
+    element.style.height = "24px";
+    element.style.borderRadius = "5px";
+    element.style.border = "2px solid white";
+
+    // 【追加】方向ごとの色と矢印の設定
+    let arrow = "↑";
+    let noteColor = "#39ff14"; 
+    let glowColor = "#39ff14";
+
+    switch (note.direction) {
+        //上方向
+        case "up":
+            arrow = "↑";
+            noteColor = "#39ff14"; 
+            glowColor = "#39ff14";
+            break;
+        case "upleft":
+            arrow = "↖";
+            noteColor = "#39ff14"; 
+            glowColor = "#39ff14";
+            break;
+        case "upright":
+            arrow = "↗";
+            noteColor = "#39ff14"; 
+            glowColor = "#39ff14";
+            break;
+        //下方向
+        case "down":
+            arrow = "↓";
+            noteColor = "#ff2a85";
+            glowColor = "#ff2a85";
+            break;
+        case "downleft":
+            arrow = "↙";
+            noteColor = "#ff2a85";
+            glowColor = "#ff2a85";
+            break;
+        case "downright":
+            arrow = "↘";
+            noteColor = "#ff2a85";
+            glowColor = "#ff2a85";
+            break;
+        //左右
+        case "left":
+            arrow = "←";
+            noteColor = "#00e1ff";
+            glowColor = "#00e1ff";
+            break;
+        case "right":
+            arrow = "→";
+            noteColor = "#ff9d3d";
+            glowColor = "#ff9d3d";
+            break;
+    }
+
+    // 決定した色を適用
+    element.style.background = noteColor;
+    element.style.boxShadow = `0 0 10px ${glowColor}, 0 0 20px ${glowColor}`;
+
+    element.textContent = arrow;
+    element.style.textAlign = "center";
+    element.style.lineHeight = "20px";
+    element.style.fontWeight = "bold";
+    element.style.color = "white";
+
+    element.onclick = event => {
+        event.stopPropagation();
+        if (mode === "delete") {
+            chart.notes.splice(index, 1);
+            renderChart();
+            return;
+        }
+        selectNote(index);
+    };
+    timeline.appendChild(element);
+}
 /* =========================================================
    プロパティ設定
 ========================================================= */
@@ -526,30 +647,160 @@ function selectNote(index) {
 
 function showProperties(note) {
     if (!properties) return;
-    properties.innerHTML = "";
-    Object.keys(note).forEach(key => {
+    properties.innerHTML = `<h3>ノーツ設定 (${note.type.toUpperCase()})</h3>`;
+
+    // 共通項目：レーン（単体・ホールド・ジャンプなど）
+    if (note.lane !== undefined) {
+        addPropertyInput("レーン (0〜)", note.lane, (val) => {
+            let laneVal = Number(val);
+            if (!isNaN(laneVal) && laneVal >= 0 && laneVal < laneCount) {
+                note.lane = laneVal;
+                renderChart();
+            }
+        });
+    }
+
+    // スライド専用：開始レーン・終了レーン
+    if (note.startLane !== undefined) {
+        addPropertyInput("開始レーン", note.startLane, (val) => {
+            let v = Number(val);
+            if (!isNaN(v) && v >= 0 && v < laneCount) {
+                note.startLane = v;
+                renderChart();
+            }
+        });
+    }
+    if (note.endLane !== undefined) {
+        addPropertyInput("終了レーン", note.endLane, (val) => {
+            let v = Number(val);
+            if (!isNaN(v) && v >= 0 && v < laneCount) {
+                note.endLane = v;
+                renderChart();
+            }
+        });
+    }
+
+    // 時間項目：単体ノーツ (time)
+    if (note.time !== undefined) {
+        addPropertyInput("時間 (秒)", note.time, (val) => {
+            let t = Number(val);
+            if (!isNaN(t) && t >= 0) {
+                note.time = t;
+                renderChart();
+            }
+        }, "0.001");
+    }
+
+    // 時間項目：ホールド・スライドなど (startTime / endTime)
+    if (note.startTime !== undefined) {
+        addPropertyInput("開始時間 (秒)", note.startTime, (val) => {
+            let t = Number(val);
+            if (!isNaN(t) && t >= 0) {
+                note.startTime = t;
+                renderChart();
+            }
+        }, "0.001");
+    }
+    if (note.endTime !== undefined) {
+        addPropertyInput("終了時間 (秒)", note.endTime, (val) => {
+            let t = Number(val);
+            if (!isNaN(t) && t >= 0) {
+                note.endTime = t;
+                renderChart();
+            }
+        }, "0.001");
+    }
+
+    // 【追加】方向指定を持つノーツ（ジャンプノーツなど）の場合のセレクトボックス
+    if (note.direction !== undefined) {
         const wrapper = document.createElement("div");
         wrapper.className = "property";
 
         const label = document.createElement("label");
-        label.textContent = key;
+        label.textContent = "方向 (direction)";
 
-        const input = document.createElement("input");
-        input.value = note[key];
+        const select = document.createElement("select");
+        select.style.width = "100%";
+        select.style.background = "#333";
+        select.style.color = "white";
+        select.style.border = "1px solid #555";
+        select.style.padding = "7px";
 
-        input.onchange = () => {
-            let value = input.value;
-            if (value !== "" && !isNaN(value)) {
-                value = Number(value);
+        const directions = [
+            { value: "up", label: "上 (UP)" },
+            { value: "upleft", label: "左上 (UP-LEFT)" },
+            { value: "upright", label: "右上 (UP-RIGHT)" },
+            { value: "down", label: "下 (DOWN)" },
+            { value: "downleft", label: "左下 (DOWN-LEFT)" },
+            { value: "downright", label: "右下 (DOWN-RIGHT)" },
+            { value: "left", label: "左 (LEFT)" },
+            { value: "right", label: "右 (RIGHT)" }
+        ];
+
+        directions.forEach(dir => {
+            const option = document.createElement("option");
+            option.value = dir.value;
+            option.textContent = dir.label;
+            if (note.direction === dir.value) {
+                option.selected = true;
             }
-            note[key] = value;
-            renderChart();
+            select.appendChild(option);
+        });
+
+        select.onchange = () => {
+            note.direction = select.value;
+            renderChart(); // 変更時にタイムラインの矢印を即座に再描画
         };
 
         wrapper.appendChild(label);
-        wrapper.appendChild(input);
+        wrapper.appendChild(select);
         properties.appendChild(wrapper);
-    });
+    }
+
+    // フリック・スカイ・ジャンプ以外の場合のEX属性切り替えチェックボックス
+    if (note.type !== "flick" && note.type !== "sky" && note.type !== "jump" && note.type !== "hold" && note.type !== "slide") {
+        const exWrapper = document.createElement("div");
+        exWrapper.className = "property";
+
+        const exLabel = document.createElement("label");
+        exLabel.textContent = "EX属性";
+
+        const exCheckbox = document.createElement("input");
+        exCheckbox.type = "checkbox";
+        exCheckbox.style.width = "auto";
+        exCheckbox.checked = !!note.isEx;
+
+        exCheckbox.onchange = () => {
+            note.isEx = exCheckbox.checked;
+            renderChart();
+        };
+
+        exWrapper.appendChild(exLabel);
+        exWrapper.appendChild(exCheckbox);
+        properties.appendChild(exWrapper);
+    }
+}
+
+// プロパティ用の入力欄を簡単に追加するヘルパー関数（既存にある場合は不要）
+function addPropertyInput(labelText, value, callback, step = "1") {
+    const wrapper = document.createElement("div");
+    wrapper.className = "property";
+
+    const label = document.createElement("label");
+    label.textContent = labelText;
+
+    const input = document.createElement("input");
+    input.type = "number";
+    input.step = step;
+    input.value = value;
+
+    input.onchange = () => {
+        callback(input.value);
+    };
+
+    wrapper.appendChild(label);
+    wrapper.appendChild(input);
+    properties.appendChild(wrapper);
 }
 
 /* =========================================================
