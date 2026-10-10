@@ -29,9 +29,8 @@ public class ChartLoader : MonoBehaviour
 
         string json = File.ReadAllText(path);
 
+        // ChartLoader.cs ‚Ì Start“à‚É’Ç‰Á
         chart = JsonUtility.FromJson<ChartData>(json);
-
-        // ChartLoader.cs ‚Ì Start“à‚É’Ç‰Á        chart = JsonUtility.FromJson<ChartData>(json);
 
         if (chart != null)
         {
