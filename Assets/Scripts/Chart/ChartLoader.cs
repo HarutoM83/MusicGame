@@ -31,6 +31,23 @@ public class ChartLoader : MonoBehaviour
 
         chart = JsonUtility.FromJson<ChartData>(json);
 
+        // ChartLoader.cs の Start内に追加        chart = JsonUtility.FromJson<ChartData>(json);
+
+        if (chart != null)
+        {
+            // 最大コンボ数の設定
+            if (ScoreManager.Instance != null)
+            {
+                ScoreManager.Instance.maxChartCombo = chart.maxPossibleCombo > 0 ? chart.maxPossibleCombo : chart.notes.Count;
+            }
+
+            // ★ UIへ曲名や難易度、色彩を反映する
+            if (GameUIManager.Instance != null)
+            {
+                GameUIManager.Instance.SetupUI(chart);
+            }
+        }
+
         // ★ ここでJSONから読み込んだ最大コンボ数を ScoreManager にセットする
         if (ScoreManager.Instance != null && chart != null)
         {
@@ -47,6 +64,7 @@ public class ChartLoader : MonoBehaviour
         {
             Debug.LogWarning("ScoreManager.Instance または chart が見つかりませんでした。");
         }
+
     }
     public void StartGame()
     {
