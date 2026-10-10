@@ -1,0 +1,258 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #111;
+    color: white;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+/* =========================
+   ツールバー
+========================= */
+
+#toolbar {
+    height: 64px;
+    background: #222;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid #444;
+}
+
+#toolbar input,
+#toolbar select {
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    padding: 6px;
+}
+
+button {
+    background: #444;
+    color: white;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #666;
+}
+
+button.active {
+    background: #268cff;
+}
+
+/* =========================
+   エディタ
+========================= */
+
+#editorWrapper {
+    height: calc(100vh - 64px);
+    overflow: auto;
+    position: relative;
+}
+
+#timeline {
+    position: relative;
+    width: 600px;
+    margin-left: 100px;
+    background: #1b1b1b;
+}
+
+/* 小節線・拍線・レーン線 */
+
+.measureLine {
+    position: absolute;
+    left: 0;
+    height: 2px;
+    background: #777;
+    z-index: 2;
+}
+
+.beatLine {
+    position: absolute;
+    left: 0;
+    height: 1px;
+    background: #333;
+    z-index: 1;
+}
+
+.laneLine {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: #444;
+    z-index: 1;
+}
+
+.timeLabel {
+    position: absolute;
+    left: -90px;
+    width: 80px;
+    text-align: right;
+    color: #888;
+    font-size: 12px;
+}
+
+.bpmChangeLine {
+    position: absolute;
+    left: 0;
+    height: 3px;
+    background: #ff9d3d;
+    z-index: 3;
+}
+
+.bpmChangeLabel {
+    position: absolute;
+    right: -140px;
+    width: 130px;
+    text-align: left;
+    color: #ff9d3d;
+    font-size: 11px;
+    cursor: pointer;
+    background: rgba(0,0,0,0.6);
+    padding: 2px 4px;
+    border-radius: 3px;
+    z-index: 15;
+}
+.bpmChangeLabel:hover {
+    background: #ff9d3d;
+    color: black;
+}
+
+.gridSubLine {
+    position: absolute;
+    left: 0;
+    height: 1px;
+    background: #222;
+    z-index: 1;
+}
+
+/* =========================
+   共通ノーツ
+========================= */
+
+.note {
+    position: absolute;
+    z-index: 10;
+    cursor: pointer;
+}
+
+/* TAP */
+.note-tap {
+    height: 24px;
+    border-radius: 5px;
+    background: #ff3535;
+    border: 2px solid white;
+}
+
+/* EX */
+.note-ex {
+    height: 24px;
+    border-radius: 5px;
+    background: #ffd83d;
+    border: 3px solid #fff;
+    box-shadow: 0 0 10px #ffd83d, 0 0 20px #ffd83d;
+}
+
+/* HOLD */
+.note-hold {
+    background: #ff9100;
+    border: 2px solid white;
+    border-radius: 8px;
+}
+
+/* FLICK */
+.note-flick {
+    height: 24px;
+    border-radius: 5px;
+    background: #00e1ff;
+    border: 3px solid white;
+}
+
+/* DRAG */
+.note-drag {
+    height: 12px;
+    border-radius: 5px;
+    background: #ff3535;
+    border: 2px solid white;
+}
+
+/* SLIDE */
+.slide-line {
+    position: absolute;
+    height: 8px;
+    background: #0084ff;
+    border-radius: 8px;
+    transform-origin: 0 50%;
+    z-index: 5;
+}
+
+.slide-point {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid rgb(0, 38, 255);
+    z-index: 12;
+}
+
+/* SKY */
+.note-sky {
+    height: 12px;
+    border-radius: 5px;
+    background: #4400ff;
+    border: 3px solid white;
+    box-shadow: 0 0 10px #824dff, 0 0 30px #824dff;
+}
+
+/* =========================
+   設定パネル
+========================= */
+
+#propertyPanel {
+    position: fixed;
+    right: 0;
+    top: 64px;
+    width: 260px;
+    bottom: 0;
+    background: #202020;
+    border-left: 1px solid #444;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+#propertyPanel h3 {
+    margin-top: 0;
+}
+
+.property {
+    margin-bottom: 12px;
+}
+
+.property label {
+    display: block;
+    color: #aaa;
+    margin-bottom: 4px;
+}
+
+.property input,
+.property select {
+    width: 100%;
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    padding: 7px;
+}
+
+.hidden {
+    display: none;
+}
