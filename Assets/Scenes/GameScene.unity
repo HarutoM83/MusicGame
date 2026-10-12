@@ -2595,6 +2595,7 @@ MonoBehaviour:
   PerfectComboColor: {r: 0, g: 0.8, b: 1, a: 1}
   normalComboColor: {r: 0.9455871, g: 1, b: 0.118867874, a: 1}
   defaultComboColor: {r: 0.79622644, g: 0.79622644, b: 0.79622644, a: 1}
+  fadeOutWaitTime: 3
   maxChartCombo: 0
 --- !u!114 &1224723826
 MonoBehaviour:

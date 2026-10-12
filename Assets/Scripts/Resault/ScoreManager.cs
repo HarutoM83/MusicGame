@@ -1,43 +1,55 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Collections; // 追記: コルーチンを使用するために必要
+using System.Collections;
 
 public class ScoreManager : MonoBehaviour
 {
     public JudgeManager judge;
     public static ScoreManager Instance;
-    // private string lastJudgment; // 使わない場合は削除またはコメントアウト可能
 
     [Header("UIテキスト（ゲーム画面用）")]
     [SerializeField] private TMP_Text comboText;
     [SerializeField] private TMP_Text scoreText;
 
-    // ★ 追加：曲終了時に「All Perfect」や「Full Combo」を表示するテキスト
+    // 曲終了時に「All Perfect」や「Full Combo」を表示するテキスト
     [SerializeField] private TMP_Text resultStateText;
+
     [Header("コンボの文字色設定")]
-    [SerializeField] private Color PerfectComboColor = new Color(0.0f, 0.8f, 1.0f, 1.0f); // Perfect+のみの時（All Perfectなど）
-    [SerializeField] private Color normalComboColor = Color.yellow;                      // フルコンボ時（Good/Bad/Missはなし、Greatはあり等）
-    [SerializeField] private Color defaultComboColor = Color.gray;                       // コンボが切れた時の色
+    [SerializeField] private Color PerfectComboColor = new Color(0.0f, 0.8f, 1.0f, 1.0f);
+    [SerializeField] private Color normalComboColor = Color.yellow;
+    [SerializeField] private Color defaultComboColor = Color.gray;
+
+    [Header("終了後の演出設定")]
+    [SerializeField] private float fadeOutWaitTime = 2.0f; // 音楽が終わってからシーン遷移するまでの追加の余韻（秒）
 
     // ゲーム中のリアルタイムデータ
-    private float currentScore = 0f; // 計算精度のためfloatで保持
+    private float currentScore = 0f;
     private int currentCombo = 0;
-    private int maxCombo = 0; // プレイヤーが実際に達成した最大コンボ
+    private int maxCombo = 0;
 
     // 各判定のカウント
     private int pPlus, perfect, great, good, bad, miss;
 
+    // これまでに処理されたノーツの総数
+    private int processedNotesCount = 0;
+
     // フルコンボの状態を管理するフラグ
-    private bool isAllPerfectPlus = true; // 途中までずっと Perfect+ のみか
-    private bool isAllPerfect = true; // 途中までずっと Perfect のみか
-    private bool isFullCombo = true;      // 途中まで一度もコンボが途切れていないか
+    private bool isAllPerfectPlus = true;
+    private bool isAllPerfect = true;
+    private bool isFullCombo = true;
 
     [Header("譜面データ（ゲーム開始時に設定）")]
     public int maxChartCombo = 0; // その曲の最大コンボ数（総ノーツ数）
 
-    // 1ノーツあたりの配点（自動計算される）
+    // ChartLoader から受け取る BGM の AudioSource
+    private AudioSource bgmAudioSource;
+
+    // 1ノーツあたりの配点
     private float perfectBaseScore = 0f;
+
+    // 終了シーケンスの二重実行防止用フラグ
+    private bool isFinished = false;
 
     void Awake()
     {
@@ -54,11 +66,24 @@ public class ScoreManager : MonoBehaviour
         {
             Debug.LogError("最大コンボ数(maxChartCombo)が0、または設定されていません！");
         }
+
+        // 開始時は結果テキストを空にしておく
+        if (resultStateText != null) resultStateText.text = "";
+
         UpdateUI();
+    }
+
+    // ChartLoader から AudioSource を受け取るためのメソッド
+    public void SetAudioSource(AudioSource audioSource)
+    {
+        this.bgmAudioSource = audioSource;
     }
 
     public void AddJudgment(string judgment)
     {
+        // すでに終了シーケンスに入っていたら判定を受け付けない
+        if (isFinished) return;
+
         // 判定ごとの処理
         switch (judgment)
         {
@@ -72,7 +97,7 @@ public class ScoreManager : MonoBehaviour
                 perfect++;
                 currentCombo++;
                 currentScore += perfectBaseScore;
-                isAllPerfectPlus = false; // Perfect+以外が出たのでオールP+ではない
+                isAllPerfectPlus = false;
                 break;
 
             case "Great":
@@ -89,7 +114,7 @@ public class ScoreManager : MonoBehaviour
                 currentScore += perfectBaseScore * 0.4f;
                 isAllPerfectPlus = false;
                 isAllPerfect = false;
-                isFullCombo = false;      // コンボが切れたのでフルコンボではない
+                isFullCombo = false;
                 break;
 
             case "Bad":
@@ -104,7 +129,6 @@ public class ScoreManager : MonoBehaviour
             case "Miss":
                 miss++;
                 currentCombo = 0;
-                // 点数加算なし
                 isAllPerfectPlus = false;
                 isAllPerfect = false;
                 isFullCombo = false;
@@ -112,7 +136,48 @@ public class ScoreManager : MonoBehaviour
         }
 
         if (currentCombo > maxCombo) maxCombo = currentCombo;
+
+        // ノーツが1つ処理されるごとにカウントを増やす
+        processedNotesCount++;
+
         UpdateUI();
+
+        // 最後のノーツの判定が完了した瞬間
+        if (maxChartCombo > 0 && processedNotesCount >= maxChartCombo)
+        {
+            isFinished = true;
+            // コルーチンを起動して終了演出とシーン遷移を管理
+            StartCoroutine(HandleEndSequenceRoutine());
+        }
+    }
+
+    // ★ 曲が終わるのを待ってからシーン遷移するコルーチン
+    private IEnumerator HandleEndSequenceRoutine()
+    {
+        Debug.Log("すべてのノーツの判定が終了しました。結果を表示し、曲の終了を待ちます。");
+
+        //「ALL PERFECT」や「FULL COMBO」のテキストを表示する
+        PrepareResultText();
+
+        // AudioSource（BGM）が再生中なら、曲が完全に終わる（isPlaying が false になる）まで待つ
+        if (bgmAudioSource != null && bgmAudioSource.isPlaying)
+        {
+            while (bgmAudioSource.isPlaying)
+            {
+                yield return null; // 1フレームごとに再生中かチェック
+            }
+        }
+        else
+        {
+            // AudioSourceが設定されていない、またはすでに止まっている場合の保険
+            yield return new WaitForSeconds(3.0f);
+        }
+
+        //曲が終わったあとに、画面が暗転するまでの余韻タメ時間を挟む
+        yield return new WaitForSeconds(fadeOutWaitTime);
+
+        // 4. シーンを切り替える
+        OnTimelineLoadResultScene();
     }
 
     void UpdateUI()
@@ -139,23 +204,19 @@ public class ScoreManager : MonoBehaviour
 
     private void UpdateComboColor()
     {
-        // コンボが続いている場合
         if (currentCombo > 0)
         {
-            // これまでに「Perfect+とPerfect以外」を一度でも出していなければ水色
-            if (isAllPerfectPlus||isAllPerfect)
+            if (isAllPerfectPlus || isAllPerfect)
             {
                 comboText.color = PerfectComboColor;
             }
-            // フルコンボが継続中（Good/Bad/Missを出していない）なら黄色
             else if (isFullCombo)
             {
                 comboText.color = normalComboColor;
             }
-            // コンボは繋がっているが、過去にGood等でフルコンボが途絶えている場合の色
             else
             {
-                comboText.color = defaultComboColor; // 必要に応じて別の色や normalComboColor にしてください
+                comboText.color = defaultComboColor;
             }
         }
         else
@@ -164,7 +225,6 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    //パネルが出現した瞬間に文字をセットするメソッド
     public void PrepareResultText()
     {
         if (resultStateText != null)
@@ -181,7 +241,7 @@ public class ScoreManager : MonoBehaviour
             }
             else
             {
-                resultStateText.text = ""; // 該当なしなら何も表示しない
+                resultStateText.text = "";
             }
         }
     }
@@ -201,13 +261,9 @@ public class ScoreManager : MonoBehaviour
         }
         */
 
-    // 余韻が終わってシーンを切り替えるメソッド
+    // シーンを切り替えるメソッド
     public void OnTimelineLoadResultScene()
     {
-        // 例: リザルト画面へ遷移
-        //UnityEngine.SceneManagement.SceneManager.LoadScene("ResultScene");
-
-        // FadeManagerを使っている場合はこちら
-        FadeManager.Instance.LoadScene("ResultScene", 1f);
+        UnityEngine.SceneManagement.SceneManager.LoadScene("ResultScene");
     }
 }

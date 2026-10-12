@@ -50,7 +50,11 @@ public class ChartLoader : MonoBehaviour
         // ここでJSONから読み込んだ最大コンボ数を ScoreManager にセットする
         if (ScoreManager.Instance != null && chart != null)
         {
-            ScoreManager.Instance.maxChartCombo = chart.maxPossibleCombo;
+            //ScoreManager.Instance.maxChartCombo = chart.maxPossibleCombo;
+            ScoreManager.Instance.maxChartCombo = chart.maxPossibleCombo > 0 ? chart.maxPossibleCombo : chart.notes.Count;
+
+            // ScoreManager に AudioSource を登録する
+            ScoreManager.Instance.SetAudioSource(music);
 
             // 【保険】もし古いJSONなどで maxPossibleCombo が 0 になっている場合は、自動的にノーツの数（notes.Count）を代入するようにしておくと安全
             if (chart.maxPossibleCombo == 0 && chart.notes != null)
@@ -62,7 +66,6 @@ public class ChartLoader : MonoBehaviour
         {
             Debug.LogWarning("ScoreManager.Instance または chart が見つかりませんでした。");
         }
-
     }
     public void StartGame()
     {
@@ -134,5 +137,4 @@ public class ChartLoader : MonoBehaviour
             JudgeManager.Instance.activeNotes.Add(notes);
         }
     }
-
 }
