@@ -690,13 +690,13 @@ PlayableDirector:
   - key: {fileID: 0}
     value: {fileID: 0}
   - key: {fileID: 5126440854511649832, guid: d52be8a0280fdda4a80eb054e235a267, type: 2}
-    value: {fileID: 1224723826}
+    value: {fileID: 0}
   - key: {fileID: 4745102932083623299, guid: d52be8a0280fdda4a80eb054e235a267, type: 2}
     value: {fileID: 747835481}
   - key: {fileID: 0}
     value: {fileID: 0}
   - key: {fileID: 2666267488972524220, guid: d52be8a0280fdda4a80eb054e235a267, type: 2}
-    value: {fileID: 1224723826}
+    value: {fileID: 0}
   m_ExposedReferences:
     m_References: []
 --- !u!4 &298944252
@@ -1326,7 +1326,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &747835482
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1366,7 +1366,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2506,7 +2506,6 @@ GameObject:
   - component: {fileID: 1224723823}
   - component: {fileID: 1224723824}
   - component: {fileID: 1224723825}
-  - component: {fileID: 1224723826}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -2597,51 +2596,6 @@ MonoBehaviour:
   defaultComboColor: {r: 0.79622644, g: 0.79622644, b: 0.79622644, a: 1}
   fadeOutWaitTime: 3
   maxChartCombo: 0
---- !u!114 &1224723826
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1224723821}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e52de21a22b6dd44c9cc19f810c65059, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.SignalReceiver
-  m_Events:
-    m_Signals:
-    - {fileID: 11400000, guid: dca635598dd6ec0469782857cfc0ac22, type: 2}
-    - {fileID: 11400000, guid: 067e05d8c5fcd3f43a410d77a4b74f94, type: 2}
-    m_Events:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1224723825}
-          m_TargetAssemblyTypeName: ScoreManager, Assembly-CSharp
-          m_MethodName: PrepareResultText
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1224723825}
-          m_TargetAssemblyTypeName: ScoreManager, Assembly-CSharp
-          m_MethodName: OnTimelineLoadResultScene
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
 --- !u!1 &1271525304
 GameObject:
   m_ObjectHideFlags: 0
@@ -3762,6 +3716,10 @@ PrefabInstance:
     - target: {fileID: 2068873753592437144, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.66
+      objectReference: {fileID: 0}
+    - target: {fileID: 2200661980904358626, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
+      propertyPath: m_text
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2200661980904358626, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
       propertyPath: m_fontSize
