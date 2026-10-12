@@ -22,7 +22,7 @@ public class ChartData
     public string chartDesigner;　//ノーツデザイナー名
     public float offset;
     public float scrollSpeed;
-    public int maxPossibleCombo;
+    public int maxPossibleCombo; // 最大コンボ数
 
     public List<NotesData> notes;
 }

@@ -40,20 +40,19 @@ public class ChartLoader : MonoBehaviour
                 ScoreManager.Instance.maxChartCombo = chart.maxPossibleCombo > 0 ? chart.maxPossibleCombo : chart.notes.Count;
             }
 
-            // ★ UIへ曲名や難易度、色彩を反映する
+            // UIへ曲名や難易度、色彩を反映する
             if (GameUIManager.Instance != null)
             {
                 GameUIManager.Instance.SetupUI(chart);
             }
         }
 
-        // ★ ここでJSONから読み込んだ最大コンボ数を ScoreManager にセットする
+        // ここでJSONから読み込んだ最大コンボ数を ScoreManager にセットする
         if (ScoreManager.Instance != null && chart != null)
         {
             ScoreManager.Instance.maxChartCombo = chart.maxPossibleCombo;
 
-            // 【保険】もし古いJSONなどで maxPossibleCombo が 0 になっている場合は、
-            // 自動的にノーツの数（notes.Count）を代入するようにしておくと安全です
+            // 【保険】もし古いJSONなどで maxPossibleCombo が 0 になっている場合は、自動的にノーツの数（notes.Count）を代入するようにしておくと安全
             if (chart.maxPossibleCombo == 0 && chart.notes != null)
             {
                 ScoreManager.Instance.maxChartCombo = chart.notes.Count;
@@ -104,7 +103,7 @@ public class ChartLoader : MonoBehaviour
     
     void SpawnNote(NotesData data)
     {
-        // 例: ノーツのタイプに応じて使用するプールを切り替える
+        // ノーツのタイプに応じて使用するプールを切り替える
         ObjectPool_Notes targetPool = notesPool;
 
         if ((data.type == "drag")|| (data.grade == "dragex"))// チャートデータの仕様に合わせて条件を変更してください

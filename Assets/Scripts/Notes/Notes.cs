@@ -9,6 +9,7 @@ public abstract class Notes : MonoBehaviour
     public int Lane;
     public float hitTime;
     public ObjectPool_Notes pool;
+    [Header("ノーツごとのマテリアル設定")]
     public Material normalMat;
     public Material normalLaneMat;
     public Material EXMat;
@@ -16,6 +17,7 @@ public abstract class Notes : MonoBehaviour
     public Material skynotesLaneMat;
     public Renderer sr;
     public Renderer[] srl;
+
     protected Vector3 spawnPosition;
     protected Vector3 judgePosition;
     public float scrollSpeed;

@@ -28,7 +28,7 @@ public class ScoreManager : MonoBehaviour
     // 各判定のカウント
     private int pPlus, perfect, great, good, bad, miss;
 
-    // ★ 追加：フルコンボの状態を管理するフラグ
+    // フルコンボの状態を管理するフラグ
     private bool isAllPerfectPlus = true; // 途中までずっと Perfect+ のみか
     private bool isAllPerfect = true; // 途中までずっと Perfect のみか
     private bool isFullCombo = true;      // 途中まで一度もコンボが途切れていないか

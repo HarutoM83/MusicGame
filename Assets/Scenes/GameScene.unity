@@ -2591,7 +2591,7 @@ MonoBehaviour:
   judge: {fileID: 4073855793498850242}
   comboText: {fileID: 4925246526014813935}
   scoreText: {fileID: 1613978781320877076}
-  resultStateText: {fileID: 0}
+  resultStateText: {fileID: 747835483}
   PerfectComboColor: {r: 0, g: 0.8, b: 1, a: 1}
   normalComboColor: {r: 0.9455871, g: 1, b: 0.118867874, a: 1}
   defaultComboColor: {r: 0.79622644, g: 0.79622644, b: 0.79622644, a: 1}
