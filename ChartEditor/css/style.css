@@ -214,6 +214,28 @@ button.active {
     box-shadow: 0 0 10px #824dff, 0 0 30px #824dff;
 }
 
+/* JUMP */
+.note-jump {
+    height: 12px;
+    border-radius: 5px;
+    border: 2px solid white;
+    text-align: center;
+    line-height: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+/* 方向ごとの色と光彩（グロー効果） */
+.jump-up, .jump-upleft, .jump-upright {
+    background: #39ff14;
+    box-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14;
+}
+
+.jump-down, .jump-downleft, .jump-downright {
+    background: #ff2a85;
+    box-shadow: 0 0 10px #ff2a85, 0 0 20px #ff2a85;
+}
+
 /* =========================
    設定パネル
 ========================= */

@@ -25,13 +25,13 @@ let chart = {
    ノーツ定義
 ========================================================= */
 const NOTE_TYPES = {
-    tap: { name: "通常", color: "#35a9ff", placement: "single" },
-    flick: { name: "フリック", color: "#9d5cff", placement: "single", defaults: { direction: "right" } },
-    drag: { name: "ドラッグ", color: "#39e68c", placement: "single" },
-    hold: { name: "ホールド", color: "#ff4d91", placement: "range" },
-    slide: { name: "スライド", color: "#ff9d3d", placement: "slide" },
-    sky: { name: "スカイ", color: "#4de8ff", placement: "single", defaults: { x: 0, y: 0, z: 0 } },
-    jump: { name: "ジャンプ", color: "#ff2a85", placement: "single", defaults: { direction: "up" } }
+    tap: { name: "通常", placement: "single" },
+    flick: { name: "フリック", placement: "single"},
+    drag: { name: "ドラッグ", placement: "single" },
+    hold: { name: "ホールド", placement: "range" },
+    slide: { name: "スライド", placement: "slide" },
+    sky: { name: "スカイ",placement: "single", defaults: { x: 0, y: 0, z: 0 } },
+    jump: { name: "ジャンプ",placement: "single", defaults: { direction: "up" } }
 };
 
 /* =========================================================
@@ -415,7 +415,7 @@ function renderNote(note, index, laneWidth) {
             createSingleVisual(note, index, laneWidth, "note-ex");
             break;
         case "flick":
-            createDirectionalVisual(note, index, laneWidth, "note-flick");
+            createSingleVisual(note, index, laneWidth, "note-flick");
             break;
         case "drag":
             createSingleVisual(note, index, laneWidth, "note-drag");
@@ -427,7 +427,7 @@ function renderNote(note, index, laneWidth) {
             createSlideVisual(note, index, laneWidth);
             break;
         case "sky":
-            createSkyVisual(note, index, laneWidth);
+            createSingleVisual(note, index, laneWidth, "note-sky");
             break;
         case "jump":
             createJumpVisual(note, index, laneWidth);
@@ -435,6 +435,7 @@ function renderNote(note, index, laneWidth) {
     }
 }
 
+//単体ノーツ(タップ・フリック・ドラッグ・スカイなど)
 function createSingleVisual(note, index, laneWidth, className) {
     const element = document.createElement("div");
     element.className = "note " + className;
@@ -442,7 +443,6 @@ function createSingleVisual(note, index, laneWidth, className) {
     element.style.bottom = timeToY(note.time) + "px";
     element.style.width = (laneWidth - 20) + "px";
     
-    // 【追加】isExがtrueの場合、見た目をEX風（金色・光沢）に上書きする
     if (note.isEx) {
         element.style.background = "#ffd83d";
         element.style.border = "2px solid #fff";
@@ -461,6 +461,7 @@ function createSingleVisual(note, index, laneWidth, className) {
     timeline.appendChild(element);
 }
 
+//ホールドノーツ
 function createHoldVisual(note, index, laneWidth) {
     const element = document.createElement("div");
     element.className = "note note-hold";
@@ -487,6 +488,7 @@ function createHoldVisual(note, index, laneWidth) {
     timeline.appendChild(element);
 }
 
+//スライドノーツ
 function createSlideVisual(note, index, laneWidth) {
     const startX = note.startLane * laneWidth + laneWidth / 2;
     const endX = note.endLane * laneWidth + laneWidth / 2;
@@ -506,12 +508,12 @@ function createSlideVisual(note, index, laneWidth) {
     line.style.transformOrigin = "0 50%";
     line.style.transform = `rotate(${angle}deg)`;
 
+    // 【修正】elementではなく line に対してEXスタイルを適用
     if (note.isEx) {
-            element.style.background = "#ffd83d";
-            element.style.border = "2px solid #fff";
-            element.style.boxShadow = "0 0 8px #ffd83d";
-        }
-
+        line.style.background = "#ffd83d";
+        line.style.border = "2px solid #fff";
+        line.style.boxShadow = "0 0 8px #ffd83d";
+    }
 
     line.onclick = event => {
         event.stopPropagation();
@@ -535,96 +537,28 @@ function createSlidePoint(x, y, color) {
     timeline.appendChild(point);
 }
 
-function createSkyVisual(note, index, laneWidth) {
-    const element = document.createElement("div");
-    element.className = "note note-sky";
-    element.style.left = (note.lane * laneWidth + 10) + "px";
-    element.style.bottom = timeToY(note.time) + "px";
-    element.style.width = (laneWidth - 20) + "px";
-
-    element.onclick = event => {
-        event.stopPropagation();
-        if (mode === "delete") {
-            chart.notes.splice(index, 1);
-            renderChart();
-            return;
-        }
-        selectNote(index);
-    };
-    timeline.appendChild(element);
-}
-
 function createJumpVisual(note, index, laneWidth) {
     const element = document.createElement("div");
-    element.className = "note";
+    // CSSクラスでベーススタイルと方向ごとの色・光彩を適用
+    element.className = `note note-jump jump-${note.direction || "up"}`;
+    
     element.style.left = (note.lane * laneWidth + 10) + "px";
     element.style.bottom = timeToY(note.time) + "px";
     element.style.width = (laneWidth - 20) + "px";
-    
-    element.style.height = "24px";
-    element.style.borderRadius = "5px";
-    element.style.border = "2px solid white";
 
-    // 【追加】方向ごとの色と矢印の設定
-    let arrow = "↑";
-    let noteColor = "#39ff14"; 
-    let glowColor = "#39ff14";
+    // 方向ごとの矢印設定
+    const arrows = {
+        up: "↑", upleft: "↖", upright: "↗",
+        down: "↓", downleft: "↙", downright: "↘",
+    };
 
-    switch (note.direction) {
-        //上方向
-        case "up":
-            arrow = "↑";
-            noteColor = "#39ff14"; 
-            glowColor = "#39ff14";
-            break;
-        case "upleft":
-            arrow = "↖";
-            noteColor = "#39ff14"; 
-            glowColor = "#39ff14";
-            break;
-        case "upright":
-            arrow = "↗";
-            noteColor = "#39ff14"; 
-            glowColor = "#39ff14";
-            break;
-        //下方向
-        case "down":
-            arrow = "↓";
-            noteColor = "#ff2a85";
-            glowColor = "#ff2a85";
-            break;
-        case "downleft":
-            arrow = "↙";
-            noteColor = "#ff2a85";
-            glowColor = "#ff2a85";
-            break;
-        case "downright":
-            arrow = "↘";
-            noteColor = "#ff2a85";
-            glowColor = "#ff2a85";
-            break;
-        //左右
-        case "left":
-            arrow = "←";
-            noteColor = "#00e1ff";
-            glowColor = "#00e1ff";
-            break;
-        case "right":
-            arrow = "→";
-            noteColor = "#ff9d3d";
-            glowColor = "#ff9d3d";
-            break;
+    element.textContent = arrows[note.direction] || "↑";
+
+    if (note.isEx) {
+        element.style.background = "#ffd83d";
+        element.style.border = "2px solid #fff";
+        element.style.boxShadow = "0 0 8px #ffd83d";
     }
-
-    // 決定した色を適用
-    element.style.background = noteColor;
-    element.style.boxShadow = `0 0 10px ${glowColor}, 0 0 20px ${glowColor}`;
-
-    element.textContent = arrow;
-    element.style.textAlign = "center";
-    element.style.lineHeight = "20px";
-    element.style.fontWeight = "bold";
-    element.style.color = "white";
 
     element.onclick = event => {
         event.stopPropagation();
@@ -637,6 +571,7 @@ function createJumpVisual(note, index, laneWidth) {
     };
     timeline.appendChild(element);
 }
+
 /* =========================================================
    プロパティ設定
 ========================================================= */
@@ -732,9 +667,7 @@ function showProperties(note) {
             { value: "upright", label: "右上 (UP-RIGHT)" },
             { value: "down", label: "下 (DOWN)" },
             { value: "downleft", label: "左下 (DOWN-LEFT)" },
-            { value: "downright", label: "右下 (DOWN-RIGHT)" },
-            { value: "left", label: "左 (LEFT)" },
-            { value: "right", label: "右 (RIGHT)" }
+            { value: "downright", label: "右下 (DOWN-RIGHT)" }
         ];
 
         directions.forEach(dir => {
@@ -757,8 +690,8 @@ function showProperties(note) {
         properties.appendChild(wrapper);
     }
 
-    // フリック・スカイ・ジャンプ以外の場合のEX属性切り替えチェックボックス
-    if (note.type !== "flick" && note.type !== "sky" && note.type !== "jump" && note.type !== "hold" && note.type !== "slide") {
+    // フリック・スカイの場合のEX属性切り替えチェックボックス
+    if (note.type !== "flick" && note.type !== "sky" && note.type !== "hold" && note.type !== "slide") {
         const exWrapper = document.createElement("div");
         exWrapper.className = "property";
 
