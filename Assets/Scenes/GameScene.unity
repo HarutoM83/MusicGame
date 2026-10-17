@@ -512,8 +512,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -50}
-  m_SizeDelta: {x: 1725, y: 200}
+  m_AnchoredPosition: {x: 0, y: -87.5}
+  m_SizeDelta: {x: 1725, y: 175}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &186020732
 MonoBehaviour:
@@ -726,7 +726,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 295c569d47b579a43952d161753cc17d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimelineManager
-  MusicStartDirector: {fileID: 298944251}
+  director: {fileID: 298944251}
   chartLoader: {fileID: 1224723823}
 --- !u!1 &326044516
 GameObject:
@@ -3693,6 +3693,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4734764614307058, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4734764614307058, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 449967267237875073, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
       propertyPath: m_LocalPosition.y
       value: 3
@@ -3760,6 +3768,14 @@ PrefabInstance:
     - target: {fileID: 3273734258690121857, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.66
+      objectReference: {fileID: 0}
+    - target: {fileID: 3354508770947763385, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 3354508770947763385, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -75
       objectReference: {fileID: 0}
     - target: {fileID: 4116683967280519413, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
       propertyPath: m_LocalPosition.y

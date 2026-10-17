@@ -101,7 +101,7 @@ function getBpmChanges() {
 }
 
 function timeToY(time) {
-    let y = 30; // 下部余白
+    let y = 0; // 0秒のときを最下部（y=0）にする
     let changes = getBpmChanges();
     let baseBpm = Number(document.getElementById("bpm").value) || 120;
     let pps = pixelsPerSecond;
@@ -127,8 +127,8 @@ function timeToY(time) {
 }
 
 function yToTime(y) {
-    if (y <= 30) return 0;
-    let targetY = y - 30;
+    if (y <= 0) return 0;
+    let targetY = y; // オフセット分の引き算をなくす
     let changes = getBpmChanges();
     let baseBpm = Number(document.getElementById("bpm").value) || 120;
     let pps = pixelsPerSecond;
@@ -291,12 +291,21 @@ function renderChart() {
     const timelineWidth = laneWidth * laneCount;
     timeline.style.width = timelineWidth + "px";
 
-    const minutes = Number(document.getElementById("songMinutes").value) || 2;
+   const minutes = Number(document.getElementById("songMinutes").value) || 2;
     const seconds = Number(document.getElementById("songSeconds").value) || 0;
     const totalSeconds = (minutes * 60) + seconds;
     const maxTime = Math.max(30, totalSeconds);
 
-    timeline.style.height = timeToY(maxTime) + 100 + "px";
+    // 【修正】0秒がスタートラインにぴったり来たり、maxTimeが綺麗に収まるように高さを設定
+    // タイムラインの高さ ＝ (maxTimeまでのY座標) ＋ (画面上部の余白)
+    // renderChart() 内の高さ決定部分を以下のように修正
+    const maxTimeY = timeToY(maxTime);
+    const wrapperHeight = document.getElementById("editorWrapper").clientHeight;
+    
+    // maxTime が終了したときにちょうどスタートラインに届くよう、高さを計算
+    // maxTime に到達したとき、最後のノーツがスタートラインの位置にぴったりピタリと来るようにする
+    const startLineBottom = 80; // CSSの #startLine の bottom と合わせる
+    timeline.style.height = (maxTimeY + wrapperHeight - startLineBottom) + "px";
 
     // レーン線の描画
     for (let i = 0; i <= laneCount; i++) {
@@ -848,8 +857,10 @@ if (fileInputEl) {
 }
 
 /* =========================================================
-   音声再生・同期
+   音声再生・同期（requestAnimationFrame による高精度・滑らかスクロール）
 ========================================================= */
+let animationFrameId = null;
+
 function togglePlay() {
     if (!bgmPlayer || !bgmPlayer.src || bgmPlayer.src === window.location.href) {
         alert("先に音源ファイルを選択してください！");
@@ -867,28 +878,67 @@ function stopAudio() {
     if (!bgmPlayer) return;
     bgmPlayer.pause();
     bgmPlayer.currentTime = 0;
+    updateScrollAndDisplay();
 }
 
-if (bgmPlayer) {
-    bgmPlayer.addEventListener("timeupdate", () => {
-        const currentTime = bgmPlayer.currentTime;
-        const duration = bgmPlayer.duration || 0;
+// 再生開始時
+bgmPlayer.addEventListener("play", () => {
+    loopAnimation();
+});
 
-        const timeDisplay = document.getElementById("audioTimeDisplay");
-        if (timeDisplay) {
-            timeDisplay.textContent = `${currentTime.toFixed(2)} / ${duration.toFixed(2)}`;
-        }
+// 一時停止・終了時
+bgmPlayer.addEventListener("pause", () => {
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+    updateScrollAndDisplay();
+});
 
-        if (!bgmPlayer.paused) {
-            const wrapper = document.getElementById("editorWrapper");
-            if (wrapper) {
-                const targetY = timeToY(currentTime);
-                const scrollTopTarget = timeline.scrollHeight - targetY - (wrapper.clientHeight / 2);
-                wrapper.scrollTop = Math.max(0, scrollTopTarget);
-            }
-        }
-    });
+bgmPlayer.addEventListener("ended", () => {
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+    updateScrollAndDisplay();
+});
+
+// 毎フレーム（60fps）実行される滑らかなループ処理
+function loopAnimation() {
+    if (bgmPlayer.paused || bgmPlayer.ended) return;
+
+    updateScrollAndDisplay();
+    animationFrameId = requestAnimationFrame(loopAnimation);
 }
+
+// 画面のスクロール位置と時間表示を更新する関数（スタートライン基準）
+function updateScrollAndDisplay() {
+    const currentTime = bgmPlayer.currentTime;
+    const duration = bgmPlayer.duration || 0;
+
+    const timeDisplay = document.getElementById("audioTimeDisplay");
+    if (timeDisplay) {
+        timeDisplay.textContent = `${currentTime.toFixed(2)} / ${duration.toFixed(2)}`;
+    }
+
+    const wrapper = document.getElementById("editorWrapper");
+    if (wrapper && timeline) {
+        const targetY = timeToY(currentTime);
+        const timelineHeight = timeline.clientHeight;
+        const wrapperHeight = wrapper.clientHeight;
+        
+        // CSSの #startLine の bottom の値 (80px) に合わせる
+        const startLineBottom = 80; 
+
+        // タイムライン上の該当Y座標が、常に固定のスタートラインの位置に来るようにスクロール値を計算
+        const scrollTopTarget = timelineHeight - targetY - wrapperHeight + startLineBottom;
+        
+        wrapper.scrollTop = Math.max(0, scrollTopTarget);
+    }
+}
+
+// 【補足】もしタイムライン上のスクロールバーを手動でぐりぐり動かしたときに
+// 音声の再生位置を合わせたい（シークしたい）場合の拡張もここに追加できます。
 
 /* =========================================================
    initial execution
