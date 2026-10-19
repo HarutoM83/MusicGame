@@ -1,5 +1,4 @@
 using System.IO;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class ChartLoader : MonoBehaviour
@@ -25,12 +24,26 @@ public class ChartLoader : MonoBehaviour
 
     void Start()
     {
-        string path = Path.Combine(Application.streamingAssetsPath, "Test.json");
+        // ★ 1. GameDataHolder から選択された曲のファイル名を取得する
+        string jsonFileName = "Test.json"; // 起動直直や直接シーン再生したときの保険
+        if (GameDataHolder.Instance != null && !string.IsNullOrEmpty(GameDataHolder.Instance.selectedJsonFileName))
+        {
+            jsonFileName = GameDataHolder.Instance.selectedJsonFileName;
+        }
 
-        string json = File.ReadAllText(path);
+        // ★ 2. 取得したファイル名を使ってStreamingAssetsからパスを組み立てる
+        string path = Path.Combine(Application.streamingAssetsPath, jsonFileName);
 
-        // ChartLoader.cs の Start内に追加
-        chart = JsonUtility.FromJson<ChartData>(json);
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            chart = JsonUtility.FromJson<ChartData>(json);
+        }
+        else
+        {
+            Debug.LogError("譜面ファイルが見つかりません: " + path);
+            return;
+        }
 
         if (chart != null)
         {
@@ -38,6 +51,9 @@ public class ChartLoader : MonoBehaviour
             if (ScoreManager.Instance != null)
             {
                 ScoreManager.Instance.maxChartCombo = chart.maxPossibleCombo > 0 ? chart.maxPossibleCombo : chart.notes.Count;
+
+                // ScoreManager に AudioSource を登録する
+                ScoreManager.Instance.SetAudioSource(music);
             }
 
             // UIへ曲名や難易度、色彩を反映する
@@ -46,33 +62,18 @@ public class ChartLoader : MonoBehaviour
                 GameUIManager.Instance.SetupUI(chart);
             }
         }
-
-        // ここでJSONから読み込んだ最大コンボ数を ScoreManager にセットする
-        if (ScoreManager.Instance != null && chart != null)
-        {
-            //ScoreManager.Instance.maxChartCombo = chart.maxPossibleCombo;
-            ScoreManager.Instance.maxChartCombo = chart.maxPossibleCombo > 0 ? chart.maxPossibleCombo : chart.notes.Count;
-
-            // ScoreManager に AudioSource を登録する
-            ScoreManager.Instance.SetAudioSource(music);
-
-            // 【保険】もし古いJSONなどで maxPossibleCombo が 0 になっている場合は、自動的にノーツの数（notes.Count）を代入するようにしておくと安全
-            if (chart.maxPossibleCombo == 0 && chart.notes != null)
-            {
-                ScoreManager.Instance.maxChartCombo = chart.notes.Count;
-            }
-        }
         else
         {
-            Debug.LogWarning("ScoreManager.Instance または chart が見つかりませんでした。");
+            Debug.LogWarning("chart のパースに失敗しました。");
         }
     }
+
     public void StartGame()
     {
         gameStarted = true;
         music.Play();
     }
-    // Update is called once per frame
+
     void Update()
     {
         if (!gameStarted)
@@ -86,8 +87,8 @@ public class ChartLoader : MonoBehaviour
             NotesData notes = chart.notes[nextNoteIndex];
 
             float distance = Vector3.Distance(
-            laneSpawnPoints[notes.lane].position,
-            judgeLine.position
+                laneSpawnPoints[notes.lane].position,
+                judgeLine.position
             );
 
             float spawnTime = distance / scrollSpeed;
@@ -103,13 +104,13 @@ public class ChartLoader : MonoBehaviour
             }
         }
     }
-    
+
     void SpawnNote(NotesData data)
     {
         // ノーツのタイプに応じて使用するプールを切り替える
         ObjectPool_Notes targetPool = notesPool;
 
-        if ((data.type == "drag")|| (data.grade == "dragex"))// チャートデータの仕様に合わせて条件を変更してください
+        if ((data.type == "drag") || (data.grade == "dragex"))
         {
             targetPool = dragnotesPool;
         }

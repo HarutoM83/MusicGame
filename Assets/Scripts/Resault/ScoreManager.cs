@@ -159,6 +159,29 @@ public class ScoreManager : MonoBehaviour
         //「ALL PERFECT」や「FULL COMBO」のテキストを表示する
         PrepareResultText();
 
+        // リザルトデータへの保存処理（必要に応じてコメントアウトを解除）
+        if (GameDataHolder.Instance != null)
+        {
+            // 今回のデータをセット
+            var result = GameDataHolder.Instance.currentResult;
+            result.score = Mathf.RoundToInt(currentScore);
+            result.maxCombo = maxCombo;
+            result.perfectPlusCount = pPlus;
+            result.perfectCount = perfect;
+            result.greatCount = great;
+            result.goodCount = good;
+            result.badCount = bad;
+            result.missCount = miss;
+
+            // 保存とハイスコア更新判定を実行
+            string playingMusicId = "song_01";
+            GameDataHolder.Instance.SaveResult(playingMusicId);
+        }
+        else
+        {
+            Debug.LogWarning("GameResultData がシーン内に存在しません！データが引き継がれません。");
+        }
+
         // AudioSource（BGM）が再生中なら、曲が完全に終わる（isPlaying が false になる）まで待つ
         if (bgmAudioSource != null && bgmAudioSource.isPlaying)
         {
@@ -249,18 +272,6 @@ public class ScoreManager : MonoBehaviour
     // シーンを切り替えるメソッド
     public void OnTimelineLoadResultScene()
     {
-        // リザルトデータへの保存処理（必要に応じてコメントアウトを解除）
-        if (MusicResultData.Instance != null)
-        {
-            MusicResultData.Instance.score = Mathf.RoundToInt(currentScore);
-            MusicResultData.Instance.maxCombo = maxCombo;
-            MusicResultData.Instance.perfectPlusCount = pPlus;
-            MusicResultData.Instance.perfectCount = perfect;
-            MusicResultData.Instance.greatCount = great;
-            MusicResultData.Instance.goodCount = good;
-            MusicResultData.Instance.badCount = bad;
-            MusicResultData.Instance.missCount = miss;
-        }
         UnityEngine.SceneManagement.SceneManager.LoadScene("ResultScene");
     }
 }
