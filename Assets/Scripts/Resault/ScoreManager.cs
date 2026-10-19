@@ -176,7 +176,7 @@ public class ScoreManager : MonoBehaviour
         //曲が終わったあとに、画面が暗転するまでの余韻タメ時間を挟む
         yield return new WaitForSeconds(fadeOutWaitTime);
 
-        // 4. シーンを切り替える
+        // シーンを切り替える
         OnTimelineLoadResultScene();
     }
 
@@ -246,24 +246,21 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    /*
-        // リザルトデータへの保存処理（必要に応じてコメントアウトを解除）
-        if (GameResultData.Instance != null)
-        {
-            GameResultData.Instance.score = Mathf.RoundToInt(currentScore);
-            GameResultData.Instance.maxCombo = maxCombo;
-            GameResultData.Instance.perfectPlusCount = pPlus;
-            GameResultData.Instance.perfectCount = perfect;
-            GameResultData.Instance.greatCount = great;
-            GameResultData.Instance.goodCount = good;
-            GameResultData.Instance.badCount = bad;
-            GameResultData.Instance.missCount = miss;
-        }
-        */
-
     // シーンを切り替えるメソッド
     public void OnTimelineLoadResultScene()
     {
+        // リザルトデータへの保存処理（必要に応じてコメントアウトを解除）
+        if (MusicResultData.Instance != null)
+        {
+            MusicResultData.Instance.score = Mathf.RoundToInt(currentScore);
+            MusicResultData.Instance.maxCombo = maxCombo;
+            MusicResultData.Instance.perfectPlusCount = pPlus;
+            MusicResultData.Instance.perfectCount = perfect;
+            MusicResultData.Instance.greatCount = great;
+            MusicResultData.Instance.goodCount = good;
+            MusicResultData.Instance.badCount = bad;
+            MusicResultData.Instance.missCount = miss;
+        }
         UnityEngine.SceneManagement.SceneManager.LoadScene("ResultScene");
     }
 }
