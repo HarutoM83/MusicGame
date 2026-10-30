@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 36139185}
   - component: {fileID: 36139184}
+  - component: {fileID: 36139186}
   m_Layer: 0
   m_Name: TimelineManager
   m_TagString: Untagged
@@ -165,6 +166,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!320 &36139186
+PlayableDirector:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 36139183}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_PlayableAsset: {fileID: 11400000, guid: ea4b47c010756e54892b55d1a388ca31, type: 2}
+  m_InitialState: 1
+  m_WrapMode: 2
+  m_DirectorUpdateMode: 1
+  m_InitialTime: 0
+  m_SceneBindings: []
+  m_ExposedReferences:
+    m_References: []
 --- !u!1 &82064873
 GameObject:
   m_ObjectHideFlags: 0
@@ -2087,7 +2105,7 @@ MonoBehaviour:
   newRecordText: {fileID: 855472510}
   scoreText: {fileID: 1042435547}
   highScoreText: {fileID: 154243168}
-  ScoreRankText: {fileID: 1306315178}
+  scoreRankText: {fileID: 1306315178}
   maxComboText: {fileID: 1287070413}
   pPlusText: {fileID: 276847921}
   perfectText: {fileID: 82064875}
@@ -2095,6 +2113,37 @@ MonoBehaviour:
   goodText: {fileID: 1396570685}
   badText: {fileID: 607525076}
   missText: {fileID: 793650566}
+  rankSettings:
+  - rankName: SSS+
+    thresholdScore: 1090000
+    rankColor: {r: 0, g: 0.8, b: 1, a: 1}
+  - rankName: SSS
+    thresholdScore: 1075000
+    rankColor: {r: 0, g: 0.8, b: 1, a: 1}
+  - rankName: SS+
+    thresholdScore: 1050000
+    rankColor: {r: 0, g: 0.8, b: 1, a: 1}
+  - rankName: SS
+    thresholdScore: 1000000
+    rankColor: {r: 0, g: 0.8, b: 1, a: 1}
+  - rankName: S+
+    thresholdScore: 990000
+    rankColor: {r: 0, g: 0.8, b: 1, a: 1}
+  - rankName: S
+    thresholdScore: 975000
+    rankColor: {r: 0, g: 0.8, b: 1, a: 1}
+  - rankName: A
+    thresholdScore: 800000
+    rankColor: {r: 1, g: 0.84313726, b: 0, a: 1}
+  - rankName: B
+    thresholdScore: 700000
+    rankColor: {r: 0, g: 0, b: 1, a: 1}
+  - rankName: C
+    thresholdScore: 500000
+    rankColor: {r: 0.72156864, g: 0.4509804, b: 0.2, a: 1}
+  - rankName: D
+    thresholdScore: 0
+    rankColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &1474550483
 GameObject:
   m_ObjectHideFlags: 0

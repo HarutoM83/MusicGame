@@ -21,7 +21,7 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private Color defaultComboColor = Color.gray;
 
     [Header("終了後の演出設定")]
-    [SerializeField] private float fadeOutWaitTime = 2.0f; // 音楽が終わってからシーン遷移するまでの追加の余韻（秒）
+    [SerializeField] private float fadeOutWaitTime = 3.0f; // 音楽が終わってからシーン遷移するまでの追加の余韻（秒）
 
     // ゲーム中のリアルタイムデータ
     private float currentScore = 0f;

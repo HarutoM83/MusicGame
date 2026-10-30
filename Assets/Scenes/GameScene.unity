@@ -3833,6 +3833,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.66
       objectReference: {fileID: 0}
+    - target: {fileID: 7082075520706247680, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7087137171160659919, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
       propertyPath: music
       value: 

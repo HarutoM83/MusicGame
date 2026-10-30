@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ public class ResultManager : MonoBehaviour
     [SerializeField] private TMP_Text newRecordText;
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private TMP_Text highScoreText;
-    [SerializeField] private TMP_Text ScoreRankText;
+    [SerializeField] private TMP_Text scoreRankText;
     [SerializeField] private TMP_Text maxComboText;
     [SerializeField] private TMP_Text pPlusText;
     [SerializeField] private TMP_Text perfectText;
@@ -16,21 +17,41 @@ public class ResultManager : MonoBehaviour
     [SerializeField] private TMP_Text badText;
     [SerializeField] private TMP_Text missText;
 
+    // --- ランクごとの設定をまとめたデータ構造 ---
+    [System.Serializable]
+    public struct RankSetting
+    {
+        public string rankName;       // ランク名 (例: SSS, SS, S...)
+        public int thresholdScore;    // このランクに必要な最低スコア
+        public Color rankColor;       // その時のテキストカラー
+    }
+
+    [Header("ランク設定（高いスコア順に上から並べてください）")]
+    [SerializeField]
+    private RankSetting[] rankSettings = new RankSetting[]
+    {
+        new RankSetting { rankName = "SSS+", thresholdScore = 1090000, rankColor = new Color(0.0f, 0.8f, 1.0f, 1.0f) },
+        new RankSetting { rankName = "SSS", thresholdScore = 1075000, rankColor = new Color(0.0f, 0.8f, 1.0f, 1.0f) },
+        new RankSetting { rankName = "SS+", thresholdScore = 1050000, rankColor = new Color(0.0f, 0.8f, 1.0f, 1.0f) },
+        new RankSetting { rankName = "SS",  thresholdScore = 1000000,  rankColor = new Color(0.0f, 0.8f, 1.0f, 1.0f) },
+        new RankSetting { rankName = "S+", thresholdScore = 990000, rankColor = new Color(0.0f, 0.8f, 1.0f, 1.0f) },
+        new RankSetting { rankName = "S",   thresholdScore = 975000,  rankColor = new Color(0.0f, 0.8f, 1.0f, 1.0f) },
+        new RankSetting { rankName = "A",   thresholdScore = 800000,  rankColor = new Color32(255, 215, 0, 255) }, // ゴールド
+        new RankSetting { rankName = "B",   thresholdScore = 700000,  rankColor = Color.blue },
+        new RankSetting { rankName = "C",   thresholdScore = 500000,       rankColor = new Color32(184, 115, 51, 255) },
+        new RankSetting { rankName = "D",   thresholdScore = 0,       rankColor = Color.gray }
+    };
+
     private void Start()
     {
         if (GameDataHolder.Instance != null)
         {
-            // 現在選択中（プレイした）の曲IDを取得
             string songId = GameDataHolder.Instance.selectedJsonFileName;
-
-            // 今回のプレイ結果データ
             var result = GameDataHolder.Instance.currentResult;
 
-            // 今回のスコアとコンボを表示
             scoreText.text = result.score.ToString("N0");
             maxComboText.text = result.maxCombo.ToString();
 
-            // 各判定数を表示（※ currentResult から取得するよう修正）
             pPlusText.text = result.perfectPlusCount.ToString();
             perfectText.text = result.perfectCount.ToString();
             greatText.text = result.greatCount.ToString();
@@ -38,11 +59,15 @@ public class ResultManager : MonoBehaviour
             badText.text = result.badCount.ToString();
             missText.text = result.missCount.ToString();
 
-            // 保存されているハイスコアを取得して表示
+            // ランク判定と色の反映
+            if (scoreRankText != null)
+            {
+                SetRankAndColor(result.score);
+            }
+
             PlayResultData savedData = GameDataHolder.Instance.LoadResult(songId);
             highScoreText.text = savedData.score.ToString("N0");
 
-            // ハイスコアを更新した場合だけ「NEW RECORD!」を表示する
             if (result.isNewHighScore)
             {
                 if (newRecordText != null)
@@ -55,14 +80,37 @@ public class ResultManager : MonoBehaviour
             {
                 if (newRecordText != null)
                 {
-                    newRecordText.gameObject.SetActive(false); // 更新していなければ隠す
+                    newRecordText.gameObject.SetActive(false);
                 }
             }
         }
         else
         {
-            // デバッグ用（リザルトシーン単体で再生したときのエラー防止）
             Debug.LogWarning("GameDataHolder が見つかりません。");
         }
+    }
+
+    /// <summary>
+    /// インスペクターの設定を元にランクを判定し、UIに反映する
+    /// </summary>
+    private void SetRankAndColor(int score)
+    {
+        // デフォルト値（万が一リストが空のとき用）
+        string rankStr = "-";
+        Color rankColor = Color.white;
+
+        // 上から順に判定（スコアが高い順に並んでいる前提）
+        foreach (var setting in rankSettings)
+        {
+            if (score >= setting.thresholdScore)
+            {
+                rankStr = setting.rankName;
+                rankColor = setting.rankColor;
+                break; // 条件に一致したらループを抜ける
+            }
+        }
+
+        scoreRankText.text = rankStr;
+        scoreRankText.color = rankColor;
     }
 }
