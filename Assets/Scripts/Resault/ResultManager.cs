@@ -7,6 +7,7 @@ public class ResultManager : MonoBehaviour
     [SerializeField] private TMP_Text newRecordText;
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private TMP_Text highScoreText;
+    [SerializeField] private TMP_Text ScoreRankText;
     [SerializeField] private TMP_Text maxComboText;
     [SerializeField] private TMP_Text pPlusText;
     [SerializeField] private TMP_Text perfectText;
@@ -41,7 +42,7 @@ public class ResultManager : MonoBehaviour
             PlayResultData savedData = GameDataHolder.Instance.LoadResult(songId);
             highScoreText.text = savedData.score.ToString("N0");
 
-            // 4. ハイスコアを更新した場合だけ「NEW RECORD!」を表示する
+            // ハイスコアを更新した場合だけ「NEW RECORD!」を表示する
             if (result.isNewHighScore)
             {
                 if (newRecordText != null)
