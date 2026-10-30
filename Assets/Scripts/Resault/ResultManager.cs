@@ -110,7 +110,17 @@ public class ResultManager : MonoBehaviour
             }
         }
 
-        scoreRankText.text = rankStr;
-        scoreRankText.color = rankColor;
+        // ランク用テキストに反映
+        if (scoreRankText != null)
+        {
+            scoreRankText.text = rankStr;
+            scoreRankText.color = rankColor;
+        }
+
+        // スコア用テキストにも同じ色を反映する
+        if (scoreText != null)
+        {
+            scoreText.color = rankColor;
+        }
     }
 }

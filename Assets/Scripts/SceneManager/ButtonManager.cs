@@ -108,6 +108,10 @@ public class ButtonManager : MonoBehaviour
     {
         OptionCanvas.SetActive(false); // ƒIƒvƒVƒ‡ƒ“‰æ–Ê‚ð•Â‚¶‚é
     }
+    public void OnResultQuitClick()
+    {
+        SceneManager.LoadScene("MusicSelectScene");
+    }
     private void Retry()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
