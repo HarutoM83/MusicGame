@@ -296,7 +296,7 @@ GameObject:
   - component: {fileID: 220584657}
   - component: {fileID: 220584656}
   m_Layer: 5
-  m_Name: NOTE DESIGNER:Text
+  m_Name: NOTE DESIGNER:Text (Legacy)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -907,6 +907,58 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &544282718
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 544282720}
+  - component: {fileID: 544282719}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &544282719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 544282718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e312d4c6383aa3844a1e95a00676fa59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameUIManager
+  songTitleText: {fileID: 1587277101}
+  artistText: {fileID: 1940770628}
+  difficultyAndLevelText: {fileID: 1866922570}
+  chartDesignerText: {fileID: 220584656}
+  bpmText: {fileID: 1852966657}
+  difficultyBackgroundImage: {fileID: 966084807}
+  difficultyBackgroundImage2: {fileID: 0}
+  colorDatabase: {fileID: 11400000, guid: 872830d685b7190438a8688ee0e8d9b7, type: 2}
+--- !u!4 &544282720
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 544282718}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.93521, y: -0, z: 33.85669}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &641350840
 GameObject:
   m_ObjectHideFlags: 0
@@ -2311,6 +2363,7 @@ MonoBehaviour:
   MenuCanvas: {fileID: 0}
   PauseCanvas: {fileID: 421450061}
   OptionCanvas: {fileID: 1610606855}
+  countdownText: {fileID: 0}
 --- !u!4 &1444467671
 Transform:
   m_ObjectHideFlags: 0
@@ -2429,7 +2482,7 @@ GameObject:
   - component: {fileID: 1587277102}
   - component: {fileID: 1587277101}
   m_Layer: 5
-  m_Name: MusicText
+  m_Name: MusicText (Legacy)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4449,6 +4502,7 @@ SceneRoots:
   - {fileID: 1797846064}
   - {fileID: 647294869}
   - {fileID: 1444467671}
+  - {fileID: 544282720}
   - {fileID: 786384361}
   - {fileID: 421450065}
   - {fileID: 1610606859}

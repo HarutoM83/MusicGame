@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class GameUIManager : MonoBehaviour
@@ -6,10 +7,18 @@ public class GameUIManager : MonoBehaviour
     public static GameUIManager Instance;
 
     [Header("ゲーム画面のUIテキスト")]
-    [SerializeField] private TMP_Text songTitleText;
-    [SerializeField] private TMP_Text artistText;
-    [SerializeField] private TMP_Text difficultyAndLevelText;
-    [SerializeField] private TMP_Text chartDesignerText;
+    [SerializeField] private Text songTitleText;
+    [SerializeField] private Text artistText;
+    [SerializeField] private Text difficultyAndLevelText;
+    [SerializeField] private Text chartDesignerText;
+    [SerializeField] private TMP_Text bpmText;
+
+    [Header("難易度カラーを反映させたい画像（Image）")]
+    [SerializeField] private Image difficultyBackgroundImage;
+    [SerializeField] private Image difficultyBackgroundImage2;
+
+    [Header("難易度カラーのデータベース（アセットファイルをここにドラッグする）")]
+    [SerializeField] private DifficultyColorDatabase colorDatabase; // ★追加
 
     void Awake()
     {
@@ -36,7 +45,11 @@ public class GameUIManager : MonoBehaviour
             difficultyAndLevelText.text = $"{chart.difficulty.ToUpper()} - Lv.{chart.level}";
 
             // 難易度に応じたカラーを反映する
-            difficultyAndLevelText.color = DifficultyColorUtility.GetDifficultyColor(chart.difficulty);
+            if (colorDatabase != null)
+            {
+                difficultyBackgroundImage.color = colorDatabase.GetColor(chart.difficulty);
+                difficultyBackgroundImage2.color = colorDatabase.GetColor(chart.difficulty);
+            }
         }
     }
 }
