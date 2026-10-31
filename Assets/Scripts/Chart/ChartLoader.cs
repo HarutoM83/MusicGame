@@ -24,14 +24,14 @@ public class ChartLoader : MonoBehaviour
 
     void Start()
     {
-        // ★ 1. GameDataHolder から選択された曲のファイル名を取得する
+        // GameDataHolder から選択された曲のファイル名を取得する
         string jsonFileName = "Test.json"; // 起動直直や直接シーン再生したときの保険
         if (GameDataHolder.Instance != null && !string.IsNullOrEmpty(GameDataHolder.Instance.selectedJsonFileName))
         {
             jsonFileName = GameDataHolder.Instance.selectedJsonFileName;
         }
 
-        // ★ 2. 取得したファイル名を使ってStreamingAssetsからパスを組み立てる
+        // 取得したファイル名を使ってStreamingAssetsからパスを組み立てる
         string path = Path.Combine(Application.streamingAssetsPath, jsonFileName);
 
         if (File.Exists(path))

@@ -40,12 +40,7 @@ public class ButtonManager : MonoBehaviour
     {
         PauseCanvas.SetActive(false);
     }
-    public void OnMusicSelectClick()
-    {
-        FadeManager.Instance.LoadScene("GameScene",1f);
-        Time.timeScale = 1f; // ƒQ[ƒ€‚ğÄŠJ
-        AudioListener.pause = false; // ‰¹‚ğÄŠJ‚·‚é
-    }
+    
     public void OnMenuButtonClick()
     {
         MenuCanvas.SetActive(true);
