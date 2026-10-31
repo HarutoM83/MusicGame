@@ -193,17 +193,14 @@ function getLane(x) {
 }
 
 /* =========================================================
-   タイムライン イベント
+   タイムライン イベント（ホールド・スライドの直感的な配置対応）
 ========================================================= */
 if (timeline) {
-    // タイムラインの mousedown イベント内
     timeline.addEventListener("mousedown", event => {
-        // 【重要】modeがnull、または "delete" のときはノーツを新しく配置しない
         if (!mode || mode === "delete") return;
 
         const pos = getMousePosition(event);
         const lane = getLane(pos.x);
-
         if (lane < 0 || lane >= laneCount) return;
 
         const config = NOTE_TYPES[mode];
@@ -213,15 +210,13 @@ if (timeline) {
 
         if (config.placement === "single") {
             addSingleNote(mode, lane, snappedTime);
-        }
-        if (config.placement === "range" || config.placement === "slide") {
+        } else if (config.placement === "range" || config.placement === "slide") {
+            // ホールドやスライドの場合、押した瞬間をドラッグ開始地点として保持
             dragStart = { lane: lane, time: snappedTime };
         }
     });
 
-    // タイムラインの mouseup イベント内
     timeline.addEventListener("mouseup", event => {
-        // 【追加】モードが解除されている（null）か、削除モードなら何もしない
         if (!mode || mode === "delete") return;
         if (dragStart === null) return;
 
@@ -229,11 +224,21 @@ if (timeline) {
         const endLane = getLane(pos.x);
         const endTime = snapTimeToGrid(yToTime(pos.y));
 
-        if (mode === "hold" && endTime > dragStart.time) {
-            addHoldNote(dragStart.lane, dragStart.time, endTime);
-        }
-        if (mode === "slide" && endTime > dragStart.time && endLane >= 0 && endLane < laneCount) {
-            addSlideNote(dragStart.lane, endLane, dragStart.time, endTime);
+        // 終了時間が開始時間より後ろ（または同じ）の場合に生成
+        if (endTime >= dragStart.time) {
+            if (mode === "hold") {
+                // ホールドは同じレーン内、または最低限の長さがある場合
+                const targetLane = endLane >= 0 && endLane < laneCount ? endLane : dragStart.lane;
+                // 通常ホールドは同じレーンで作る場合が多いので dragStart.lane に固定するか、endLaneを使うか
+                addHoldNote(dragStart.lane, dragStart.time, endTime > dragStart.time ? endTime : dragStart.time + 0.5);
+            } 
+            else if (mode === "slide") {
+                // スライドの場合：開始レーンと終了レーンが別でもOK！
+                const validEndLane = (endLane >= 0 && endLane < laneCount) ? endLane : dragStart.lane;
+                const validEndTime = endTime > dragStart.time ? endTime : dragStart.time + 0.5;
+                
+                addSlideNote(dragStart.lane, validEndLane, dragStart.time, validEndTime);
+            }
         }
         dragStart = null;
     });
@@ -296,16 +301,20 @@ function renderChart() {
     const totalSeconds = (minutes * 60) + seconds;
     const maxTime = Math.max(30, totalSeconds);
 
-    // 【修正】0秒がスタートラインにぴったり来たり、maxTimeが綺麗に収まるように高さを設定
+    // 0秒がスタートラインにぴったり来たり、maxTimeが綺麗に収まるように高さを設定
     // タイムラインの高さ ＝ (maxTimeまでのY座標) ＋ (画面上部の余白)
-    // renderChart() 内の高さ決定部分を以下のように修正
+    // maxTime が終了したときにちょうどスタートラインに届くよう、高さを計算
     const maxTimeY = timeToY(maxTime);
     const wrapperHeight = document.getElementById("editorWrapper").clientHeight;
     
     // maxTime が終了したときにちょうどスタートラインに届くよう、高さを計算
     // maxTime に到達したとき、最後のノーツがスタートラインの位置にぴったりピタリと来るようにする
     const startLineBottom = 80; // CSSの #startLine の bottom と合わせる
-    timeline.style.height = (maxTimeY + wrapperHeight - startLineBottom) + "px";
+    const calculatedHeight = maxTimeY + wrapperHeight - startLineBottom;
+
+    // ★【追加】Firefoxなどの描画制限（約30,000px）を超えて要素が消えないよう上限を設定
+    const MAX_SAFE_HEIGHT = 28000;
+    timeline.style.height = Math.min(calculatedHeight, MAX_SAFE_HEIGHT) + "px";
 
     // レーン線の描画
     for (let i = 0; i <= laneCount; i++) {
@@ -452,6 +461,21 @@ function createSingleVisual(note, index, laneWidth, className) {
     element.style.bottom = timeToY(note.time) + "px";
     element.style.width = (laneWidth - 20) + "px";
     
+    element.onmousedown = event => {
+        // 削除モードのときは削除を優先
+        if (mode === "delete") {
+            event.stopPropagation();
+            chart.notes.splice(index, 1);
+            renderChart();
+            return;
+        }
+    
+    // 通常モードのときは「掴んでドラッグ移動」を開始
+    event.stopPropagation();
+    draggingNoteIndex = index;
+    selectNote(index);
+};
+
     if (note.isEx) {
         element.style.background = "#ffd83d";
         element.style.border = "2px solid #fff";
@@ -470,19 +494,55 @@ function createSingleVisual(note, index, laneWidth, className) {
     timeline.appendChild(element);
 }
 
-//ホールドノーツ
+// ホールドノーツ描画の拡張
 function createHoldVisual(note, index, laneWidth) {
     const element = document.createElement("div");
     element.className = "note note-hold";
-    element.style.left = (note.lane * laneWidth + 20) + "px";
+    element.style.left = (note.lane * laneWidth + 10) + "px";
     element.style.bottom = timeToY(note.startTime) + "px";
-    element.style.width = (laneWidth - 40) + "px";
+    element.style.width = (laneWidth - 20) + "px";
     element.style.height = (timeToY(note.endTime) - timeToY(note.startTime)) + "px";
 
+    element.onmousedown = event => {
+    // 削除モードのときは削除を優先
+    if (mode === "delete") {
+        event.stopPropagation();
+        chart.notes.splice(index, 1);
+        renderChart();
+        return;
+    }
+    
+    // 通常モードのときは「掴んでドラッグ移動」を開始
+    event.stopPropagation();
+    draggingNoteIndex = index;
+    selectNote(index);
+    };
+
+    // EX属性（始点側、または全体）の適用
     if (note.isEx) {
         element.style.background = "#ffd83d";
         element.style.border = "2px solid #fff";
-        element.style.boxShadow = "0 0 8px #ffd83d";
+        element.style.boxShadow = "0 0 10px #ffd83d";
+    }
+
+    // 終点判定がある場合の視覚的演出（例：上部に枠線を付けるなど）
+    if (note.hasEndJudge) {
+        element.style.borderTop = "3px dashed #fff";
+    }
+
+    // 終点がジャンプの場合の表示
+    if (note.endType === "jump") {
+        const arrows = { up: "↑", upleft: "↖", upright: "↗", down: "↓", downleft: "↙", downright: "↘" };
+        const jumpBadge = document.createElement("div");
+        jumpBadge.textContent = arrows[note.endDirection || "up"] || "↑";
+        jumpBadge.style.position = "absolute";
+        jumpBadge.style.top = "0";
+        jumpBadge.style.left = "50%";
+        jumpBadge.style.transform = "translateX(-50%)";
+        jumpBadge.style.fontSize = "14px";
+        jumpBadge.style.fontWeight = "bold";
+        jumpBadge.style.color = "#fff";
+        element.appendChild(jumpBadge);
     }
 
     element.onclick = event => {
@@ -497,31 +557,52 @@ function createHoldVisual(note, index, laneWidth) {
     timeline.appendChild(element);
 }
 
-//スライドノーツ
+// スライドノーツ（複雑な回転をやめ、レーン基準で確実に配置する）
 function createSlideVisual(note, index, laneWidth) {
-    const startX = note.startLane * laneWidth + laneWidth / 2;
-    const endX = note.endLane * laneWidth + laneWidth / 2;
-    const startY = timeToY(note.startTime);
-    const endY = timeToY(note.endTime);
+    // データの安全チェック（エラー防止）
+    if (note.startLane === undefined || note.endLane === undefined) return;
 
-    const dx = endX - startX;
-    const dy = endY - startY;
-    const length = Math.sqrt(dx * dx + dy * dy);
-    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+    const startX = note.startLane * laneWidth + 10;
+    const endX = note.endLane * laneWidth + 10;
+    const startY = timeToY(note.startTime || 0);
+    const endY = timeToY(note.endTime || 0);
 
     const line = document.createElement("div");
     line.className = "slide-line";
-    line.style.left = startX + "px";
-    line.style.bottom = startY + "px";
-    line.style.width = length + "px";
-    line.style.transformOrigin = "0 50%";
-    line.style.transform = `rotate(${angle}deg)`;
+    line.style.left = Math.min(startX, endX) + "px"; // 左右の端のどちらか低い方から
+    line.style.bottom = Math.min(startY, endY) + "px";
+    
+    // 横幅は「またいだレーン分の幅」、高さは「時間の長さ（Yの差）」にする
+    const widthSpan = Math.abs(note.endLane - note.startLane) * laneWidth + (laneWidth - 20);
+    const heightSpan = Math.abs(endY - startY);
 
-    // 【修正】elementではなく line に対してEXスタイルを適用
+    line.style.width = widthSpan + "px";
+    line.style.height = Math.max(10, heightSpan) + "px";
+    line.style.borderRadius = "8px";
+
+    // ──────────────────────────────────────────────
+    // ★【ここに入れます】スライドを掴んで動かす / 削除する処理
+    // ──────────────────────────────────────────────
+    line.onmousedown = event => {
+        event.stopPropagation();
+        if (mode === "delete") {
+            chart.notes.splice(index, 1);
+            renderChart();
+            return;
+        }
+        // ドラッグ移動を開始
+        draggingNoteIndex = index;
+        selectNote(index);
+    };
+    // ──────────────────────────────────────────────
+
+    timeline.appendChild(line);
+
+    // EX属性の適用
     if (note.isEx) {
         line.style.background = "#ffd83d";
         line.style.border = "2px solid #fff";
-        line.style.boxShadow = "0 0 8px #ffd83d";
+        line.style.boxShadow = "0 0 10px #ffd83d";
     }
 
     line.onclick = event => {
@@ -529,23 +610,75 @@ function createSlideVisual(note, index, laneWidth) {
         if (mode === "delete") {
             chart.notes.splice(index, 1);
             renderChart();
+            return;
         }
+        selectNote(index);
     };
+
     timeline.appendChild(line);
 
-    createSlidePoint(startX, startY, "#ffffff");
-    createSlidePoint(endX, endY, "#ff9d3d");
+    // 始点と終点の描画（エラーが出ない安全な関数を呼び出す）
+    createSafeSlidePoint(note.startLane, note.startTime, note, index);
+    
+    if (note.endType === "jump") {
+        createSafeJumpVisual(note.endLane, note.endTime, note.endDirection, note, index);
+    } else {
+        createSafeSlidePoint(note.endLane, note.endTime, note, index);
+    }
 }
 
-function createSlidePoint(x, y, color) {
+function createSafeSlidePoint(lane, time, note, index) {
+    const laneWidth = getLaneWidth();
     const point = document.createElement("div");
-    point.className = "slide-point";
-    point.style.left = (x - 11) + "px";
-    point.style.bottom = (y - 11) + "px";
-    point.style.background = color;
+    point.className = "note note-tap";
+    point.style.left = (lane * laneWidth + 10) + "px";
+    point.style.bottom = timeToY(time || 0) + "px";
+    point.style.width = (laneWidth - 20) + "px";
+
+    if (note.isEx) {
+        point.style.background = "#ffd83d";
+        point.style.border = "2px solid #fff";
+    }
+
+    point.onclick = event => {
+        event.stopPropagation();
+        if (mode === "delete") {
+            chart.notes.splice(index, 1);
+            renderChart();
+            return;
+        }
+        selectNote(index);
+    };
+
     timeline.appendChild(point);
 }
 
+// 終点専用のジャンプノーツ描画用ヘルパー
+function createSafeJumpVisual(lane, time, direction, note, index) {
+    const laneWidth = getLaneWidth();
+    const element = document.createElement("div");
+    element.className = `note note-jump jump-${direction || "up"}`;
+    element.style.left = (lane * laneWidth + 10) + "px";
+    element.style.bottom = timeToY(time || 0) + "px";
+    element.style.width = (laneWidth - 20) + "px";
+
+    const arrows = { up: "↑", upleft: "↖", upright: "↗", down: "↓", downleft: "↙", downright: "↘" };
+    element.textContent = arrows[direction || "up"] || "↑";
+
+    element.onclick = event => {
+        event.stopPropagation();
+        if (mode === "delete") {
+            chart.notes.splice(index, 1);
+            renderChart();
+            return;
+        }
+        selectNote(index);
+    };
+
+    timeline.appendChild(element);
+}
+
+//ジャンプノーツ
 function createJumpVisual(note, index, laneWidth) {
     const element = document.createElement("div");
     // CSSクラスでベーススタイルと方向ごとの色・光彩を適用
@@ -568,6 +701,22 @@ function createJumpVisual(note, index, laneWidth) {
         element.style.border = "2px solid #fff";
         element.style.boxShadow = "0 0 8px #ffd83d";
     }
+
+    // 例：単体ノーツの生成時
+    element.onmousedown = event => {
+        // 削除モードのときは削除を優先
+        if (mode === "delete") {
+            event.stopPropagation();
+            chart.notes.splice(index, 1);
+            renderChart();
+            return;
+        }
+    
+    // 通常モードのときは「掴んでドラッグ移動」を開始
+    event.stopPropagation();
+    draggingNoteIndex = index;
+    selectNote(index);
+};
 
     element.onclick = event => {
         event.stopPropagation();
@@ -655,7 +804,108 @@ function showProperties(note) {
         }, "0.001");
     }
 
-    // 【追加】方向指定を持つノーツ（ジャンプノーツなど）の場合のセレクトボックス
+    // 【追加】ホールドやスライドの「終点判定の有無」設定
+    if (note.type === "hold" || note.type === "slide") {
+        const endJudgeWrapper = document.createElement("div");
+        endJudgeWrapper.className = "property";
+
+        const label = document.createElement("label");
+        label.textContent = "終点判定あり";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.style.width = "auto";
+        checkbox.checked = !!note.hasEndJudge;
+
+        checkbox.onchange = () => {
+            note.hasEndJudge = checkbox.checked;
+            renderChart();
+        };
+
+        endJudgeWrapper.appendChild(label);
+        endJudgeWrapper.appendChild(checkbox);
+        properties.appendChild(endJudgeWrapper);
+
+        // 【追加】終点をジャンプノーツにするかどうかの設定
+        const endTypeWrapper = document.createElement("div");
+        endTypeWrapper.className = "property";
+
+        const endTypeLabel = document.createElement("label");
+        endTypeLabel.textContent = "終点タイプ (通常 / ジャンプ)";
+
+        const endTypeSelect = document.createElement("select");
+        endTypeSelect.style.width = "100%";
+        endTypeSelect.style.background = "#333";
+        endTypeSelect.style.color = "white";
+        endTypeSelect.style.border = "1px solid #555";
+        endTypeSelect.style.padding = "7px";
+
+        const endTypes = [
+            { value: "normal", label: "通常終点" },
+            { value: "jump", label: "ジャンプ終点" }
+        ];
+
+        endTypes.forEach(et => {
+            const opt = document.createElement("option");
+            opt.value = et.value;
+            opt.textContent = et.label;
+            if ((note.endType || "normal") === et.value) opt.selected = true;
+            endTypeSelect.appendChild(opt);
+        });
+
+        endTypeSelect.onchange = () => {
+            note.endType = endTypeSelect.value;
+            if (note.endType === "jump" && !note.endDirection) {
+                note.endDirection = "up"; // デフォルトのジャンプ方向
+            }
+            renderChart();
+        };
+
+        endTypeWrapper.appendChild(endTypeLabel);
+        endTypeWrapper.appendChild(endTypeSelect);
+        properties.appendChild(endTypeWrapper);
+
+        // もし終点がジャンプの場合、方向のセレクトボックスも表示
+        if (note.endType === "jump") {
+            const dirWrapper = document.createElement("div");
+            dirWrapper.className = "property";
+            dirWrapper.innerHTML = `<label>終点ジャンプ方向</label>`;
+            
+            const dirSelect = document.createElement("select");
+            dirSelect.style.width = "100%";
+            dirSelect.style.background = "#333";
+            dirSelect.style.color = "white";
+            dirSelect.style.border = "1px solid #555";
+            dirSelect.style.padding = "7px";
+
+            const directions = [
+                { value: "up", label: "上 (UP)" },
+                { value: "upleft", label: "左上 (UP-LEFT)" },
+                { value: "upright", label: "右上 (UP-RIGHT)" },
+                { value: "down", label: "下 (DOWN)" },
+                { value: "downleft", label: "左下 (DOWN-LEFT)" },
+                { value: "downright", label: "右下 (DOWN-RIGHT)" }
+            ];
+
+            directions.forEach(dir => {
+                const opt = document.createElement("option");
+                opt.value = dir.value;
+                opt.textContent = dir.label;
+                if ((note.endDirection || "up") === dir.value) opt.selected = true;
+                dirSelect.appendChild(opt);
+            });
+
+            dirSelect.onchange = () => {
+                note.endDirection = dirSelect.value;
+                renderChart();
+            };
+
+            dirWrapper.appendChild(dirSelect);
+            properties.appendChild(dirWrapper);
+        }
+    }
+
+    // 方向指定を持つノーツ（ジャンプノーツなど）の場合のセレクトボックス
     if (note.direction !== undefined) {
         const wrapper = document.createElement("div");
         wrapper.className = "property";
@@ -760,6 +1010,67 @@ if (laneCountInput) {
     const el = document.getElementById(id);
     if (el) el.onchange = renderChart;
 });
+
+/* =========================================================
+   ノーツのドラッグ移動（掴んで動かす）機能
+========================================================= */
+let draggingNoteIndex = null;
+let dragType = null; // "single", "hold-start", "hold-end", "slide-start", "slide-end", "slide-all" など
+let dragOffsetLane = 0;
+let dragOffsetTime = 0;
+
+// タイムライン全体でのマウス移動・ドロップ処理
+if (timeline) {
+    timeline.addEventListener("mousemove", event => {
+        if (draggingNoteIndex === null) return;
+
+        const pos = getMousePosition(event);
+        const currentLane = getLane(pos.x);
+        const currentTime = snapTimeToGrid(yToTime(pos.y));
+
+        const note = chart.notes[draggingNoteIndex];
+        if (!note) return;
+
+        // ノーツの種類や掴んでいる場所に応じた移動処理
+        if (note.type === "tap" || note.type === "ex" || note.type === "flick" || note.type === "drag" || note.type === "sky" || note.type === "jump") {
+            if (currentLane >= 0 && currentLane < laneCount) {
+                note.lane = currentLane;
+            }
+            note.time = Math.max(0, currentTime);
+        } 
+        else if (note.type === "hold") {
+            // ホールドの場合のドラッグ移動（簡易的に全体を移動、または長さを維持）
+            const duration = note.endTime - note.startTime;
+            if (currentLane >= 0 && currentLane < laneCount) {
+                note.lane = currentLane;
+            }
+            note.startTime = Math.max(0, currentTime);
+            note.endTime = note.startTime + Math.max(0.2, duration);
+        }
+        else if (note.type === "slide") {
+            // スライドの場合：全体を丸ごと移動するか、始点・終点を動かす
+            const timeSpan = note.endTime - note.startTime;
+            if (currentLane >= 0 && currentLane < laneCount) {
+                // レーン移動の差分計算
+                const laneDiff = currentLane - note.startLane;
+                note.startLane = Math.max(0, Math.min(laneCount - 1, note.startLane + laneDiff));
+                note.endLane = Math.max(0, Math.min(laneCount - 1, note.endLane + laneDiff));
+            }
+            note.startTime = Math.max(0, currentTime);
+            note.endTime = note.startTime + Math.max(0.2, timeSpan);
+        }
+
+        // ドラッグ中にリアルタイム再描画
+        renderChart();
+    });
+
+    window.addEventListener("mouseup", () => {
+        if (draggingNoteIndex !== null) {
+            draggingNoteIndex = null;
+            renderChart();
+        }
+    });
+}
 
 /* =========================================================
    音声ファイル読み込み

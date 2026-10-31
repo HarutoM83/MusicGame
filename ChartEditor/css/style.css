@@ -189,20 +189,21 @@ button.active {
 /* SLIDE */
 .slide-line {
     position: absolute;
-    height: 8px;
-    background: #0084ff;
-    border-radius: 8px;
+    background: #0084ff;       /* スライド用の青色 */
+    border: 2px solid white;    /* ホールドと同じ白い枠線 */
+    border-radius: 8px;         /* ホールドと同じ角丸 */
     transform-origin: 0 50%;
     z-index: 5;
 }
 
 .slide-point {
     position: absolute;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    border: 2px solid rgb(0, 38, 255);
+    height: 24px;
+    border-radius: 5px;
+    border: rgb(0, 38, 255); /* スライドに合わせた青色、または白など自由に変更可能 */
+    border: 2px solid white;
     z-index: 12;
+    cursor: pointer;
 }
 
 /* SKY */
