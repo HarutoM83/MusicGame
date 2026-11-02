@@ -8,9 +8,6 @@ public class GameDataReset : MonoBehaviour
     [Header("シーン名の設定")]
     [SerializeField] private string loadSceneName = "LoadingScene";   // ロード画面のシーン名
     [SerializeField] private string titleSceneName = "TitleScene"; // タイトル画面のシーン名
-    [Header("リセットしたいテキスト")]
-    [SerializeField] private TMP_Text highScoreText;
-    [SerializeField] private Text maxComboText;
 
     /// <summary>
     /// 現在選んでいる曲のデータをリセットして、画面と内部変数を同期する
@@ -30,30 +27,4 @@ public class GameDataReset : MonoBehaviour
         //UpdateSongDataUI();
     }
 
-    /*
-    /// <summary>
-    /// 現在のデータをロードして画面のUIテキストに反映する関数
-    /// </summary>
-    private void UpdateSongDataUI()
-    {
-        string targetSongId = GameDataHolder.Instance.currentSongId;
-
-        // 最新のデータをロード（消えていれば初期値の0データが返ってくる）
-        PlayResultData data = GameDataHolder.Instance.LoadResult(targetSongId);
-
-        // 画面のテキストを更新
-        if (data.score == 0 && data.maxCombo == 0)
-        {
-            // 未プレイ時の表示
-            highScoreText.text = "Score: ---";
-            maxComboText.text = "Max Combo: ---";
-        }
-        else
-        {
-            // プレイ済みの表示
-            highScoreText.text = "Score: " + data.score.ToString();
-            maxComboText.text = "Max Combo: " + data.maxCombo.ToString();
-        }
-    }
-    */
 }
