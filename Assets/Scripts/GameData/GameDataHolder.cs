@@ -16,7 +16,6 @@ public class PlayResultData
 
 public class GameDataHolder : MonoBehaviour
 {
-    // ★修正: 型を MusicResultData から GameDataHolder に修正
     public static GameDataHolder Instance;
 
     [Header("次にプレイする曲（またはJSONファイル名）")]
@@ -88,5 +87,25 @@ public class GameDataHolder : MonoBehaviour
     {
         get => currentSongId;
         set => currentSongId = value;
+    }
+
+    // ==========================================
+    // データリセット機能
+    // ==========================================
+
+    public bool isRedirectToTitle = false; // タイトルに戻るためのフラグ
+
+    /// <summary>
+    /// 【注意】すべてのPlayerPrefsデータを一括削除します（全曲のハイスコアが消えます）
+    /// </summary>
+    public void ResetAllResults()
+    {
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+
+        // メモリ上に残っている現在のリザルト情報も初期化
+        currentResult = new PlayResultData();
+        isRedirectToTitle = true;
+        Debug.Log("すべてのプレイデータを完全にリセットしました。");
     }
 }

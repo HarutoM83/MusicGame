@@ -5,12 +5,15 @@ using UnityEngine.SceneManagement;
 
 public class Loading : MonoBehaviour
 {
+    // ★追加: 外部から次のシーン名を一時的に指定するための静的変数
+    public static string nextSceneOverride = null;
+
     [Header("SceneNameSet")]
     [SerializeField] private string scenename;
     [SerializeField] private Slider slider;
+
     IEnumerator Start()
     {
-
         slider.value = 0f;
 
         // フェードアウト終わるぐらいまで待つ
@@ -23,6 +26,18 @@ public class Loading : MonoBehaviour
             slider.value += Time.deltaTime * waitTime; // 速度調整OK
             yield return null;
         }
-        SceneManager.LoadScene(scenename);
+
+        // もし外部から上書き用のシーン名が指定されていたらそれを使う
+        if (!string.IsNullOrEmpty(nextSceneOverride))
+        {
+            string targetScene = nextSceneOverride;
+            nextSceneOverride = null; // 次回のためにクリアしておく
+            FadeManager.Instance.LoadScene(targetScene, 1f);
+        }
+        else
+        {
+            // 通常通りの遷移
+            SceneManager.LoadScene(scenename);
+        }
     }
 }

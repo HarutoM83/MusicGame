@@ -12,18 +12,6 @@ public class ButtonManager : MonoBehaviour
 
     [SerializeField] private TMP_Text countdownText;      // カウントダウン用の数字Text（TextMeshProなら TextMeshProUGUI）
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void OnStartButtonClick()
     {
         FadeManager.Instance.LoadScene("LoadingScene",1f);
