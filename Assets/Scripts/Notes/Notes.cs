@@ -9,6 +9,7 @@ public abstract class Notes : MonoBehaviour
     public int Lane;
     public float hitTime;
     public ObjectPool_Notes pool;
+
     [Header("ノーツごとのマテリアル設定")]
     public Material normalMat;
     public Material normalLaneMat;
@@ -27,7 +28,6 @@ public abstract class Notes : MonoBehaviour
     public virtual float greatWindow { get; set; } = 0.06f;
     public virtual float goodWindow { get; set; } = 0.09f;
     public virtual float badWindow { get; set; } = 0.12f;
-
 
     public float speed = 10f;
     public float judgeZ = 5f;
@@ -53,13 +53,13 @@ public abstract class Notes : MonoBehaviour
         spawnPosition = spawnPos;
         judgePosition = judgePos;
 
-        // 【注意】ここで元のコードだと `scrollSpeed = speed * scrollSpeed;` になっており、
-        // インスペクターの設定次第で速度が倍々に増えてしまう可能性があるため、修正
-        scrollSpeed = speed;
+        // ★【重要】プールから取り出した瞬間に必ずスポーン位置に配置（瞬間移動対策）
+        transform.position = spawnPosition;
 
+        scrollSpeed = speed;
         judgeLineZ = judgePos.z;
 
-        // --- ★ここを追加：生成時にJudgeManagerのリストに登録する---
+        // JudgeManagerのリストに登録
         if (JudgeManager.Instance != null)
         {
             if (!JudgeManager.Instance.activeNotes.Contains(this))
@@ -68,16 +68,11 @@ public abstract class Notes : MonoBehaviour
             }
         }
 
-        // ----------------------------------------------------
-
-        // （以降の見た目の処理はそのまま）
+        // マテリアル切替
         if (data.type == "tap")
         {
             sr.material = normalMat;
-            srl[0].material = normalLaneMat;
-            srl[1].material = normalLaneMat;
-            srl[2].material = normalLaneMat;
-            srl[3].material = normalLaneMat;
+            for (int i = 0; i < srl.Length; i++) srl[i].material = normalLaneMat;
         }
         else if (data.grade == "ex")
         {
@@ -86,10 +81,7 @@ public abstract class Notes : MonoBehaviour
         else if (data.grade == "drag")
         {
             sr.material = normalMat;
-            srl[0].material = normalLaneMat;
-            srl[1].material = normalLaneMat;
-            srl[2].material = normalLaneMat;
-            srl[3].material = normalLaneMat;
+            for (int i = 0; i < srl.Length; i++) srl[i].material = normalLaneMat;
         }
         else if (data.grade == "dragex")
         {
@@ -98,43 +90,32 @@ public abstract class Notes : MonoBehaviour
         else if (data.type == "sky")
         {
             sr.material = skynotesMat;
-            srl[0].material = skynotesLaneMat;
-            srl[1].material = skynotesLaneMat;
-            srl[2].material = skynotesLaneMat;
-            srl[3].material = skynotesLaneMat;
+            for (int i = 0; i < srl.Length; i++) srl[i].material = skynotesLaneMat;
         }
     }
 
     protected virtual void FixedUpdate()
     {
-        if (!music.isPlaying)
+        if (music == null || !music.isPlaying)
             return;
-        if (pool == null || music == null)
+        if (pool == null)
             return;
 
-        float remainTime = hitTime - music.time;
+        float songTime = music.time;
+        float remainTime = hitTime - songTime;
 
-        float distance =
-            Vector3.Distance(
-                spawnPosition,
-                judgePosition
-            );
-
+        float distance = Vector3.Distance(spawnPosition, judgePosition);
         float totalTime = distance / scrollSpeed;
 
-        float progress =
-            1 - (remainTime / totalTime);
+        if (totalTime <= 0f) totalTime = 0.001f;
 
+        float progress = 1 - (remainTime / totalTime);
 
         Vector3 pos = transform.position;
-
-        pos.z = 
-            spawnPosition.z+
-            (judgePosition.z- spawnPosition.z)*
-            progress;
-
+        pos.z = spawnPosition.z + (judgePosition.z - spawnPosition.z) * progress;
         transform.position = pos;
 
+        // ★★★ ここを復活させる：指定したZ座標（resetnotes）より手前に来たらプールに戻す ★★★
         if (transform.position.z < resetnotes)
         {
             Release();
@@ -155,14 +136,6 @@ public abstract class Notes : MonoBehaviour
         if (JudgeManager.Instance != null)
         {
             JudgeManager.Instance.activeNotes.Remove(this);
-        }
-    }
-    void OnBecameInvisible()
-    {
-        //Debug.Log("Note Disable " + gameObject.name);
-        if (pool != null)
-        {
-            Release();
         }
     }
 }
