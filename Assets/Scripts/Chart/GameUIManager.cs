@@ -9,7 +9,8 @@ public class GameUIManager : MonoBehaviour
     [Header("ゲーム画面のUIテキスト")]
     [SerializeField] private Text songTitleText;
     [SerializeField] private Text artistText;
-    [SerializeField] private Text difficultyAndLevelText;
+    [SerializeField] private Text difficultyText;
+    [SerializeField] private Text LevelText;
     [SerializeField] private Text chartDesignerText;
     [SerializeField] private TMP_Text bpmText;
 
@@ -37,12 +38,14 @@ public class GameUIManager : MonoBehaviour
             artistText.text = chart.artist;
 
         if (chartDesignerText != null)
-            chartDesignerText.text = "Charted by: " + chart.chartDesigner;
+            chartDesignerText.text = chart.chartDesigner;
 
-        if (difficultyAndLevelText != null)
+        // 両方のテキストがアセットに設定されている場合のみ処理する
+        if (difficultyText != null && LevelText != null)
         {
-            // 例: "EXPERT - Lv.12" のように表示
-            difficultyAndLevelText.text = $"{chart.difficulty.ToUpper()} - Lv.{chart.level}";
+            // ① .text をつけ、② $ をつける
+            difficultyText.text = $"{chart.difficulty.ToUpper()}";
+            LevelText.text = $"{chart.level}";
 
             // 難易度に応じたカラーを反映する
             if (colorDatabase != null)
@@ -53,3 +56,4 @@ public class GameUIManager : MonoBehaviour
         }
     }
 }
+

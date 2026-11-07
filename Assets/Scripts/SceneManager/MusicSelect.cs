@@ -10,7 +10,7 @@ public class MusicSelect : MonoBehaviour
         if (GameDataHolder.Instance != null)
         {
             // GameDataHolder に選ばれた曲のJSONファイル名をセットする
-            GameDataHolder.Instance.currentSongId = targetJsonFileName;
+            GameDataHolder.Instance.selectedJsonFileName = targetJsonFileName;
             // （selectedJsonFileName = targetJsonFileName; でもOK）
         }
         //ゲームシーンへ移動

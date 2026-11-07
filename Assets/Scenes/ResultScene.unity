@@ -2995,7 +2995,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameUIManager
   songTitleText: {fileID: 736872929}
   artistText: {fileID: 703004341}
-  difficultyAndLevelText: {fileID: 1227866668}
+  difficultyText: {fileID: 1880077282}
+  LevelText: {fileID: 1227866668}
   chartDesignerText: {fileID: 0}
   bpmText: {fileID: 0}
   difficultyBackgroundImage: {fileID: 1845678143}

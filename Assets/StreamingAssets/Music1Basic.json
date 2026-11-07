@@ -1,0 +1,521 @@
+{
+  "songName": "シャイニングスター_game尺ver",
+  "title": "シャイニングスター",
+  "artist": "魔王魂",
+  "difficulty": "Basic",
+  "level": 1,
+  "chartDesigner": "仮",
+  "bpm": 158,
+  "timeNumerator": 4,
+  "timeDenominator": 4,
+  "laneCount": 8,
+  "duration": 152,
+  "bpmChanges": [],
+  "notes": [
+    {
+      "type": "tap",
+      "lane": 0,
+      "time": 6,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 0,
+      "time": 7.5,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 7,
+      "time": 9,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 7,
+      "time": 10.55,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 0,
+      "time": 12.05,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 7,
+      "time": 13.57,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 3,
+      "time": 15.1,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 4,
+      "time": 16.6,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 0,
+      "time": 18.1,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 0,
+      "time": 19.65,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 7,
+      "time": 21.15,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 7,
+      "time": 22.69,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 1,
+      "time": 24.2,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 1,
+      "time": 25.7,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 6,
+      "time": 27.25,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 6,
+      "time": 28.75,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 0,
+      "time": 30.3,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 1,
+      "time": 31.8,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 7,
+      "time": 33.33,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 6,
+      "time": 34.85,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 3,
+      "time": 36.35,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 2,
+      "time": 37.88,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 4,
+      "time": 39.4,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 5,
+      "time": 40.9,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 2,
+      "time": 42.45,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 5,
+      "time": 45.45,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 6,
+      "time": 50,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 2,
+      "time": 51.55,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 5,
+      "time": 53.05,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 1,
+      "time": 48.5,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 1,
+      "time": 56.1,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 2,
+      "time": 57.63,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 6,
+      "time": 59.15,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 5,
+      "time": 60.65,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 3,
+      "time": 74.35,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 4,
+      "time": 75.86,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 1,
+      "time": 62.18,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 6,
+      "time": 65.23,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 0,
+      "time": 63.7,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 7,
+      "time": 66.7,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 3,
+      "time": 69.78,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 5,
+      "time": 71.3,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 4,
+      "time": 72.8,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 2,
+      "time": 68.25,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 1,
+      "time": 77.38,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 6,
+      "time": 78.9,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 3,
+      "time": 80.4,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 4,
+      "time": 80.4,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 3,
+      "time": 54.58,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 4,
+      "time": 54.58,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 6,
+      "time": 81.93,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 5,
+      "time": 83.45,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 1,
+      "time": 84.96,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 2,
+      "time": 86.48,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 6,
+      "time": 88,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 7,
+      "time": 89.52,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 1,
+      "time": 91.05,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 0,
+      "time": 92.56,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 5,
+      "time": 94.08,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 4,
+      "time": 95.6,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 2,
+      "time": 97.12,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 3,
+      "time": 98.65,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 4,
+      "time": 100.15,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 3,
+      "time": 101.68,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 2,
+      "time": 103.2,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 1,
+      "time": 104.7,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 2,
+      "time": 106.23,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 5,
+      "time": 106.23,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 6,
+      "time": 104.7,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 3,
+      "time": 107.75,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 4,
+      "time": 107.75,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 0,
+      "time": 110.8,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 7,
+      "time": 112.3,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 1,
+      "time": 113.85,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 6,
+      "time": 115.35,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 2,
+      "time": 116.85,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 5,
+      "time": 118.4,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 3,
+      "time": 119.9,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 4,
+      "time": 121.45,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 3,
+      "time": 122.95,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 4,
+      "time": 122.95,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 4,
+      "time": 142.7,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 4,
+      "time": 129,
+      "isEx": true
+    },
+    {
+      "type": "tap",
+      "lane": 3,
+      "time": 136.6,
+      "isEx": true
+    }
+  ],
+  "maxPossibleCombo": 84
+}

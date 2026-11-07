@@ -33,11 +33,14 @@ public class Loading : MonoBehaviour
             string targetScene = nextSceneOverride;
             nextSceneOverride = null; // 次回のためにクリアしておく
             FadeManager.Instance.LoadScene(targetScene, 1f);
+            
         }
         else
         {
             // 通常通りの遷移
             SceneManager.LoadScene(scenename);
         }
+        Time.timeScale = 1f; // ゲームを再開
+        AudioListener.pause = false; // 音を再開する
     }
 }

@@ -31,6 +31,12 @@ public class ChartLoader : MonoBehaviour
             jsonFileName = GameDataHolder.Instance.selectedJsonFileName;
         }
 
+        // 取得したファイル名に拡張子が含まれていない場合を考慮し、必要に応じて拡張子を補う
+        if (!jsonFileName.EndsWith(".json"))
+        {
+            jsonFileName += ".json"; // 例として .json を補う場合
+        }
+
         // 取得したファイル名を使ってStreamingAssetsからパスを組み立てる
         string path = Path.Combine(Application.streamingAssetsPath, jsonFileName);
 
@@ -41,7 +47,8 @@ public class ChartLoader : MonoBehaviour
         }
         else
         {
-            Debug.LogError("譜面ファイルが見つかりません: " + path);
+            // ▼ ここを書き換えて、実際に探したパスと変数の中身を出力する
+            Debug.LogError($"[エラー確認] ファイルが見つかりません。\n探したパス: {path}\njsonFileNameの中身: '{jsonFileName}'");
             return;
         }
 

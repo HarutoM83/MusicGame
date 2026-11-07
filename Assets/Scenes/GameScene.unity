@@ -2769,7 +2769,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameUIManager
   songTitleText: {fileID: 1606874140}
   artistText: {fileID: 1304157609}
-  difficultyAndLevelText: {fileID: 1038619973}
+  difficultyText: {fileID: 67511136}
+  LevelText: {fileID: 1038619973}
   chartDesignerText: {fileID: 0}
   bpmText: {fileID: 0}
   difficultyBackgroundImage: {fileID: 6544768161925166097}
@@ -4278,7 +4279,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7087137171160659919, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
       propertyPath: activeNotes.Array.size
-      value: 17
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 9041524024367779572, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
       propertyPath: m_AnchoredPosition.y

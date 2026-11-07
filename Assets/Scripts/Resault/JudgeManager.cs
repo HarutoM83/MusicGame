@@ -39,6 +39,33 @@ public class JudgeManager : MonoBehaviour
         Instance = this;
     }
 
+    void Update()
+    {
+        if (music == null || !music.isPlaying) return;
+
+        float songTime = music.time;
+
+        // activeNotes を後ろからループして、時間切れ（Miss）になったノーツがないかチェックする
+        for (int i = activeNotes.Count - 1; i >= 0; i--)
+        {
+            Notes note = activeNotes[i];
+
+            if (note == null)
+            {
+                activeNotes.RemoveAt(i);
+                continue;
+            }
+
+            // 現在の曲の時間が、ノーツのヒット時間 ＋ Badの許容時間を過ぎていたら「見逃し（Miss）」とする
+            if (songTime > note.hitTime + note.badWindow)
+            {
+                // Miss 判定として処理する
+                HandleMissNote(note);
+                activeNotes.RemoveAt(i);
+            }
+        }
+    }
+
     // 外部から「このレーンが押されているか」を確認できるようにするメソッド
     public bool IsLanePressed(int lane)
     {
@@ -108,6 +135,35 @@ public class JudgeManager : MonoBehaviour
         if (target == null)return;
 
         JudgeResult(target, bestDiff);
+    }
+
+    // 見逃したノーツを Miss として処理する専用メソッド
+    void HandleMissNote(Notes note)
+    {
+        string judgmentStr = "Miss";
+
+        // 判定テキストに「MISS」を表示させる場合（お好みで）
+        if (judgmentTextUI != null)
+        {
+            judgmentTextUI.text = judgmentStr;
+            judgmentTextUI.color = GetJudgmentColor(judgmentStr);
+            judgmentTextUI.gameObject.SetActive(true);
+
+            if (hideJudgmentCoroutine != null)
+            {
+                StopCoroutine(hideJudgmentCoroutine);
+            }
+            hideJudgmentCoroutine = StartCoroutine(HideJudgmentTextAfterDelay(0.5f));
+        }
+
+        // ScoreManager に Miss を伝える（これで processedNotesCount が増える！）
+        if (ScoreManager.Instance != null)
+        {
+            ScoreManager.Instance.AddJudgment(judgmentStr);
+        }
+
+        // ノーツをプールに戻す
+        note.Release();
     }
 
     void JudgeResult(Notes note, float diff)
