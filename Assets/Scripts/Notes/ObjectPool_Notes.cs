@@ -16,7 +16,7 @@ public class ObjectPool_Notes : MonoBehaviour
             OnDestroyPoolObject,     // プールが上限を超えた場合の処理
             true,                    // すでにプール内にいるオブジェクトを返却した際にエラー表示するか
             2,                       // 初期のプールの容量
-            20);                     // プール内オブジェクトの上限数
+            100);                     // プール内オブジェクトの上限数
     }
 
     // オブジェクト生成の際の処理

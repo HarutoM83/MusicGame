@@ -1,6 +1,6 @@
-using System.Collections; // コルーチンを使うために必要
+using System.Collections;
 using System.Collections.Generic;
-using TMPro; // TextMeshProを使う場合
+using TMPro;
 using UnityEngine;
 
 [DefaultExecutionOrder(-100)]
@@ -11,7 +11,7 @@ public class JudgeManager : MonoBehaviour
     public AudioSource music;
     public List<Notes> activeNotes = new List<Notes>();
 
-    [SerializeField] private TextMeshProUGUI judgmentTextUI; // ★ 判定を表示するテキスト
+    [SerializeField] private TextMeshProUGUI judgmentTextUI;
 
     [Header("判定ごとの色設定")]
     [SerializeField] private Color pPlusColor = new Color(0.0f, 0.8f, 1.0f);
@@ -21,21 +21,16 @@ public class JudgeManager : MonoBehaviour
     [SerializeField] private Color badColor = Color.blue;
     [SerializeField] private Color missColor = Color.gray;
 
-    // 非表示タイマー用のコルーチンを保持する変数
     private Coroutine hideJudgmentCoroutine;
-
-    // レーンが押されているかを保持する配列（例として4レーン分）
     private bool[] isLanePressed = new bool[4];
 
     void Awake()
     {
-        // シングルトンの初期化を確実に実行する
         if (Instance != null)
         {
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
     }
 
@@ -45,9 +40,11 @@ public class JudgeManager : MonoBehaviour
 
         float songTime = music.time;
 
-        // activeNotes を後ろからループして、時間切れ（Miss）になったノーツがないかチェックする
+        // 後ろから前へループして安全にチェック
         for (int i = activeNotes.Count - 1; i >= 0; i--)
         {
+            if (i >= activeNotes.Count) continue;
+
             Notes note = activeNotes[i];
 
             if (note == null)
@@ -56,17 +53,27 @@ public class JudgeManager : MonoBehaviour
                 continue;
             }
 
-            // 現在の曲の時間が、ノーツのヒット時間 ＋ Badの許容時間を過ぎていたら「見逃し（Miss）」とする
+            // 時間切れ（Miss）判定
             if (songTime > note.hitTime + note.badWindow)
             {
-                // Miss 判定として処理する
                 HandleMissNote(note);
-                activeNotes.RemoveAt(i);
+                RemoveAndReleaseNote(note); // 共通メソッドで安全に削除・解放
             }
         }
     }
 
-    // 外部から「このレーンが押されているか」を確認できるようにするメソッド
+    // ノーツをリストから安全に削除し、プールに返す共通メソッド
+    private void RemoveAndReleaseNote(Notes note)
+    {
+        if (note == null) return;
+
+        if (activeNotes.Contains(note))
+        {
+            activeNotes.Remove(note);
+        }
+        note.Release();
+    }
+
     public bool IsLanePressed(int lane)
     {
         if (lane >= 0 && lane < isLanePressed.Length)
@@ -97,33 +104,26 @@ public class JudgeManager : MonoBehaviour
         }
 
         float songTime = music.time;
-
         Notes target = null;
         float bestDiff = float.MaxValue;
 
-        // 判定対象を探す（古いノーツ（リストの前方）を優先するため、正順で走査する方が安全な場合が多いです）
-        // ただし削除の安全性を考慮して逆順にする場合は、一番古いものを選ぶ条件に調整します
+        // 正順で最も古いターゲットを探す
         for (int i = 0; i < activeNotes.Count; i++)
         {
             Notes note = activeNotes[i];
 
-            // null対策
             if (note == null)
             {
                 activeNotes.RemoveAt(i);
-                i--; // インデックスのズレを調整
+                i--;
                 continue;
             }
 
-            // 違うレーンは無視
-            if (note.Lane != lane)continue;
-
-            // まだ判定範囲に入っていない場合は無視
-            if (songTime < note.hitTime - note.badWindow)continue;
+            if (note.Lane != lane) continue;
+            if (songTime < note.hitTime - note.badWindow) continue;
 
             float diff = Mathf.Abs(songTime - note.hitTime);
 
-            // 最初に範囲内に入った（＝一番時間が古い）ノーツを優先、もしくは最もタイミングが近いものを選択
             if (diff < bestDiff)
             {
                 bestDiff = diff;
@@ -131,39 +131,21 @@ public class JudgeManager : MonoBehaviour
             }
         }
 
-        // 対象なし
-        if (target == null)return;
+        if (target == null) return;
 
         JudgeResult(target, bestDiff);
     }
 
-    // 見逃したノーツを Miss として処理する専用メソッド
     void HandleMissNote(Notes note)
     {
         string judgmentStr = "Miss";
 
-        // 判定テキストに「MISS」を表示させる場合（お好みで）
-        if (judgmentTextUI != null)
-        {
-            judgmentTextUI.text = judgmentStr;
-            judgmentTextUI.color = GetJudgmentColor(judgmentStr);
-            judgmentTextUI.gameObject.SetActive(true);
+        ShowJudgmentUI(judgmentStr);
 
-            if (hideJudgmentCoroutine != null)
-            {
-                StopCoroutine(hideJudgmentCoroutine);
-            }
-            hideJudgmentCoroutine = StartCoroutine(HideJudgmentTextAfterDelay(0.5f));
-        }
-
-        // ScoreManager に Miss を伝える（これで processedNotesCount が増える！）
         if (ScoreManager.Instance != null)
         {
             ScoreManager.Instance.AddJudgment(judgmentStr);
         }
-
-        // ノーツをプールに戻す
-        note.Release();
     }
 
     void JudgeResult(Notes note, float diff)
@@ -177,33 +159,34 @@ public class JudgeManager : MonoBehaviour
         else if (diff <= note.badWindow) judgmentStr = "Bad";
         else judgmentStr = "Miss";
 
-        // ★ 判定テキストの表示・色変更・非表示タイマーの処理
-        if (judgmentTextUI != null)
-        {
-            judgmentTextUI.text = judgmentStr;
-            judgmentTextUI.color = GetJudgmentColor(judgmentStr); // 色を設定
-            judgmentTextUI.gameObject.SetActive(true);            // 表示する
+        ShowJudgmentUI(judgmentStr);
 
-            // すでに動いている非表示タイマーがあればリセットする（連続で叩いたとき用）
-            if (hideJudgmentCoroutine != null)
-            {
-                StopCoroutine(hideJudgmentCoroutine);
-            }
-            // 0.5秒後にテキストを非表示にする
-            hideJudgmentCoroutine = StartCoroutine(HideJudgmentTextAfterDelay(0.5f));
-        }
-
-        // ScoreManagerに判定結果を渡す
         if (ScoreManager.Instance != null)
         {
             ScoreManager.Instance.AddJudgment(judgmentStr);
         }
 
-        activeNotes.Remove(note);
-        note.Release();
+        // 共通メソッドで安全に削除・解放
+        RemoveAndReleaseNote(note);
     }
 
-    // 判定ごとに色を返すメソッド
+    // 判定UIの共通表示処理
+    private void ShowJudgmentUI(string judgmentStr)
+    {
+        if (judgmentTextUI != null)
+        {
+            judgmentTextUI.text = judgmentStr;
+            judgmentTextUI.color = GetJudgmentColor(judgmentStr);
+            judgmentTextUI.gameObject.SetActive(true);
+
+            if (hideJudgmentCoroutine != null)
+            {
+                StopCoroutine(hideJudgmentCoroutine);
+            }
+            hideJudgmentCoroutine = StartCoroutine(HideJudgmentTextAfterDelay(0.5f));
+        }
+    }
+
     private Color GetJudgmentColor(string judgment)
     {
         switch (judgment)
@@ -218,14 +201,13 @@ public class JudgeManager : MonoBehaviour
         }
     }
 
-    // 一定時間後にテキストオブジェクトを非表示にするコルーチン
     private IEnumerator HideJudgmentTextAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
 
         if (judgmentTextUI != null)
         {
-            judgmentTextUI.gameObject.SetActive(false); // 非表示にする
+            judgmentTextUI.gameObject.SetActive(false);
         }
     }
 }

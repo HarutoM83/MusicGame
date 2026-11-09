@@ -22,7 +22,5 @@ public class MusicSelect : MonoBehaviour
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
         }
-        Time.timeScale = 1f; // ƒQ[ƒ€‚ğÄŠJ
-        AudioListener.pause = false; // ‰¹‚ğÄŠJ‚·‚é
     }
 }

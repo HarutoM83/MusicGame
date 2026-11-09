@@ -115,11 +115,6 @@ public abstract class Notes : MonoBehaviour
         pos.z = spawnPosition.z + (judgePosition.z - spawnPosition.z) * progress;
         transform.position = pos;
 
-        // ★★★ ここを復活させる：指定したZ座標（resetnotes）より手前に来たらプールに戻す ★★★
-        if (transform.position.z < resetnotes)
-        {
-            Release();
-        }
     }
 
     public void Release()

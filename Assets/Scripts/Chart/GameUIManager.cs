@@ -40,19 +40,32 @@ public class GameUIManager : MonoBehaviour
         if (chartDesignerText != null)
             chartDesignerText.text = chart.chartDesigner;
 
+        if (bpmText != null)
+            bpmText.text = chart.bpm.ToString(); // 必要であればBPMも反映
+
         // 両方のテキストがアセットに設定されている場合のみ処理する
         if (difficultyText != null && LevelText != null)
         {
-            // ① .text をつけ、② $ をつける
             difficultyText.text = $"{chart.difficulty.ToUpper()}";
             LevelText.text = $"{chart.level}";
 
             // 難易度に応じたカラーを反映する
             if (colorDatabase != null)
             {
-                difficultyBackgroundImage.color = colorDatabase.GetColor(chart.difficulty);
-                difficultyBackgroundImage2.color = colorDatabase.GetColor(chart.difficulty);
+                Color diffColor = colorDatabase.GetColor(chart.difficulty);
+
+                if (difficultyBackgroundImage != null)
+                    difficultyBackgroundImage.color = diffColor;
+
+                if (difficultyBackgroundImage2 != null)
+                    difficultyBackgroundImage2.color = diffColor;
             }
+        }
+
+        if (colorDatabase != null)
+        {
+            difficultyBackgroundImage.color = colorDatabase.GetColor(chart.difficulty);
+            difficultyBackgroundImage2.color = colorDatabase.GetColor(chart.difficulty);
         }
     }
 }

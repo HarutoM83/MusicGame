@@ -821,6 +821,7 @@ GameObject:
   - component: {fileID: 1527596440}
   - component: {fileID: 1527596441}
   - component: {fileID: 1527596442}
+  - component: {fileID: 1527596443}
   m_Layer: 0
   m_Name: DataManager
   m_TagString: Untagged
@@ -881,8 +882,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameDataReset
   loadSceneName: LoadingScene
   titleSceneName: TitleScene
-  highScoreText: {fileID: 0}
-  maxComboText: {fileID: 0}
+--- !u!114 &1527596443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1527596438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e312d4c6383aa3844a1e95a00676fa59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameUIManager
+  songTitleText: {fileID: 0}
+  artistText: {fileID: 0}
+  difficultyText: {fileID: 0}
+  LevelText: {fileID: 0}
+  chartDesignerText: {fileID: 0}
+  bpmText: {fileID: 0}
+  difficultyBackgroundImage: {fileID: 0}
+  difficultyBackgroundImage2: {fileID: 0}
+  colorDatabase: {fileID: 11400000, guid: 872830d685b7190438a8688ee0e8d9b7, type: 2}
 --- !u!1 &1830263061
 GameObject:
   m_ObjectHideFlags: 0
