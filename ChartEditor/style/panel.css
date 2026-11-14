@@ -1,0 +1,42 @@
+/* =========================
+   設定パネル
+========================= */
+
+#propertyPanel {
+    position: fixed;
+    right: 0;
+    top: 64px;
+    width: 260px;
+    bottom: 0;
+    background: #202020;
+    border-left: 1px solid #444;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+#propertyPanel h3 {
+    margin-top: 0;
+}
+
+.property {
+    margin-bottom: 12px;
+}
+
+.property label {
+    display: block;
+    color: #aaa;
+    margin-bottom: 4px;
+}
+
+.property input,
+.property select {
+    width: 100%;
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    padding: 7px;
+}
+
+.hidden {
+    display: none;
+}

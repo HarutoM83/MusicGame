@@ -1,0 +1,16 @@
+/* =========================
+   エディタ
+========================= */
+
+#editorWrapper {
+    height: calc(100vh - 64px);
+    overflow: auto;
+    position: relative;
+}
+
+#timeline {
+    position: relative;
+    width: 600px;
+    margin-left: 100px;
+    background: #1b1b1b;
+}

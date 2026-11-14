@@ -1,0 +1,71 @@
+/* =========================
+   小節線・拍線・レーン線 
+========================= */
+
+.measureLine {
+    position: absolute;
+    left: 0;
+    height: 2px;
+    background: #777;
+    z-index: 2;
+}
+
+.beatLine {
+    position: absolute;
+    left: 0;
+    height: 1px;
+    background: #333;
+    z-index: 1;
+}
+
+.laneLine {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: #444;
+    z-index: 1;
+}
+
+.timeLabel {
+    position: absolute;
+    left: -90px;
+    width: 80px;
+    text-align: right;
+    color: #888;
+    font-size: 12px;
+}
+
+.bpmChangeLine {
+    position: absolute;
+    left: 0;
+    height: 3px;
+    background: #ff9d3d;
+    z-index: 3;
+}
+
+.bpmChangeLabel {
+    position: absolute;
+    right: -140px;
+    width: 130px;
+    text-align: left;
+    color: #ff9d3d;
+    font-size: 11px;
+    cursor: pointer;
+    background: rgba(0,0,0,0.6);
+    padding: 2px 4px;
+    border-radius: 3px;
+    z-index: 15;
+}
+.bpmChangeLabel:hover {
+    background: #ff9d3d;
+    color: black;
+}
+
+.gridSubLine {
+    position: absolute;
+    left: 0;
+    height: 1px;
+    background: #222;
+    z-index: 1;
+}

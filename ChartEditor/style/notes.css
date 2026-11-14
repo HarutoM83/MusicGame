@@ -1,0 +1,100 @@
+/* =========================
+   共通ノーツ
+========================= */
+
+.note {
+    position: absolute;
+    z-index: 10;
+    cursor: pointer;
+}
+
+/* TAP */
+.note-tap {
+    height: 24px;
+    border-radius: 5px;
+    background: #ff3535;
+    border: 2px solid white;
+}
+
+/* EX */
+.note-ex {
+    height: 24px;
+    border-radius: 5px;
+    background: #ffd83d;
+    border: 3px solid #fff;
+    box-shadow: 0 0 10px #ffd83d, 0 0 20px #ffd83d;
+}
+
+/* HOLD */
+.note-hold {
+    background: #ff9100;
+    border: 2px solid white;
+    border-radius: 8px;
+}
+
+/* FLICK */
+.note-flick {
+    height: 24px;
+    border-radius: 5px;
+    background: #00e1ff;
+    border: 3px solid white;
+}
+
+/* DRAG */
+.note-drag {
+    height: 12px;
+    border-radius: 5px;
+    background: #ff3535;
+    border: 2px solid white;
+}
+
+/* SLIDE */
+.slide-line {
+    position: absolute;
+    background: #0084ff;       /* スライド用の青色 */
+    border: 2px solid white;    /* ホールドと同じ白い枠線 */
+    border-radius: 8px;         /* ホールドと同じ角丸 */
+    transform-origin: 0 50%;
+    z-index: 5;
+}
+
+.slide-point {
+    position: absolute;
+    height: 24px;
+    border-radius: 5px;
+    border: rgb(0, 38, 255); /* スライドに合わせた青色、または白など自由に変更可能 */
+    border: 2px solid white;
+    z-index: 12;
+    cursor: pointer;
+}
+
+/* SKY */
+.note-sky {
+    height: 12px;
+    border-radius: 5px;
+    background: #4400ff;
+    border: 3px solid white;
+    box-shadow: 0 0 10px #824dff, 0 0 30px #824dff;
+}
+
+/* JUMP */
+.note-jump {
+    height: 12px;
+    border-radius: 5px;
+    border: 2px solid white;
+    text-align: center;
+    line-height: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+/* 方向ごとの色と光彩（グロー効果） */
+.jump-up, .jump-upleft, .jump-upright {
+    background: #39ff14;
+    box-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14;
+}
+
+.jump-down, .jump-downleft, .jump-downright {
+    background: #ff2a85;
+    box-shadow: 0 0 10px #ff2a85, 0 0 20px #ff2a85;
+}
