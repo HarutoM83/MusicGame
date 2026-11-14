@@ -343,7 +343,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4073855793498850243}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &104915226
 GameObject:
@@ -1969,7 +1969,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4073855793498850243}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &951272537
 MonoBehaviour:
@@ -4298,15 +4298,9 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 5158064299511107909, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
       insertIndex: 9
-      addedObject: {fileID: 951272536}
-    - targetCorrespondingSourceObject: {fileID: 5158064299511107909, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
-      insertIndex: 10
-      addedObject: {fileID: 72391357}
-    - targetCorrespondingSourceObject: {fileID: 5158064299511107909, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
-      insertIndex: 11
       addedObject: {fileID: 1828101462}
     - targetCorrespondingSourceObject: {fileID: 5158064299511107909, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
-      insertIndex: 12
+      insertIndex: 10
       addedObject: {fileID: 1198082727}
     - targetCorrespondingSourceObject: {fileID: 5158064299511107909, guid: e8f1356a9e2accb4c9f33559bd64c32b, type: 3}
       insertIndex: -1
@@ -4390,6 +4384,8 @@ SceneRoots:
   - {fileID: 1594447847}
   - {fileID: 25336046}
   - {fileID: 795214470}
+  - {fileID: 951272536}
+  - {fileID: 72391357}
   - {fileID: 1224723822}
   - {fileID: 298944252}
   - {fileID: 1813108401}
