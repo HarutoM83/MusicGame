@@ -59,7 +59,7 @@ function createNoteButtons() {
 }
 
 function setMode(type) {
-    // 【追加】もし「すでに選択されているモード」をもう一度クリックした場合は解除（キャンセル）する
+    //「すでに選択されているモード」をもう一度クリックした場合は解除（キャンセル）する
     if (mode === type) {
         mode = null; // または "none" など、配置できないモードにする
         document.querySelectorAll("#noteButtons button").forEach(button => {
@@ -312,7 +312,7 @@ function renderChart() {
     const startLineBottom = 80; // CSSの #startLine の bottom と合わせる
     const calculatedHeight = maxTimeY + wrapperHeight - startLineBottom;
 
-    // ★【追加】Firefoxなどの描画制限（約30,000px）を超えて要素が消えないよう上限を設定
+    // Firefoxなどの描画制限（約30,000px）を超えて要素が消えないよう上限を設定
     const MAX_SAFE_HEIGHT = 28000;
     timeline.style.height = Math.min(calculatedHeight, MAX_SAFE_HEIGHT) + "px";
 
@@ -581,7 +581,7 @@ function createSlideVisual(note, index, laneWidth) {
     line.style.borderRadius = "8px";
 
     // ──────────────────────────────────────────────
-    // ★【ここに入れます】スライドを掴んで動かす / 削除する処理
+    // スライドを掴んで動かす / 削除する処理
     // ──────────────────────────────────────────────
     line.onmousedown = event => {
         event.stopPropagation();
@@ -702,7 +702,7 @@ function createJumpVisual(note, index, laneWidth) {
         element.style.boxShadow = "0 0 8px #ffd83d";
     }
 
-    // 例：単体ノーツの生成時
+    // 単体ノーツの生成時
     element.onmousedown = event => {
         // 削除モードのときは削除を優先
         if (mode === "delete") {
@@ -804,7 +804,7 @@ function showProperties(note) {
         }, "0.001");
     }
 
-    // 【追加】ホールドやスライドの「終点判定の有無」設定
+    // ホールドやスライドの「終点判定の有無」設定
     if (note.type === "hold" || note.type === "slide") {
         const endJudgeWrapper = document.createElement("div");
         endJudgeWrapper.className = "property";
@@ -826,7 +826,7 @@ function showProperties(note) {
         endJudgeWrapper.appendChild(checkbox);
         properties.appendChild(endJudgeWrapper);
 
-        // 【追加】終点をジャンプノーツにするかどうかの設定
+        // 終点をジャンプノーツにするかどうかの設定
         const endTypeWrapper = document.createElement("div");
         endTypeWrapper.className = "property";
 
