@@ -1,12 +1,14 @@
+//state.js
+
 /* =========================================================
    基本設定
 ========================================================= */
 export const state = {
-pixelsPerSecond = 100,
-laneCount = 8,
-mode = "tap",
-selectedNoteIndex = -1,
-dragStart = null,
+pixelsPerSecond: 100,
+laneCount: 8,
+mode: "tap",
+selectedNoteIndex: -1,
+dragStart: null,
 }
 
 /* =========================================================

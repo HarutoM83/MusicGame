@@ -1,5 +1,7 @@
-import { state,chart } from "./state.js";
+//audio.js
 
+import { state,chart } from "./state.js";
+import { renderChart } from "./render.js";
 
 /* =========================================================
    音声ファイル読み込み

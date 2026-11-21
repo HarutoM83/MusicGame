@@ -1,5 +1,7 @@
+//timecalculator.js
+
 import { state,chart} from "./state.js";
-import { dom } from "./dom.js";
+import { dom } from "./DOM.js";
 
 /* =========================================================
    時間変換・ソフラン計算

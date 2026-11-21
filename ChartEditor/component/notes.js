@@ -1,6 +1,8 @@
+//notes.js
+
 import { NOTE_TYPES } from "./constants.js";
 import { state,chart } from "./state.js";
-import { dom } from "./dom.js";
+import { dom } from "./DOM.js";
 import { yToTime } from "./timecalculator.js";
 import { renderChart } from "./render.js";
 

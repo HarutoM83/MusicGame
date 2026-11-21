@@ -1,6 +1,8 @@
+//event.js
+
 import { NOTE_TYPES } from "./constants.js";
 import { state,chart} from "./state.js";
-import { dom } from "./dom.js";
+import { dom } from "./DOM.js";
 import { getLane, getMousePosition, snapTimeToGrid, yToTime } from "./timecalculator.js";
 import { addSingleNote, addHoldNote, addSlideNote } from "./notes.js";
 import { renderChart } from "./render.js";

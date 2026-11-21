@@ -1,5 +1,7 @@
+//storage.js
+
 import { state,chart } from "./state.js";
-import { dom } from "./dom.js";
+import { dom } from "./DOM.js";
 import { renderChart } from "./render.js";
 
 /* =========================================================

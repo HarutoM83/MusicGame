@@ -1,8 +1,8 @@
-// main.js（最小限の変更でつなぐイメージ）
-import { state } from "./state.js";
-import { createNoteButtons, setMode } from "./mode.js";
+// main.js
+import { state, chart } from "./state.js";
+import { createNoteButtons, setMode } from "./modeselect.js";
 import { renderChart } from "./render.js";
-import { showProperties } from "./properties.js";
+import { showProperties } from "./propertiespanel.js";
 import { bindEvents } from "./event.js";
 import { bindNoteDragEvents } from "./drag.js";
 import { bindAudioEvents } from "./audio.js";
@@ -14,18 +14,18 @@ function redraw() {
   renderChart({
     onSelectNote: (index) => {
       state.selectedNoteIndex = index;
-      const note = state.chart.notes?.[index];
+      const note = chart.notes?.[index];
       if (note) showProperties(note, redraw);
     },
     onDeleteNote: (index) => {
-      state.chart.notes?.splice(index, 1);
+      chart.notes?.splice(index, 1);
       if (state.selectedNoteIndex === index) state.selectedNoteIndex = -1;
       redraw();
     },
     onStartDragNote: (index) => {
       state.draggingNoteIndex = index;
     },
-    onChartMutate: redraw
+    onChartMutate: redraw,
   });
 }
 

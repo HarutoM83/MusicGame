@@ -1,5 +1,7 @@
+//drag.js
+
 import { state,chart } from "./state.js";
-import { dom } from "./dom.js";
+import { dom } from "./DOM.js";
 import { getLane, 
     getMousePosition, 
     snapTimeToGrid, 

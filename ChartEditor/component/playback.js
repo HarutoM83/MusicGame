@@ -1,4 +1,6 @@
-import { dom } from "./dom.js";
+//playback.js
+
+import { dom } from "./DOM.js";
 import { timeToY } from "./timecalculator.js";
 
 /* =========================================================
