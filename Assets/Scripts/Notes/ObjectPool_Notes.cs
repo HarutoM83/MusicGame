@@ -6,7 +6,7 @@ public class ObjectPool_Notes : MonoBehaviour
     ObjectPool<GameObject> pool;    // オブジェクトプールの変数を宣言
     public GameObject obj;  // プールの中で管理したいオブジェクト
 
-    void Start()
+    void Awake()
     {
         // オブジェクトプールのインスタンスを生成
         pool = new ObjectPool<GameObject>(
@@ -16,7 +16,7 @@ public class ObjectPool_Notes : MonoBehaviour
             OnDestroyPoolObject,     // プールが上限を超えた場合の処理
             true,                    // すでにプール内にいるオブジェクトを返却した際にエラー表示するか
             2,                       // 初期のプールの容量
-            100);                     // プール内オブジェクトの上限数
+            50);                     // プール内オブジェクトの上限数
     }
 
     // オブジェクト生成の際の処理
